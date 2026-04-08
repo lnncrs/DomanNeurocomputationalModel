@@ -4,8 +4,6 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
 
-EXTERNPROTO "../protos/Ball.proto"
-
 WorldInfo {
   title "Inclined Plane"
   basicTimeStep 16
@@ -14,7 +12,7 @@ WorldInfo {
 Viewpoint {
   fieldOfView 1
   orientation 0.03741850780052345 0.062246943463816026 -0.9973590994739029 1.08483679948474
-  position -2.740169228960147 6.729256178922152 1.412044802372448
+  position -4.344874029932336 9.750151302841935 1.6690760881078341
 }
 TexturedBackground {
   texture "mars"
@@ -107,13 +105,4 @@ Solid {
   boundingObject Box {
     size 1.8 0.1 5
   }
-}
-Ball {
-  translation 0 0 2
-}
-Ball {
-  translation 0 0 4
-}
-Ball {
-  translation 0 0 6
 }
