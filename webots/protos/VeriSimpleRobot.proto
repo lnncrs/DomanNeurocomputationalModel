@@ -1,0 +1,31 @@
+#VRML_SIM R2025a utf8
+
+PROTO SimpleRobot [
+  field SFVec3f translation 0 0 0
+]
+{
+  Robot {
+    translation IS translation
+
+    children [
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.2 0.2 0.8
+        }
+        geometry Box {
+          size 0.3 0.1 0.4
+        }
+      }
+    ]
+
+    boundingObject Box {
+      size 0.3 0.1 0.4
+    }
+
+    physics Physics {
+      mass 1
+    }
+
+    controller "void"
+  }
+}
