@@ -7,6 +7,7 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
   title "Inclined Plane"
   randomSeed 42
+  basicTimeStep 16
 }
 Viewpoint {
   fieldOfView 1
@@ -23,7 +24,7 @@ Floor {
   size 12 12
   tileSize 1 1
 }
-Pose {
+Solid  {
   translation 0 0 0.7
   rotation 1 0 0 1.3589003061004252
   children [
@@ -89,4 +90,7 @@ Pose {
       ]
     }
   ]
+    boundingObject Box {
+    size 1.8 0.1 5
+  }
 }
