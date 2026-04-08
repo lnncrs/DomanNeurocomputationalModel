@@ -10,8 +10,8 @@ WorldInfo {
 }
 Viewpoint {
   fieldOfView 1
-  orientation 0.06635741530054926 0.11811090035087998 -0.9907807571067047 1.0316793522781362
-  position -2.3273358235766035 5.507457995311137 1.2272590131760135
+  orientation -0.14299646076104977 -0.2627092706132318 0.9542200225019789 5.246401233002214
+  position -2.313881813248724 4.796240267445325 1.1887169469649612
 }
 TexturedBackground {
   texture "mars"
@@ -24,8 +24,8 @@ Floor {
   tileSize 1 1
 }
 Pose {
-  translation 0 0 0.7
-  rotation 1 0 0 1.3589003061004252
+  translation 0 0 0.6
+  rotation 1 0 0 1.39
   children [
     Shape {
       appearance PBRAppearance {
@@ -57,33 +57,6 @@ Pose {
           }
           geometry Box {
             size 0.05 0.12 5
-          }
-        }
-      ]
-    }
-    Pose {
-      translation 0 0.2 2.5
-      children [
-        Shape {
-          appearance PBRAppearance {
-            baseColor 0.9 0.3 0.3
-          }
-          geometry Box {
-            size 1.7 0.12 0.05
-          }
-        }
-      ]
-    }
-    Pose {
-      translation 0 -0.03 -3
-      rotation 1 0 0 0.2
-      children [
-        Shape {
-          appearance PBRAppearance {
-            baseColor 0.2 0.4 0.2
-          }
-          geometry Box {
-            size 1.8 0.1 1
           }
         }
       ]
