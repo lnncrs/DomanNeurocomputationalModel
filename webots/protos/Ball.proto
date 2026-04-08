@@ -1,0 +1,31 @@
+#VRML_SIM R2025a utf8
+
+PROTO Ball [
+  field SFVec3f translation 0 0 0
+  field SFFloat radius 0.1
+  field SFFloat mass 0.2
+]
+{
+  Solid {
+    translation IS translation
+
+    children [
+      Shape {
+        appearance PBRAppearance {
+          baseColor 1 0 0
+        }
+        geometry Sphere {
+          radius IS radius
+        }
+      }
+    ]
+
+    boundingObject Sphere {
+      radius IS radius
+    }
+
+    physics Physics {
+      mass IS mass
+    }
+  }
+}

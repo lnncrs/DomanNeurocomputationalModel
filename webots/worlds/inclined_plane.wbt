@@ -4,15 +4,17 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
 
+EXTERNPROTO "../protos/Ball.proto"
+
 WorldInfo {
   title "Inclined Plane"
-  randomSeed 42
   basicTimeStep 16
+  randomSeed 42
 }
 Viewpoint {
   fieldOfView 1
-  orientation 0.09883090893749392 0.23580887374062592 -0.9667608941738213 0.8181373986325832
-  position -15.50877065601773 14.574306630253108 5.510467702204666
+  orientation 0.03741850780052345 0.062246943463816026 -0.9973590994739029 1.08483679948474
+  position -2.740169228960147 6.729256178922152 1.412044802372448
 }
 TexturedBackground {
   texture "mars"
@@ -24,8 +26,8 @@ Floor {
   size 12 12
   tileSize 1 1
 }
-Solid  {
-  translation 0 0 0.7
+Solid {
+  translation 0 0 0.8
   rotation 1 0 0 1.3589003061004252
   children [
     Shape {
@@ -36,7 +38,7 @@ Solid  {
         size 1.8 0.1 5
       }
     }
-    Pose {
+    Solid {
       translation -0.92 0.2 0
       children [
         Shape {
@@ -48,8 +50,11 @@ Solid  {
           }
         }
       ]
+      boundingObject Box {
+        size 0.05 0.12 5
+      }
     }
-    Pose {
+    Solid {
       translation 0.92 0.2 0
       children [
         Shape {
@@ -61,8 +66,11 @@ Solid  {
           }
         }
       ]
+      boundingObject Box {
+        size 0.05 0.12 5
+      }
     }
-    Pose {
+    Solid {
       translation 0 0.2 2.5
       children [
         Shape {
@@ -74,23 +82,38 @@ Solid  {
           }
         }
       ]
+      boundingObject Box {
+        size 1.7 0.12 0.05
+      }
     }
-    Pose {
-      translation 0 -0.03 -3
-      rotation 1 0 0 0.2
+    Solid {
+      translation 0 0 -3.2
+      rotation 1 0 0 0.21
       children [
         Shape {
           appearance PBRAppearance {
             baseColor 0.2 0.4 0.2
           }
           geometry Box {
-            size 1.8 0.1 1
+            size 2.2 0.1 1.5
           }
         }
       ]
+      boundingObject Box {
+        size 2.2 0.1 1.5
+      }
     }
   ]
-    boundingObject Box {
+  boundingObject Box {
     size 1.8 0.1 5
   }
+}
+Ball {
+  translation 0 0 2
+}
+Ball {
+  translation 0 0 4
+}
+Ball {
+  translation 0 0 6
 }
