@@ -48,6 +48,7 @@ Solid {
           }
         }
       ]
+      name "guardrail_left"
       boundingObject Box {
         size 0.05 0.12 5
       }
@@ -64,6 +65,7 @@ Solid {
           }
         }
       ]
+      name "guardrail_right"
       boundingObject Box {
         size 0.05 0.12 5
       }
@@ -80,6 +82,7 @@ Solid {
           }
         }
       ]
+      name "guardrail_rear"
       boundingObject Box {
         size 1.7 0.12 0.05
       }
@@ -97,6 +100,7 @@ Solid {
           }
         }
       ]
+      name "touchdown"
       boundingObject Box {
         size 2.2 0.1 1.5
       }
