@@ -5,27 +5,30 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
 
 WorldInfo {
-  title "Inclined Plane"
-  randomSeed 42
+  basicTimeStep 32
+  title "Inclined Plane - Minimal"
 }
+
 Viewpoint {
-  fieldOfView 1
-  orientation 0.09658438077519432 0.16744890757240322 -0.9811382780949284 1.0629315549335372
-  position -3.974237806126541 6.960756529135609 1.921205392512473
+  orientation -0.35 0.90 0.25 1.15
+  position 0 2.8 6.5
 }
+
 TexturedBackground {
-  texture "mars"
 }
+
 TexturedBackgroundLight {
-  texture "mars"
 }
+
 Floor {
+  translation 0 0 0
   size 12 12
   tileSize 1 1
 }
+
 Solid {
-  translation 0 0 1
-  rotation 1 0 0 1.39
+  translation 0 0.25 0
+  rotation 1 0 0 -0.18
   children [
     Shape {
       appearance PBRAppearance {
@@ -34,18 +37,23 @@ Solid {
         metalness 0
       }
       geometry Box {
-        size 1.8 0.1 5
+        size 1.8 0.1 5.0
       }
     }
   ]
   name "ramp"
   boundingObject Box {
-    size 1.8 0.1 5
+    size 1.8 0.1 5.0
+  }
+  physics Physics {
+    density -1
+    mass 8
   }
 }
+
 Solid {
   translation -0.95 0.42 0
-  rotation 0.9659257490869566 0.2588193332245518 0 -0.5530053071795864
+  rotation 1 0 0 -0.18
   children [
     Shape {
       appearance PBRAppearance {
@@ -54,15 +62,20 @@ Solid {
         metalness 0
       }
       geometry Box {
-        size 0.05 0.25 5
+        size 0.05 0.25 5.0
       }
     }
   ]
   name "left_guardrail"
   boundingObject Box {
-    size 0.05 0.25 5
+    size 0.05 0.25 5.0
+  }
+  physics Physics {
+    density -1
+    mass 2
   }
 }
+
 Solid {
   translation 0.95 0.42 0
   rotation 1 0 0 -0.18
@@ -74,12 +87,16 @@ Solid {
         metalness 0
       }
       geometry Box {
-        size 0.05 0.25 5
+        size 0.05 0.25 5.0
       }
     }
   ]
   name "right_guardrail"
   boundingObject Box {
-    size 0.05 0.25 5
+    size 0.05 0.25 5.0
+  }
+  physics Physics {
+    density -1
+    mass 2
   }
 }
