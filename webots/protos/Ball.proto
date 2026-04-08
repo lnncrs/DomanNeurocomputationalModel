@@ -29,3 +29,13 @@ PROTO Ball [
     }
   }
 }
+
+# Ball {
+#   translation 0 0 2
+# }
+# Ball {
+#   translation 0 0 4
+# }
+# Ball {
+#   translation 0 0 6
+# }

@@ -11,8 +11,8 @@ WorldInfo {
 }
 Viewpoint {
   fieldOfView 1
-  orientation 0.03741850780052345 0.062246943463816026 -0.9973590994739029 1.08483679948474
-  position -4.344874029932336 9.750151302841935 1.6690760881078341
+  orientation -0.18376352166775548 -0.4572182808863266 0.8701622904536928 5.417795657873913
+  position -9.860447020187241 9.288276199384097 5.103513234181289
 }
 TexturedBackground {
   texture "mars"
@@ -25,7 +25,7 @@ Floor {
   tileSize 1 1
 }
 Solid {
-  translation 0 0 0.8
+  translation 0 -1 0.9
   rotation 1 0 0 1.3589003061004252
   children [
     Shape {
@@ -99,6 +99,57 @@ Solid {
             size 2.2 0.1 1.5
           }
         }
+        Solid {
+          translation -1.15 0.15 0
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.8 0.8 0.2
+              }
+              geometry Box {
+                size 0.05 0.1 1.5
+              }
+            }
+          ]
+          name "touchdown_left"
+          boundingObject Box {
+            size 0.05 0.1 1.5
+          }
+        }
+        Solid {
+          translation 1.15 0.15 0
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.8 0.8 0.2
+              }
+              geometry Box {
+                size 0.05 0.1 1.5
+              }
+            }
+          ]
+          name "touchdown_right"
+          boundingObject Box {
+            size 0.05 0.1 1.5
+          }
+        }
+        Solid {
+          translation 0 0.15 -0.8
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.9 0.3 0.3
+              }
+              geometry Box {
+                size 2.2 0.1 0.05
+              }
+            }
+          ]
+          name "touchdown_front"
+          boundingObject Box {
+            size 2.2 0.1 0.05
+          }
+        }
       ]
       name "touchdown"
       boundingObject Box {
@@ -109,4 +160,13 @@ Solid {
   boundingObject Box {
     size 1.8 0.1 5
   }
+}
+Ball {
+  translation 0 0 2
+}
+Ball {
+  translation 0 0 4
+}
+Ball {
+  translation 0 0 6
 }
