@@ -1,0 +1,248 @@
+#VRML_SIM R2023b utf8
+
+PROTO FourNeuronRobot [
+  field SFVec3f    translation  0 0 0
+  field SFRotation rotation     0 0 1 0
+]
+{
+  Robot {
+    translation IS translation
+    rotation IS rotation
+    children [
+      # Corpo principal
+      DEF BODY Shape {
+        appearance PBRAppearance {
+          baseColor 0.2 0.4 0.8
+          roughness 0.3
+          metalness 0.5
+        }
+        geometry Box {
+          size 0.3 0.2 0.1
+        }
+      }
+      
+      # Motor ESQUERDO (controla ambas rodas do lado esquerdo)
+      DEF LEFT_MOTOR HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 0 1 0
+          anchor 0 0.12 0
+        }
+        device [
+          RotationalMotor {
+            name "left_motor"
+            maxVelocity 6.28
+            maxTorque 10
+          }
+        ]
+        endPoint DEF LEFT_WHEELS Solid {
+          translation 0 0.12 0
+          rotation 1 0 0 1.5708
+          children [
+            # Roda esquerda unificada (representa conjunto de rodas)
+            DEF WHEEL_SHAPE Shape {
+              appearance PBRAppearance {
+                baseColor 0.1 0.1 0.1
+              }
+              geometry Cylinder {
+                height 0.06
+                radius 0.05
+              }
+            }
+          ]
+          boundingObject USE WHEEL_SHAPE
+          physics Physics {
+            density -1
+            mass 0.1
+          }
+        }
+      }
+      
+      # Motor DIREITO (controla ambas rodas do lado direito)
+      DEF RIGHT_MOTOR HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 0 1 0
+          anchor 0 -0.12 0
+        }
+        device [
+          RotationalMotor {
+            name "right_motor"
+            maxVelocity 6.28
+            maxTorque 10
+          }
+        ]
+        endPoint DEF RIGHT_WHEELS Solid {
+          translation 0 -0.12 0
+          rotation 1 0 0 1.5708
+          children [
+            # Roda direita unificada (representa conjunto de rodas)
+            USE WHEEL_SHAPE
+          ]
+          boundingObject USE WHEEL_SHAPE
+          physics Physics {
+            density -1
+            mass 0.1
+          }
+        }
+      }
+      
+      # Esfera de estabilização frontal
+      DEF CASTER_FRONT Solid {
+        translation 0.12 0 -0.03
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.3 0.3 0.3
+            }
+            geometry Sphere {
+              radius 0.02
+            }
+          }
+        ]
+        boundingObject Sphere {
+          radius 0.02
+        }
+        physics Physics {
+          density -1
+          mass 0.01
+        }
+      }
+      
+      # Esfera de estabilização traseira
+      DEF CASTER_BACK Solid {
+        translation -0.12 0 -0.03
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.3 0.3 0.3
+            }
+            geometry Sphere {
+              radius 0.02
+            }
+          }
+        ]
+        boundingObject Sphere {
+          radius 0.02
+        }
+        physics Physics {
+          density -1
+          mass 0.01
+        }
+      }
+      
+      # Sensor de proximidade frontal
+      DEF PS_FRONT DistanceSensor {
+        translation 0.15 0 0
+        rotation 0 0 1 0
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 1 0 0
+            }
+            geometry Box {
+              size 0.01 0.01 0.01
+            }
+          }
+        ]
+        name "ps_front"
+        lookupTable [
+          0 0 0
+          0.5 500 0
+        ]
+        type "infra-red"
+      }
+      
+      # Sensor de proximidade traseiro
+      DEF PS_BACK DistanceSensor {
+        translation -0.15 0 0
+        rotation 0 0 1 3.14159
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 1 0 0
+            }
+            geometry Box {
+              size 0.01 0.01 0.01
+            }
+          }
+        ]
+        name "ps_back"
+        lookupTable [
+          0 0 0
+          0.5 500 0
+        ]
+        type "infra-red"
+      }
+      
+      # Sensor de proximidade esquerdo
+      DEF PS_LEFT DistanceSensor {
+        translation 0 0.12 0
+        rotation 0 0 1 1.5708
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 1 0 0
+            }
+            geometry Box {
+              size 0.01 0.01 0.01
+            }
+          }
+        ]
+        name "ps_left"
+        lookupTable [
+          0 0 0
+          0.5 500 0
+        ]
+        type "infra-red"
+      }
+      
+      # Sensor de proximidade direito
+      DEF PS_RIGHT DistanceSensor {
+        translation 0 -0.12 0
+        rotation 0 0 1 -1.5708
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 1 0 0
+            }
+            geometry Box {
+              size 0.01 0.01 0.01
+            }
+          }
+        ]
+        name "ps_right"
+        lookupTable [
+          0 0 0
+          0.5 500 0
+        ]
+        type "infra-red"
+      }
+      
+      # Giroscópio
+      DEF GYRO Gyro {
+        name "gyro"
+      }
+      
+      # GPS para posição
+      DEF GPS GPS {
+        name "gps"
+      }
+      
+      # Bússola para orientação
+      DEF COMPASS Compass {
+        name "compass"
+      }
+    ]
+    name "FourNeuronRobot"
+    boundingObject DEF BODY Shape {
+      geometry Box {
+        size 0.3 0.2 0.1
+      }
+    }
+    physics Physics {
+      density -1
+      mass 2.0
+      centerOfMass [ 0 0 0 ]
+    }
+    controller "main_controller"
+  }
+}
