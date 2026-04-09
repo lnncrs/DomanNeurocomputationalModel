@@ -1,6 +1,6 @@
 #VRML_SIM R2025a utf8
 
-PROTO SimpleRobot [
+PROTO VeriSimpleRobot [
   field SFVec3f translation 0 0 0
 ]
 {

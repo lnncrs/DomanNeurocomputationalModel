@@ -4,6 +4,8 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
 
+EXTERNPROTO "../protos/Ball.proto"
+
 WorldInfo {
   title "Inclined Plane"
   basicTimeStep 16
@@ -160,4 +162,13 @@ Solid {
   boundingObject Box {
     size 1.8 0.1 5
   }
+}
+Ball {
+  translation 0 0 2
+}
+Ball {
+  translation 0 0 4
+}
+Ball {
+  translation 0 0 6
 }

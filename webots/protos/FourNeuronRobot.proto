@@ -20,7 +20,7 @@ PROTO FourNeuronRobot [
           size 0.3 0.2 0.1
         }
       }
-      
+
       # Motor ESQUERDO (controla ambas rodas do lado esquerdo)
       DEF LEFT_MOTOR HingeJoint {
         jointParameters HingeJointParameters {
@@ -56,7 +56,7 @@ PROTO FourNeuronRobot [
           }
         }
       }
-      
+
       # Motor DIREITO (controla ambas rodas do lado direito)
       DEF RIGHT_MOTOR HingeJoint {
         jointParameters HingeJointParameters {
@@ -84,7 +84,7 @@ PROTO FourNeuronRobot [
           }
         }
       }
-      
+
       # Esfera de estabilização frontal
       DEF CASTER_FRONT Solid {
         translation 0.12 0 -0.03
@@ -106,7 +106,7 @@ PROTO FourNeuronRobot [
           mass 0.01
         }
       }
-      
+
       # Esfera de estabilização traseira
       DEF CASTER_BACK Solid {
         translation -0.12 0 -0.03
@@ -128,7 +128,7 @@ PROTO FourNeuronRobot [
           mass 0.01
         }
       }
-      
+
       # Sensor de proximidade frontal
       DEF PS_FRONT DistanceSensor {
         translation 0.15 0 0
@@ -150,7 +150,7 @@ PROTO FourNeuronRobot [
         ]
         type "infra-red"
       }
-      
+
       # Sensor de proximidade traseiro
       DEF PS_BACK DistanceSensor {
         translation -0.15 0 0
@@ -172,7 +172,7 @@ PROTO FourNeuronRobot [
         ]
         type "infra-red"
       }
-      
+
       # Sensor de proximidade esquerdo
       DEF PS_LEFT DistanceSensor {
         translation 0 0.12 0
@@ -194,7 +194,7 @@ PROTO FourNeuronRobot [
         ]
         type "infra-red"
       }
-      
+
       # Sensor de proximidade direito
       DEF PS_RIGHT DistanceSensor {
         translation 0 -0.12 0
@@ -216,17 +216,17 @@ PROTO FourNeuronRobot [
         ]
         type "infra-red"
       }
-      
+
       # Giroscópio
       DEF GYRO Gyro {
         name "gyro"
       }
-      
+
       # GPS para posição
       DEF GPS GPS {
         name "gps"
       }
-      
+
       # Bússola para orientação
       DEF COMPASS Compass {
         name "compass"

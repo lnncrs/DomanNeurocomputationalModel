@@ -1,0 +1,137 @@
+#VRML_SIM R2025a utf8
+
+PROTO StableDifferentialRobot [
+  field SFVec3f translation 0 0 0
+]
+{
+  Robot {
+    translation IS translation
+
+    children [
+
+      # ========================
+      # CORPO
+      # ========================
+      Solid {
+        translation 0 0.1 0
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.2 0.6 1
+              roughness 1
+              metalness 0
+            }
+            geometry Box {
+              size 0.3 0.1 0.4
+            }
+          }
+        ]
+        boundingObject Box {
+          size 0.3 0.1 0.4
+        }
+        physics Physics {
+          mass 1
+        }
+      }
+
+      # ========================
+      # RODA ESQUERDA
+      # ========================
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 0 1 0
+          anchor -0.15 0.05 0
+        }
+
+        device [
+          RotationalMotor {
+            name "left_motor"
+            maxTorque 10
+          }
+        ]
+
+        endPoint Solid {
+          translation -0.15 0.05 0
+
+          children [
+            Transform {
+              rotation 1 0 0 1.57
+              children [
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor 0 0 0
+                    roughness 1
+                  }
+                  geometry Cylinder {
+                    radius 0.05
+                    height 0.02
+                  }
+                }
+              ]
+            }
+          ]
+
+          boundingObject Cylinder {
+            radius 0.05
+            height 0.02
+          }
+
+          physics Physics {
+            mass 0.1
+          }
+        }
+      }
+
+      # ========================
+      # RODA DIREITA
+      # ========================
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 0 1 0
+          anchor 0.15 0.05 0
+        }
+
+        device [
+          RotationalMotor {
+            name "right_motor"
+            maxTorque 10
+          }
+        ]
+
+        endPoint Solid {
+          translation 0.15 0.05 0
+
+          children [
+            Transform {
+              rotation 1 0 0 1.57
+              children [
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor 0 0 0
+                    roughness 1
+                  }
+                  geometry Cylinder {
+                    radius 0.05
+                    height 0.02
+                  }
+                }
+              ]
+            }
+          ]
+
+          boundingObject Cylinder {
+            radius 0.05
+            height 0.02
+          }
+
+          physics Physics {
+            mass 0.1
+          }
+        }
+      }
+
+    ]
+
+    controller "void"
+  }
+}

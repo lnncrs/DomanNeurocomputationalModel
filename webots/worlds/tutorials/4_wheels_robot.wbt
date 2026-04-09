@@ -1,13 +1,68 @@
-#VRML_SIM R2023b utf8
+#VRML_SIM R2025a utf8
 
-PROTO SimpleRobot [
-  field SFVec3f    translation  0 0 0
-  field SFRotation rotation     0 0 0 0
-]
-{
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
+
+WorldInfo {
+  basicTimeStep 16
+}
+Viewpoint {
+  orientation 0.34588368390275137 -0.5404856700754533 -0.7669678726341472 4.947810560141415
+  position -0.4592975982312491 -0.6945563703501848 0.8399831457842541
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+Floor {
+  size 1 1
+}
+DEF WALL_1 Solid {
+  translation 0.5 0 0.05
+  children [
+    DEF WALL_SHAPE Shape {
+      appearance PBRAppearance {
+        baseColor 0.12549 0.368627 0.729412
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.02 0.98 0.1
+      }
+    }
+  ]
+  boundingObject USE WALL_SHAPE
+}
+DEF WALL_2 Solid {
+  translation -0.5 0 0.05
+  children [
+    USE WALL_SHAPE
+  ]
+  name "solid(1)"
+  boundingObject USE WALL_SHAPE
+}
+DEF WALL_3 Solid {
+  translation 0 -0.5 0.05
+  rotation 0 0 1 1.5708
+  children [
+    USE WALL_SHAPE
+  ]
+  name "solid(2)"
+  boundingObject USE WALL_SHAPE
+}
+DEF WALL_4 Solid {
+  translation 0 0.5 0.05
+  rotation 0 0 1 1.5708
+  children [
+    USE WALL_SHAPE
+  ]
+  name "solid(3)"
+  boundingObject USE WALL_SHAPE
+}
 Robot {
-  translation IS translation
-  rotation IS rotation
+  translation 0 0 0.05
+  rotation 0 0 -1 2.78858
   children [
     DEF BODY Shape {
       appearance PBRAppearance {
@@ -159,8 +214,3 @@ Robot {
   }
   controller "four_wheels_collision_avoidance"
 }
-}
-# SimpleRobot {
-#   translation 0 -2.5 2.5
-#   rotation 0 0 1 1.5
-# }
