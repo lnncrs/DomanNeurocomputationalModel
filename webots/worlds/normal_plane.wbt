@@ -1,0 +1,26 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
+
+WorldInfo {
+  title "Inclined Plane"
+  basicTimeStep 16
+  randomSeed 42
+}
+Viewpoint {
+  fieldOfView 1
+  orientation -0.22408603628819218 -0.603962653621948 0.7648624460454191 5.3798897857669985
+  position -5.72809394763614 4.686350396745299 3.7660619092443013
+}
+TexturedBackground {
+  texture "mars"
+}
+TexturedBackgroundLight {
+  texture "mars"
+}
+Floor {
+  size 6 6
+  tileSize 1 1
+}

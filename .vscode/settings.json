@@ -1,13 +1,13 @@
 {
-    "python-envs.pythonProjects": [
-        {
-            "path": ".",
-            "envManager": "ms-python.python:conda",
-            "packageManager": "ms-python.python:conda"
-        }
-    ],
-    "files.associations": {
-        "*.proto": "vrml",
-        "*.wbt": "vrml"
+  "python-envs.pythonProjects": [
+    {
+      "path": ".",
+      "envManager": "ms-python.python:conda",
+      "packageManager": "ms-python.python:conda"
     }
+  ],
+  "files.associations": {
+    "*.proto": "vrml",
+    "*.wbt": "vrml"
+  }
 }
