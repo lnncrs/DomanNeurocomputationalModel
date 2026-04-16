@@ -1,3 +1,6 @@
+
+& "C:\Program Files\Webots\msys64\mingw64\bin\webots.exe" --stdout --stderr
+
 # 🧠 Dorman Network - Aprendizado em Rampa Inclinada
 
 Projeto TCC UFABC: Rede neural de 4 neurônios com aprendizado por reforço online em ambiente Webots.
@@ -44,7 +47,7 @@ Sensores (6 inputs) → [N1: Esquerdo Frente  ]  \n                      [N2: Es
 
 **Comportamentos emergentes:**
 - Frente: N1 + N3 ativos
-- Ré: N2 + N4 ativos  
+- Ré: N2 + N4 ativos
 - Giro direita: N1 + N4 ativos
 - Giro esquerda: N2 + N3 ativos
 
