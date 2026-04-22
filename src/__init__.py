@@ -1,1 +1,1 @@
-"""Pacote src - núcleo do algoritmo de aprendizado"""
+"""Biblioteca principal do projeto"""

@@ -1,1 +1,1 @@
-"""Módulo de controle - controladores do robô"""
+"""Módulo de controle"""

@@ -2,94 +2,97 @@
 Interface específica para Webots
 """
 
-import numpy as np
-
-from .base_interface import RobotInterface
+# TODO Este código não está completo, está em fase de desenvolvimento.
 
 
-class WebotsInterface(RobotInterface):
-    """Implementação da interface para Webots"""
+# import numpy as np
 
-    def __init__(self, robot, timestep: int):
-        self.robot = robot
-        self.timestep = timestep
+# from .base_interface import RobotInterface
 
-        # Inicializa sensores e motores (adapte conforme seu robô)
-        self.sensors = []
-        self.left_motor = None
-        self.right_motor = None
 
-        self._setup_devices()
+# class WebotsInterface(RobotInterface):
+#     """Implementação da interface para Webots"""
 
-    def _setup_devices(self):
-        """Configura sensores e motores do Webots"""
-        # Motores
-        self.left_motor = self.robot.getDevice("left_motor")
-        self.right_motor = self.robot.getDevice("right_motor")
-        self.left_motor.setPosition(float("inf"))  # Modo velocidade
-        self.right_motor.setPosition(float("inf"))
-        self.left_motor.setVelocity(0.0)
-        self.right_motor.setVelocity(0.0)
+#     def __init__(self, robot, timestep: int):
+#         self.robot = robot
+#         self.timestep = timestep
 
-        # Sensores de proximidade (4 direções)
-        self.proximity_sensors = [
-            self.robot.getDevice("ps_front"),
-            self.robot.getDevice("ps_back"),
-            self.robot.getDevice("ps_left"),
-            self.robot.getDevice("ps_right"),
-        ]
-        for sensor in self.proximity_sensors:
-            sensor.enable(self.timestep)
+#         # Inicializa sensores e motores (adapte conforme seu robô)
+#         self.sensors = []
+#         self.left_motor = None
+#         self.right_motor = None
 
-        # Giroscópio (orientação angular)
-        self.gyro = self.robot.getDevice("gyro")
-        self.gyro.enable(self.timestep)
+#         self._setup_devices()
 
-        # GPS (posição global)
-        self.gps = self.robot.getDevice("gps")
-        self.gps.enable(self.timestep)
+#     def _setup_devices(self):
+#         """Configura sensores e motores do Webots"""
+#         # Motores
+#         self.left_motor = self.robot.getDevice("left_motor")
+#         self.right_motor = self.robot.getDevice("right_motor")
+#         self.left_motor.setPosition(float("inf"))  # Modo velocidade
+#         self.right_motor.setPosition(float("inf"))
+#         self.left_motor.setVelocity(0.0)
+#         self.right_motor.setVelocity(0.0)
 
-        # Bússola (direção)
-        self.compass = self.robot.getDevice("compass")
-        self.compass.enable(self.timestep)
+#         # Sensores de proximidade (4 direções)
+#         self.proximity_sensors = [
+#             self.robot.getDevice("ps_front"),
+#             self.robot.getDevice("ps_back"),
+#             self.robot.getDevice("ps_left"),
+#             self.robot.getDevice("ps_right"),
+#         ]
+#         for sensor in self.proximity_sensors:
+#             sensor.enable(self.timestep)
 
-        self.MAX_SPEED = 6.28  # rad/s
+#         # Giroscópio (orientação angular)
+#         self.gyro = self.robot.getDevice("gyro")
+#         self.gyro.enable(self.timestep)
 
-    def read_sensors(self) -> np.ndarray:
-        """Lê sensores do Webots"""
-        # 4 sensores de proximidade
-        proximity = np.array([sensor.getValue() for sensor in self.proximity_sensors])
+#         # GPS (posição global)
+#         self.gps = self.robot.getDevice("gps")
+#         self.gps.enable(self.timestep)
 
-        # Normaliza proximity (0-500 -> 0-1)
-        proximity = proximity / 500.0
+#         # Bússola (direção)
+#         self.compass = self.robot.getDevice("compass")
+#         self.compass.enable(self.timestep)
 
-        # Giroscópio (velocidade angular no eixo Z)
-        gyro_values = self.gyro.getValues()
-        angular_velocity = gyro_values[2]  # Yaw
+#         self.MAX_SPEED = 6.28  # rad/s
 
-        # Bússola (direção para o objetivo)
-        compass_values = self.compass.getValues()
-        heading = np.arctan2(compass_values[0], compass_values[1])
+#     def read_sensors(self) -> np.ndarray:
+#         """Lê sensores do Webots"""
+#         # 4 sensores de proximidade
+#         proximity = np.array([sensor.getValue() for sensor in self.proximity_sensors])
 
-        # Combina todos os sensores
-        sensor_data = np.concatenate([proximity, [angular_velocity], [heading]])
+#         # Normaliza proximity (0-500 -> 0-1)
+#         proximity = proximity / 500.0
 
-        return sensor_data
+#         # Giroscópio (velocidade angular no eixo Z)
+#         gyro_values = self.gyro.getValues()
+#         angular_velocity = gyro_values[2]  # Yaw
 
-    def set_motors(self, left: float, right: float):
-        """Define velocidades dos motores"""
-        # Clamp entre -1 e 1
-        left = np.clip(left, -1.0, 1.0)
-        right = np.clip(right, -1.0, 1.0)
+#         # Bússola (direção para o objetivo)
+#         compass_values = self.compass.getValues()
+#         heading = np.arctan2(compass_values[0], compass_values[1])
 
-        self.left_motor.setVelocity(left * self.MAX_SPEED)
-        self.right_motor.setVelocity(right * self.MAX_SPEED)
+#         # Combina todos os sensores
+#         sensor_data = np.concatenate([proximity, [angular_velocity], [heading]])
 
-    def get_position(self) -> float:
-        """Retorna posição no eixo do plano inclinado (coordenada Y)"""
-        gps_values = self.gps.getValues()
-        return gps_values[1]  # Y é o eixo ao longo da rampa
+#         return sensor_data
 
-    def get_n_sensors(self) -> int:
-        """Retorna número de sensores"""
-        return 6  # 4 proximity + 1 gyro + 1 compass
+#     def set_motors(self, left: float, right: float):
+#         """Define velocidades dos motores"""
+#         # Clamp entre -1 e 1
+#         left = np.clip(left, -1.0, 1.0)
+#         right = np.clip(right, -1.0, 1.0)
+
+#         self.left_motor.setVelocity(left * self.MAX_SPEED)
+#         self.right_motor.setVelocity(right * self.MAX_SPEED)
+
+#     def get_position(self) -> float:
+#         """Retorna posição no eixo do plano inclinado (coordenada Y)"""
+#         gps_values = self.gps.getValues()
+#         return gps_values[1]  # Y é o eixo ao longo da rampa
+
+#     def get_n_sensors(self) -> int:
+#         """Retorna número de sensores"""
+#         return 6  # 4 proximity + 1 gyro + 1 compass

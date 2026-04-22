@@ -2,3 +2,10 @@ numpy
 matplotlib
 tqdm
 python-dotenv
+pandas
+jupyter
+scipy
+statsmodels
+tomli
+seaborn
+plotly

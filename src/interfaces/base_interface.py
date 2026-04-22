@@ -1,31 +1,34 @@
 """
-Interface base abstrata para simulação/hardware
+Interface base abstrata para simulação
 """
 
-from abc import ABC, abstractmethod
-
-import numpy as np
+# TODO Este código não está completo, está em fase de desenvolvimento.
 
 
-class RobotInterface(ABC):
-    """Interface abstrata para controle do robô"""
+# from abc import ABC, abstractmethod
 
-    @abstractmethod
-    def read_sensors(self) -> np.ndarray:
-        """Lê valores dos sensores"""
-        pass
+# import numpy as np
 
-    @abstractmethod
-    def set_motors(self, left: float, right: float):
-        """Define velocidades dos motores"""
-        pass
 
-    @abstractmethod
-    def get_position(self) -> float:
-        """Retorna posição atual do robô"""
-        pass
+# class RobotInterface(ABC):
+#     """Interface abstrata para controle do robô"""
 
-    @abstractmethod
-    def get_n_sensors(self) -> int:
-        """Retorna número de sensores"""
-        pass
+#     @abstractmethod
+#     def read_sensors(self) -> np.ndarray:
+#         """Lê valores dos sensores"""
+#         pass
+
+#     @abstractmethod
+#     def set_motors(self, left: float, right: float):
+#         """Define velocidades dos motores"""
+#         pass
+
+#     @abstractmethod
+#     def get_position(self) -> float:
+#         """Retorna posição atual do robô"""
+#         pass
+
+#     @abstractmethod
+#     def get_n_sensors(self) -> int:
+#         """Retorna número de sensores"""
+#         pass
