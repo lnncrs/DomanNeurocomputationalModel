@@ -14,7 +14,7 @@ Lenin Cristi
 
 Este trabalho tem como objetivo a reprodução computacional e robótica do experimento [Doman's Inclined Floor Method for Early Motor Organization Simulated with a Four Neurons Robot (2010)](https://www.semanticscholar.org/paper/Doman%27s-Inclined-Floor-Method-for-Early-Motor-with-Pel%C3%A1ez-Santana/a1d9815865dcf65b909aeaf985f2f96c99be9dd5) de Ropero Peláez e Lucas Santana, no qual um robô controlado por uma rede neural plástica de quatro neurônios aprende a organizar seu comportamento motor em um plano inclinado, inspirado no método de estimulação motora precoce de Glenn Doman.
 
-A implementação original foi realizada em MATLAB e dependente de sensores ambientais externos (rampa listrada e estímulos visuais), este projeto visa desenvolver uma versão totalmente reprodutível do experimento utilizando linguagem multiparadigma flexível e sensoriamento embarcado.
+A implementação original foi realizada em MATLAB e dependente de sensores ambientais externos (rampa listrada e estímulos visuais), este projeto visa desenvolver uma versão totalmente reprodutível do experimento utilizando linguagem multiparadigma flexível e sensoriamento embarcado. O código do projeto está disponível em https://github.com/lnncrs/DomanNeurocomputationalModel
 
 *Na primeira fase, o foco será a reconstrução funcional do experimento: modelo neural e simulação do robô em ambiente controlado (simulador e plataforma robótica simples) e a validação experimental da emergência de comportamento direcional com métricas quantitativas de aprendizado.*
 
@@ -34,11 +34,9 @@ Ou seja a simulação, o robô e o aprendizado são tratados como **meios**, nã
 
 ### O experimento original
 
-Antes da construção do projeto, foi imprescindível fazer uma série de leituras mais detalhadas do artigo [Doman's Inclined Floor Method for Early Motor Organization Simulated with a Four Neurons Robot (2010)](https://www.semanticscholar.org/paper/Doman%27s-Inclined-Floor-Method-for-Early-Motor-with-Pel%C3%A1ez-Santana/a1d9815865dcf65b909aeaf985f2f96c99be9dd5) (que também está disponível no repositório do projeto [aqui]()) que descreve o experimento original.
+Antes da construção do projeto, foi imprescindível fazer uma série de leituras mais detalhadas do artigo que descreve o experimento original: [Doman's Inclined Floor Method for Early Motor Organization Simulated with a Four Neurons Robot (2010)](https://www.semanticscholar.org/paper/Doman%27s-Inclined-Floor-Method-for-Early-Motor-with-Pel%C3%A1ez-Santana/a1d9815865dcf65b909aeaf985f2f96c99be9dd5), este artigo também está disponível no repositório do projeto [aqui](https://github.com/lnncrs/DomanNeurocomputationalModel/blob/main/docs/Testing%20the%20inclined%20plane%20technique%20with%20a%20four%20neurons%20robot.pdf). Essas leituras adicionais do artigo revelaram um ponto fundamental sobre o experimento:
 
-Essa leitura do artigo revelou um ponto fundamental sobre o experimento:
-
-> O objetivo do experimento não é exatamente fazer o robô aprender a andar, mas sim simular o processo pelo qual uma criança aprende a fazê-lo.
+> O objetivo do experimento não é exatamente fazer o robô aprender a andar, mas sim simular o processo pelo qual uma criança aprende a fazê-lo e assim aprender mais sobre a neuroplasticidade envolvida neste processo.
 
 Para tanto, o experimento busca reproduzir:
 
@@ -46,7 +44,7 @@ Para tanto, o experimento busca reproduzir:
 - Ambiente físico (plano inclinado);
 - Simplicidade estrutural do sistema neural.
 
-Para, a partir dos dados e modelo gerados por esse experimento, analisar o comportamento emergente. Fica claro então que o objetivo fim não é o aprendizado do robô em si, mas tentar simular ao máximo as condições de uma criança aprendendo a andar no método do plano inclinado de Doman, e a partir dessa simulação, das condições e das variáveis envolvidas gerar um modelo de aprendizado com alguma capacidade de explicabilidade com relação ao aprendizado da criança no método de Doman. Em outras palavras, uma simulação robótica que nos traga mais perto de explicar a forma como as crianças organizam neuroplasticamente o seu aprendizado no método mencionado.
+E a partir dos dados e modelo gerados por esse experimento, analisar o comportamento emergente. Fica claro então que o objetivo fim não é o aprendizado do robô em si, mas tentar simular ao máximo as condições de uma criança aprendendo a andar no método do plano inclinado de Doman, e a partir dessa simulação, das condições e das variáveis envolvidas gerar um modelo de aprendizado com alguma capacidade de explicabilidade com relação ao aprendizado da criança no método de Doman. Em outras palavras, uma simulação robótica que nos traga mais perto de explicar a forma como as crianças organizam neuroplasticamente o seu aprendizado no método mencionado.
 
 ### A rede neural "não convencional"
 
@@ -64,13 +62,15 @@ Fica claro que para que o modelo tenha uma melhor capacidade de explicar o compo
 
 Esse foi o segundo grande ponto extraído do artigo, ele usa neurônios específicos e funções específicas, e não a mesma arquitetura de uma rede que vemos em redes neurais artificiais comuns e isso tem um propósito: Para que seja mais fácil correlacionar o aprendizado dele com o aprendizado de uma criança.
 
-#### Resumo das diferenças em relação a redes neurais clássicas:
+#### Resumo das diferenças
+
+Em relação a redes neurais clássicas:
 
 - Não há backpropagation tradicional;
 - Não há arquiteturas profundas;
 - Funções de ativação são específicas do modelo do artigo.
 
-Os neurônios:
+Em relação aos neurônios:
 
 - Possuem limiares e dinâmicas próprias;
 - São mais próximos de neurônios biológicos do que artificiais convencionais;
@@ -80,17 +80,20 @@ Os neurônios:
 
 #### Rede proposta
 
-Caminho do estímulo:
+Caminho pretendido do estímulo:
 
-Conjunto de sensores → 4 neurônios → 2 motores
+```text
+Conjunto de sensores → 4 neurônios → 2 motores → 2 conjuntos de rodas
+```
 
-Com mapeamento:
+Mapeamento pretendido:
 
+```text
 N1/N2 → lado esquerdo
-
 N3/N4 → lado direito
+```
 
-Comportamentos emergentes:
+Comportamentos emergentes esperados:
 
 - Movimento frontal
 - Ré
