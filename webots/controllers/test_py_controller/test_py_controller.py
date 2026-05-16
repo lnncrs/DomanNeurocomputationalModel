@@ -51,7 +51,7 @@ if motor is None:
     exit()
 
 motor.setPosition(float('inf'))
-motor.setVelocity(2)
+motor.setVelocity(10)
 
 while robot.step(timestep) != -1:
     pass
