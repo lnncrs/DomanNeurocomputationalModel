@@ -346,4 +346,5 @@ $RECYCLE.BIN/
 _other/
 /docs/*/
 
-
+### Webots hidden files ###
+/webots/**/.*
