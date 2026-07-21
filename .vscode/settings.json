@@ -7,7 +7,7 @@
     }
   ],
   "files.associations": {
-    "*.proto": "vrml",
-    "*.wbt": "vrml"
+    "*.proto": "webots-proto",
+    "*.wbt": "webots-proto"
   }
 }

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Four Wheel Robot</title>
+  <link rel="stylesheet" href="four_wheel_robot_window.css">
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Four Wheel Robot</h1>
+      <p>Telemetria embarcada do robô</p>
+    </div>
+    <div class="connection"><span id="connection-dot"></span><span id="connection-text">Aguardando dados</span></div>
+  </header>
+
+  <main>
+    <section class="card controls">
+      <div>
+        <h2>Controle de segurança</h2>
+        <p>Interrompe temporariamente os quatro motores.</p>
+      </div>
+      <button id="motor-toggle" type="button">Parar motores</button>
+    </section>
+
+    <section class="card">
+      <h2>Proximidade</h2>
+      <div class="robot-map">
+        <div class="sensor front"><span>Frente</span><strong id="ps_front">—</strong></div>
+        <div class="sensor diagonal-left"><span>Diagonal E</span><strong id="ds_left">—</strong></div>
+        <div class="sensor diagonal-right"><span>Diagonal D</span><strong id="ds_right">—</strong></div>
+        <div class="sensor side-left"><span>Esquerda</span><strong id="ps_left">—</strong></div>
+        <div class="robot-body">ROBÔ</div>
+        <div class="sensor side-right"><span>Direita</span><strong id="ps_right">—</strong></div>
+        <div class="sensor back"><span>Traseira</span><strong id="ps_back">—</strong></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Motores</h2>
+      <div class="metric-grid four">
+        <div class="metric"><span>Wheel 1 · dianteira E</span><strong id="motor-0">—</strong></div>
+        <div class="metric"><span>Wheel 2 · dianteira D</span><strong id="motor-1">—</strong></div>
+        <div class="metric"><span>Wheel 3 · traseira E</span><strong id="motor-2">—</strong></div>
+        <div class="metric"><span>Wheel 4 · traseira D</span><strong id="motor-3">—</strong></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Movimento e orientação</h2>
+      <div class="telemetry-grid">
+        <div class="vector"><h3>Acelerômetro</h3><div id="accelerometer"></div></div>
+        <div class="vector"><h3>Giroscópio</h3><div id="gyro"></div></div>
+        <div class="vector"><h3>GPS</h3><div id="gps"></div></div>
+        <div class="vector"><h3>Bússola</h3><div id="compass"></div></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Tempo de simulação: <strong id="simulation-time">—</strong> s</footer>
+  <script type="module" src="four_wheel_robot_window.js"></script>
+</body>
+</html>

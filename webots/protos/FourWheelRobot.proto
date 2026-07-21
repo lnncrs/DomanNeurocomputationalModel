@@ -3,12 +3,15 @@
 PROTO FourWheelRobot [
   field SFVec3f    translation  0 0 0
   field SFRotation rotation     0 0 0 0
+  field SFString   name         "four_wheel_robot"
   field SFString   controller   "four_wheels_collision_avoidance"
+  field SFString   window       "four_wheel_robot_window"
 ]
 {
   Robot {
     translation IS translation
     rotation IS rotation
+    name IS name
     children [
       DEF BODY Shape {
         appearance PBRAppearance {
@@ -153,11 +156,99 @@ PROTO FourWheelRobot [
         ]
         name "ds_left"
       }
+
+      # Sensores direcionais adicionais. Eles ficam disponíveis para futuros
+      # controladores, mas não são habilitados pelo controlador atual.
+      DEF PS_FRONT DistanceSensor {
+        translation 0.105 0 0
+        children [
+          DEF PROXIMITY_SENSOR_SHAPE Shape {
+            appearance PBRAppearance {
+              baseColor 1 0.55 0
+              roughness 1
+              metalness 0
+            }
+            geometry Box {
+              size 0.01 0.01 0.01
+            }
+          }
+        ]
+        name "ps_front"
+        lookupTable [
+          0 0 0
+          0.5 1000 0
+        ]
+        numberOfRays 3
+        aperture 0.1
+        type "infra-red"
+      }
+      DEF PS_BACK DistanceSensor {
+        translation -0.105 0 0
+        rotation 0 0 1 3.14159
+        children [
+          USE PROXIMITY_SENSOR_SHAPE
+        ]
+        name "ps_back"
+        lookupTable [
+          0 0 0
+          0.5 1000 0
+        ]
+        numberOfRays 3
+        aperture 0.1
+        type "infra-red"
+      }
+      DEF PS_LEFT DistanceSensor {
+        translation 0 0.055 0
+        rotation 0 0 1 1.5708
+        children [
+          USE PROXIMITY_SENSOR_SHAPE
+        ]
+        name "ps_left"
+        lookupTable [
+          0 0 0
+          0.5 1000 0
+        ]
+        numberOfRays 3
+        aperture 0.1
+        type "infra-red"
+      }
+      DEF PS_RIGHT DistanceSensor {
+        translation 0 -0.055 0
+        rotation 0 0 1 -1.5708
+        children [
+          USE PROXIMITY_SENSOR_SHAPE
+        ]
+        name "ps_right"
+        lookupTable [
+          0 0 0
+          0.5 1000 0
+        ]
+        numberOfRays 3
+        aperture 0.1
+        type "infra-red"
+      }
+
+      # Instrumentação embarcada para telemetria experimental. A presença dos
+      # dispositivos no PROTO não os habilita nem os expõe automaticamente à
+      # futura rede neural.
+      Accelerometer {
+        name "accelerometer"
+      }
+      Gyro {
+        name "gyro"
+      }
+      GPS {
+        name "gps"
+      }
+      Compass {
+        name "compass"
+      }
     ]
     boundingObject USE BODY
     physics Physics {
       density 1000
     }
     controller IS controller
+    window IS window
   }
 }

@@ -338,7 +338,8 @@ O repositório do projeto está organizado da seguinte forma:
     │   └── obstacles.wbt
     │
     └── worlds/                           # Mundos de simulação
-        ├── normal_plane.wbt              # Plano nivelado
+        ├── normal_plane.wbt              # Plano nivelado 5 x 5
+        ├── normal_plane_half_size.wbt    # Plano nivelado compacto 2 x 2 com robô
         ├── inclined_plane.wbt            # Plano inclinado canônico do experimento
         ├── inclined_plane_with_balls.wbt # Teste de física
         ├── inclined_plane_with_robot.wbt # Experimento com robô

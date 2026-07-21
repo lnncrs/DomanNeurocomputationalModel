@@ -1,0 +1,68 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
+
+WorldInfo {
+  title "Normal Plane - Half Size"
+  basicTimeStep 16
+  randomSeed 42
+}
+Viewpoint {
+  fieldOfView 1
+  orientation -0.25758780172468937 -0.259587115263696 0.9307325362270918 4.648381113466375
+  position -0.05305153233403673 2.458365960670158 1.0054756806810883
+}
+TexturedBackground {
+  texture "mars"
+}
+TexturedBackgroundLight {
+  texture "mars"
+}
+Floor {
+  size 2 2
+  tileSize 1 1
+}
+DEF WALL_1 Solid {
+  translation 1 0 0.05
+  children [
+    DEF WALL_SHAPE Shape {
+      appearance PBRAppearance {
+        baseColor 0.12549 0.368627 0.729412
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.02 1.98 0.1
+      }
+    }
+  ]
+  boundingObject USE WALL_SHAPE
+}
+DEF WALL_2 Solid {
+  translation -1 0 0.05
+  children [
+    USE WALL_SHAPE
+  ]
+  name "wall_2"
+  boundingObject USE WALL_SHAPE
+}
+DEF WALL_3 Solid {
+  translation 0 -1 0.05
+  rotation 0 0 1 1.5708
+  children [
+    USE WALL_SHAPE
+  ]
+  name "wall_3"
+  boundingObject USE WALL_SHAPE
+}
+DEF WALL_4 Solid {
+  translation 0 1 0.05
+  rotation 0 0 1 1.5708
+  children [
+    USE WALL_SHAPE
+  ]
+  name "wall_4"
+  boundingObject USE WALL_SHAPE
+}

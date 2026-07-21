@@ -6,14 +6,14 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 EXTERNPROTO "../protos/FourWheelRobot.proto"
 
 WorldInfo {
-  title "Inclined Plane"
+  title "Normal Plane - Half Size with Robot"
   basicTimeStep 16
   randomSeed 42
 }
 Viewpoint {
   fieldOfView 1
   orientation -0.25758780172468937 -0.259587115263696 0.9307325362270918 4.648381113466375
-  position -0.13262883083509183 6.145914901677395 2.513689261702721
+  position -0.05305153233403673 2.458365960670158 1.0054756806810883
 }
 TexturedBackground {
   texture "mars"
@@ -22,11 +22,11 @@ TexturedBackgroundLight {
   texture "mars"
 }
 Floor {
-  size 5 5
+  size 2 2
   tileSize 1 1
 }
 DEF WALL_1 Solid {
-  translation 2.5 0 0.05
+  translation 1 0 0.05
   children [
     DEF WALL_SHAPE Shape {
       appearance PBRAppearance {
@@ -35,14 +35,14 @@ DEF WALL_1 Solid {
         metalness 0
       }
       geometry Box {
-        size 0.02 4.98 0.1
+        size 0.02 1.98 0.1
       }
     }
   ]
   boundingObject USE WALL_SHAPE
 }
 DEF WALL_2 Solid {
-  translation -2.5 0 0.05
+  translation -1 0 0.05
   children [
     USE WALL_SHAPE
   ]
@@ -50,7 +50,7 @@ DEF WALL_2 Solid {
   boundingObject USE WALL_SHAPE
 }
 DEF WALL_3 Solid {
-  translation 0 -2.5 0.05
+  translation 0 -1 0.05
   rotation 0 0 1 1.5708
   children [
     USE WALL_SHAPE
@@ -59,7 +59,7 @@ DEF WALL_3 Solid {
   boundingObject USE WALL_SHAPE
 }
 DEF WALL_4 Solid {
-  translation 0 2.5 0.05
+  translation 0 1 0.05
   rotation 0 0 1 1.5708
   children [
     USE WALL_SHAPE
@@ -68,6 +68,6 @@ DEF WALL_4 Solid {
   boundingObject USE WALL_SHAPE
 }
 FourWheelRobot {
-  translation 1.0011455141146446 -6.472747823714454e-08 0.03986048964911626
-  rotation -0.9916988313335948 -0.00019834486907503837 -0.12858222501922636 9.62576213487074e-08
+  translation 0 0 0.04
+  controller "four_wheels_manual"
 }
