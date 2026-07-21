@@ -16,6 +16,29 @@
   </header>
 
   <main>
+    <section class="card control-status">
+      <div class="status-heading">
+        <div>
+          <h2>Estado do controle</h2>
+          <p id="joystick-model">Controle não conectado</p>
+        </div>
+        <strong id="control-mode" class="mode automatic">AUTOMATIC</strong>
+      </div>
+      <div class="control-grid">
+        <div class="metric"><span>D-pad</span><strong id="dpad-state">NEUTRAL</strong></div>
+        <div class="metric"><span>Eixo vertical</span><strong id="dpad-vertical">0</strong></div>
+        <div class="metric"><span>Eixo horizontal</span><strong id="dpad-horizontal">0</strong></div>
+        <div class="metric"><span>Botões pressionados</span><strong id="pressed-buttons">—</strong></div>
+      </div>
+      <div class="button-map">
+        <span><b>A</b> Automático</span>
+        <span><b>B</b> Manual</span>
+        <span><b>X</b> Aprendizado</span>
+        <span><b>Y</b> Emergência</span>
+        <span><b>START (0)</b> Liberar emergência</span>
+      </div>
+    </section>
+
     <section class="card controls">
       <div>
         <h2>Controle de segurança</h2>

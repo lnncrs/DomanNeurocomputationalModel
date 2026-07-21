@@ -36,6 +36,23 @@ function render(data) {
   button.classList.toggle('stopped', data.stopped);
 }
 
+function renderControlState(data) {
+  const mode = document.getElementById('control-mode');
+  mode.textContent = data.mode;
+  mode.className = `mode ${data.mode.toLowerCase().replace('_', '-')}`;
+
+  const joystick = data.joystick;
+  document.getElementById('joystick-model').textContent = joystick.connected
+    ? `Conectado: ${joystick.model}`
+    : 'Controle não conectado';
+  document.getElementById('dpad-state').textContent = joystick.dpad;
+  document.getElementById('dpad-vertical').textContent = joystick.vertical;
+  document.getElementById('dpad-horizontal').textContent = joystick.horizontal;
+  document.getElementById('pressed-buttons').textContent = joystick.buttons.length
+    ? joystick.buttons.join(', ')
+    : '—';
+}
+
 window.onload = () => {
   window.robotWindow = new RobotWindow();
   window.robotWindow.setTitle('Four Wheel Robot · Telemetria');
@@ -44,6 +61,8 @@ window.onload = () => {
       const data = JSON.parse(message);
       if (data.type === 'telemetry')
         render(data);
+      else if (data.type === 'control_state')
+        renderControlState(data);
     } catch (error) {
       console.error('Mensagem de telemetria inválida:', message, error);
     }

@@ -6,6 +6,7 @@ aprendizado (reservado) ou parada de emergência.
 """
 
 from enum import Enum, auto
+import json
 
 from controller import Robot
 
@@ -16,8 +17,7 @@ TURN_LEFT_SPEED = 1.0
 TURN_RIGHT_SPEED = -1.0
 PROXIMITY_THRESHOLD = 950.0
 AVOIDANCE_STEPS = 100
-JOYSTICK_DEAD_ZONE = 0.12
-JOYSTICK_AXIS_MAX = 32767.0
+DPAD_AXIS_THRESHOLD = 16000
 
 DISTANCE_SENSOR_NAMES = ("ds_left", "ds_right")
 WHEEL_NAMES = ("wheel1", "wheel2", "wheel3", "wheel4")
@@ -25,48 +25,17 @@ WHEEL_NAMES = ("wheel1", "wheel2", "wheel3", "wheel4")
 # Mapeamento observado no controle "Controller (Xbox One For Windows)"
 # conectado via USB. O console continua imprimindo os índices para diagnóstico.
 BUTTON_LB = 4
-BUTTON_RB = 5
 BUTTON_START = 0
 BUTTON_A = 8
 BUTTON_B = 9
 BUTTON_X = 10
 BUTTON_Y = 11
 
-# Mapeamento observado no driver atual:
-# - D-pad vertical/horizontal: eixos 0/1
-# - analógico esquerdo: eixos 2/3
-AXIS_DPAD_Y = 0
-AXIS_DPAD_X = 1
-AXIS_LEFT_X = 2
-AXIS_LEFT_Y = 3
-
-
 class ControlMode(Enum):
     AUTOMATIC = auto()
     MANUAL = auto()
     LEARNING = auto()
     EMERGENCY_STOP = auto()
-
-
-def clamp(value: float, minimum: float, maximum: float) -> float:
-    return max(minimum, min(maximum, value))
-
-
-def normalize_axis(raw_value: float, center: float = 0.0) -> float:
-    delta = raw_value - center
-    available_range = (
-        JOYSTICK_AXIS_MAX - center if delta >= 0 else center + 32768.0
-    )
-    if available_range <= 0:
-        return 0.0
-
-    value = clamp(delta / available_range, -1.0, 1.0)
-    magnitude = abs(value)
-    if magnitude <= JOYSTICK_DEAD_ZONE:
-        return 0.0
-
-    scaled = (magnitude - JOYSTICK_DEAD_ZONE) / (1.0 - JOYSTICK_DEAD_ZONE)
-    return scaled if value > 0 else -scaled
 
 
 def read_pressed_buttons(joystick) -> set[int]:
@@ -78,54 +47,30 @@ def read_pressed_buttons(joystick) -> set[int]:
     return buttons
 
 
-def manual_arcade_drive(
-    joystick, axis_centers: list[float] | None = None
-) -> tuple[float, float]:
-    axis_centers = axis_centers or []
+def manual_dpad_drive(joystick) -> tuple[float, float]:
+    # Mapeamento observado no controle Xbox/driver atual:
+    # eixo 0: cima = -32767, baixo = +32768
+    # eixo 1: esquerda = -32768, direita = +32767
+    # O POV permanece em 0 mesmo solto e, portanto, não é utilizável.
+    if joystick.getNumberOfAxes() < 2:
+        return 0.0, 0.0
 
-    def center_for(axis: int) -> float:
-        return axis_centers[axis] if axis < len(axis_centers) else 0.0
+    vertical = joystick.getAxisValue(0)
+    horizontal = joystick.getAxisValue(1)
 
-    if joystick.getNumberOfAxes() <= max(AXIS_LEFT_X, AXIS_LEFT_Y):
-        steering = 0.0
-        throttle = 0.0
+    if vertical <= -DPAD_AXIS_THRESHOLD:
+        throttle = 1.0
+    elif vertical >= DPAD_AXIS_THRESHOLD:
+        throttle = -1.0
     else:
-        steering = normalize_axis(
-            joystick.getAxisValue(AXIS_LEFT_X), center_for(AXIS_LEFT_X)
-        )
-        throttle = -normalize_axis(
-            joystick.getAxisValue(AXIS_LEFT_Y), center_for(AXIS_LEFT_Y)
-        )
+        throttle = 0.0
 
-    # Neste driver, o D-pad também aparece nos eixos 0/1. Ele assume o comando
-    # quando o analógico esquerdo estiver neutro.
-    if (
-        steering == 0.0
-        and throttle == 0.0
-        and joystick.getNumberOfAxes() > max(AXIS_DPAD_X, AXIS_DPAD_Y)
-    ):
-        steering = normalize_axis(
-            joystick.getAxisValue(AXIS_DPAD_X), center_for(AXIS_DPAD_X)
-        )
-        throttle = -normalize_axis(
-            joystick.getAxisValue(AXIS_DPAD_Y), center_for(AXIS_DPAD_Y)
-        )
-
-    # Alguns drivers expõem o D-pad somente como POV; essa leitura permanece
-    # como fallback quando nenhum dos eixos anteriores estiver ativo.
-    if steering == 0.0 and throttle == 0.0 and joystick.getNumberOfPovs() > 0:
-        pov = joystick.getPovValue(0)
-        pov_commands = {
-            0: (1.0, 0.0),
-            45: (1.0, 1.0),
-            90: (0.0, 1.0),
-            135: (-1.0, 1.0),
-            180: (-1.0, 0.0),
-            225: (-1.0, -1.0),
-            270: (0.0, -1.0),
-            315: (1.0, -1.0),
-        }
-        throttle, steering = pov_commands.get(pov, (0.0, 0.0))
+    if horizontal >= DPAD_AXIS_THRESHOLD:
+        steering = 1.0
+    elif horizontal <= -DPAD_AXIS_THRESHOLD:
+        steering = -1.0
+    else:
+        steering = 0.0
 
     left = throttle + steering
     right = throttle - steering
@@ -133,6 +78,41 @@ def manual_arcade_drive(
     # Preserva a proporção do comando ao saturar uma das laterais.
     largest = max(1.0, abs(left), abs(right))
     return left / largest * MAX_SPEED, right / largest * MAX_SPEED
+
+
+def dpad_state(joystick) -> tuple[str, int, int]:
+    if not joystick.isConnected() or joystick.getNumberOfAxes() < 2:
+        return "NEUTRAL", 0, 0
+
+    vertical = joystick.getAxisValue(0)
+    horizontal = joystick.getAxisValue(1)
+    directions = []
+    if vertical <= -DPAD_AXIS_THRESHOLD:
+        directions.append("UP")
+    elif vertical >= DPAD_AXIS_THRESHOLD:
+        directions.append("DOWN")
+    if horizontal <= -DPAD_AXIS_THRESHOLD:
+        directions.append("LEFT")
+    elif horizontal >= DPAD_AXIS_THRESHOLD:
+        directions.append("RIGHT")
+    return "+".join(directions) or "NEUTRAL", vertical, horizontal
+
+
+def send_control_state(robot, joystick, mode, pressed_buttons) -> None:
+    direction, vertical, horizontal = dpad_state(joystick)
+    message = {
+        "type": "control_state",
+        "mode": mode.name,
+        "joystick": {
+            "connected": joystick.isConnected(),
+            "model": joystick.model if joystick.isConnected() else "",
+            "buttons": sorted(pressed_buttons),
+            "dpad": direction,
+            "vertical": vertical,
+            "horizontal": horizontal,
+        },
+    }
+    robot.wwiSendText(json.dumps(message))
 
 
 class CollisionAvoidance:
@@ -245,7 +225,7 @@ def main() -> None:
             if mode == ControlMode.AUTOMATIC:
                 collision_avoidance.reset()
             elif mode == ControlMode.MANUAL:
-                print("Hold RB and use the left stick or D-pad to drive.")
+                print("Use the D-pad to drive; releasing it stops the robot.")
             if mode == ControlMode.LEARNING:
                 print("Learning mode is reserved and keeps the motors stopped.")
 
@@ -254,17 +234,15 @@ def main() -> None:
         elif mode == ControlMode.AUTOMATIC:
             left_speed, right_speed = collision_avoidance.step()
         elif mode == ControlMode.MANUAL:
-            if connected and BUTTON_RB in current_buttons:
-                left_speed, right_speed = manual_arcade_drive(
-                    joystick, axis_centers
-                )
+            if connected:
+                left_speed, right_speed = manual_dpad_drive(joystick)
             else:
-                # Deadman switch: sem RB ou sem conexão, o robô permanece parado.
                 left_speed, right_speed = 0.0, 0.0
         else:  # ControlMode.LEARNING
             left_speed, right_speed = 0.0, 0.0
 
         set_side_velocities(wheels, left_speed, right_speed)
+        send_control_state(robot, joystick, mode, current_buttons)
         previous_buttons = current_buttons
         joystick_was_connected = connected
 
