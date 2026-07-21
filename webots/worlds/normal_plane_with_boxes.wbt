@@ -1,0 +1,176 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
+
+WorldInfo {
+  title "Inclined Plane"
+  basicTimeStep 16
+  randomSeed 42
+}
+Viewpoint {
+  fieldOfView 1
+  orientation -0.25730038463647675 -0.2554369949580219 0.9319594699732046 4.634732766648067
+  position 0.056316625187308046 7.073066118330544 3.395277815524974
+}
+TexturedBackground {
+  texture "mars"
+}
+TexturedBackgroundLight {
+  texture "mars"
+}
+Floor {
+  size 5 5
+  tileSize 1 1
+}
+DEF WALL_1 Solid {
+  translation 2.5 0 0.05
+  children [
+    DEF WALL_SHAPE Shape {
+      appearance PBRAppearance {
+        baseColor 0.12549 0.368627 0.729412
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.02 4.98 0.1
+      }
+    }
+  ]
+  boundingObject USE WALL_SHAPE
+}
+DEF WALL_2 Solid {
+  translation -2.5 0 0.05
+  children [
+    USE WALL_SHAPE
+  ]
+  name "wall_2"
+  boundingObject USE WALL_SHAPE
+}
+DEF WALL_3 Solid {
+  translation 0 -2.5 0.05
+  rotation 0 0 1 1.5708
+  children [
+    USE WALL_SHAPE
+  ]
+  name "wall_3"
+  boundingObject USE WALL_SHAPE
+}
+DEF WALL_4 Solid {
+  translation 0 2.5 0.05
+  rotation 0 0 1 1.5708
+  children [
+    USE WALL_SHAPE
+  ]
+  name "wall_4"
+  boundingObject USE WALL_SHAPE
+}
+Solid {
+  translation -0.8 1.3467774571422972e-05 0.29947679999381266
+  rotation -1 1.1989327100799904e-11 2.866084244272074e-10 4.84098854174045e-07
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 1
+      }
+      geometry Box {
+        size 0.2 0.2 0.2
+      }
+    }
+  ]
+  name "box1"
+  boundingObject Box {
+    size 0.2 0.2 0.2
+  }
+  physics Physics {
+    density 125
+  }
+  linearVelocity 6.480873490752622e-17 8.037432200879705e-12 5.9940520795252e-15
+  angularVelocity -1.352893990355213e-12 -1.3322676295501972e-16 -5.720976807085535e-17
+}
+Solid {
+  translation -0.8 -1.3026622682237712e-06 0.09960759999999581
+  rotation -1 -9.896199294949288e-11 -1.184623583474406e-09 2.909376122934803e-07
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 1 0
+      }
+      geometry Box {
+        size 0.2 0.2 0.2
+      }
+    }
+  ]
+  name "box2"
+  boundingObject Box {
+    size 0.2 0.2 0.2
+  }
+  physics Physics {
+    density 125
+  }
+  linearVelocity 3.857733104397633e-17 -6.335785736973316e-15 -4.263258295529855e-16
+  angularVelocity 6.342583032415203e-14 3.996802888650571e-16 4.838086502200986e-17
+}
+Robot {
+  translation 0 0 0.09
+  children [
+    Solid {
+      translation 0 0 -0.0001569598540770989
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0 0 1
+          }
+          geometry Box {
+            size 0.2 0.2 0.2
+          }
+        }
+      ]
+      name "solid_base"
+      boundingObject Box {
+        size 0.2 0.2 0.2
+      }
+      physics Physics {
+        density 125
+      }
+      linearVelocity 0 0 -1.2002601576505442e-10
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        position 3068.59246685848
+        axis 0 1 0
+        anchor 0 0.2 0
+      }
+      device [
+        RotationalMotor {
+          name "motor"
+        }
+      ]
+      endPoint Solid {
+        translation 0.13537634927351685 -3.139199398760617e-07 -0.14720726666473982
+        rotation 6.116334484840182e-07 0.9999999999985826 -1.5686712596543464e-06 2.3980368287772054
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0 1 0
+            }
+            geometry Box {
+              size 0.2 0.2 0.2
+            }
+          }
+        ]
+        name "solid_box"
+        boundingObject Box {
+          size 0.2 0.2 0.2
+        }
+        physics Physics {
+          density 125
+        }
+        linearVelocity -1.3678460984100484 2.4565304121895176e-06 -1.565068045407831
+        angularVelocity 2.0841558139583517e-11 10.000014199491991 1.5696004413459107e-05
+      }
+    }
+  ]
+  controller "test_py_controller"
+}

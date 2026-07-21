@@ -319,7 +319,7 @@ O repositório do projeto está organizado da seguinte forma:
     │
     ├── protos/                           # Definições de objetos Webots
     │   ├── Ball.proto                    # Bola para testes de física
-    │   ├── FourNeuronRobot.proto         # Robô de 4 neurônios (uso futuro)
+    │   ├── DifferentialDriveRobot.proto  # Robô diferencial para o experimento
     │   ├── Robot.proto                   # Robô genérico
     │   ├── SimpleRobot.proto             # Robô simplificado
     │   ├── StableDifferentialRobot.proto # Robô diferencial estável
@@ -449,6 +449,29 @@ Dentro do repositório do projeto.
 
 > Use **preferencialmente** um ambiente virtual para isolar as dependências do projeto.
 
+# ! TODO
+
+pacman -Syu
+
+pacman -S mingw-w64-ucrt-x86_64-gcc
+
+pacman -S mingw-w64-ucrt-x86_64-toolchain
+
+pacman -S \
+  mingw-w64-ucrt-x86_64-toolchain \
+  mingw-w64-ucrt-x86_64-make \
+  mingw-w64-ucrt-x86_64-cmake \
+  mingw-w64-ucrt-x86_64-ninja \
+  mingw-w64-ucrt-x86_64-pkg-config \
+  mingw-w64-ucrt-x86_64-boost \
+  mingw-w64-ucrt-x86_64-doxygen
+
+adicionar ao path
+msys64\ucrt64\bin
+msys64\usr\bin
+
+Compilar usando make em
+\webots\controllers\four_wheels_collision_avoidance
 
 ## Referências
 

@@ -49,8 +49,8 @@ int main(int argc, char **argv) {
   // feedback loop
   while (wb_robot_step(TIME_STEP) != -1) {
     // init speeds
-    double left_speed = 1.0;
-    double right_speed = 1.0;
+    double left_speed = 10.0;
+    double right_speed = 10.0;
 
     if (avoid_obstacle_counter > 0) {
       avoid_obstacle_counter--;

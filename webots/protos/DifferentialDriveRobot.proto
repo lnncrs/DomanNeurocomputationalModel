@@ -1,8 +1,9 @@
-#VRML_SIM R2023b utf8
+#VRML_SIM R2025a utf8
 
-PROTO FourNeuronRobot [
+PROTO DifferentialDriveRobot [
   field SFVec3f    translation  0 0 0
   field SFRotation rotation     0 0 1 0
+  field SFString   controller   "void"
 ]
 {
   Robot {
@@ -35,6 +36,7 @@ PROTO FourNeuronRobot [
           }
         ]
         endPoint DEF LEFT_WHEELS Solid {
+          name "left_wheels"
           translation 0 0.12 0
           rotation 1 0 0 1.5708
           children [
@@ -51,8 +53,7 @@ PROTO FourNeuronRobot [
           ]
           boundingObject USE WHEEL_SHAPE
           physics Physics {
-            density -1
-            mass 0.1
+            density 212.2065907891938
           }
         }
       }
@@ -71,6 +72,7 @@ PROTO FourNeuronRobot [
           }
         ]
         endPoint DEF RIGHT_WHEELS Solid {
+          name "right_wheels"
           translation 0 -0.12 0
           rotation 1 0 0 1.5708
           children [
@@ -79,14 +81,14 @@ PROTO FourNeuronRobot [
           ]
           boundingObject USE WHEEL_SHAPE
           physics Physics {
-            density -1
-            mass 0.1
+            density 212.2065907891938
           }
         }
       }
 
       # Esfera de estabilização frontal
       DEF CASTER_FRONT Solid {
+        name "caster_front"
         translation 0.12 0 -0.03
         children [
           Shape {
@@ -102,13 +104,13 @@ PROTO FourNeuronRobot [
           radius 0.02
         }
         physics Physics {
-          density -1
-          mass 0.01
+          density 298.41551829730373
         }
       }
 
       # Esfera de estabilização traseira
       DEF CASTER_BACK Solid {
+        name "caster_back"
         translation -0.12 0 -0.03
         children [
           Shape {
@@ -124,8 +126,7 @@ PROTO FourNeuronRobot [
           radius 0.02
         }
         physics Physics {
-          density -1
-          mass 0.01
+          density 298.41551829730373
         }
       }
 
@@ -232,17 +233,16 @@ PROTO FourNeuronRobot [
         name "compass"
       }
     ]
-    name "FourNeuronRobot"
+    name "DifferentialDriveRobot"
     boundingObject DEF BODY Shape {
       geometry Box {
         size 0.3 0.2 0.1
       }
     }
     physics Physics {
-      density -1
-      mass 2.0
+      density 333.3333333333333
       centerOfMass [ 0 0 0 ]
     }
-    controller "main_controller"
+    controller IS controller
   }
 }
