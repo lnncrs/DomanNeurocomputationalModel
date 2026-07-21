@@ -1,0 +1,54 @@
+#VRML_SIM R2025a utf8
+# template language: javascript
+
+EXTERNPROTO "FourWheelRobot.proto"
+
+PROTO InclinedFourWheelRobot [
+  field SFFloat  angle             0.20943951023932
+  field SFFloat  platformSize      1
+  field SFFloat  distanceAlongRamp 1.45
+  field SFString name              "inclined_four_wheel_robot"
+  field SFString controller        "four_wheels_manual"
+  field MFString controllerArgs    ["--passive-realistic"]
+  field SFString window            "four_wheel_robot_window"
+]
+{
+  %<
+    const angle = fields.angle.value;
+    const platformHalfSize = fields.platformSize.value / 2;
+    const distanceAlongRamp = fields.distanceAlongRamp.value;
+    const wheelRadius = 0.04;
+
+    // Mantém a origem do robô um raio de roda acima da superfície inclinada.
+    const surfaceY = platformHalfSize + distanceAlongRamp * Math.cos(angle);
+    const surfaceZ = distanceAlongRamp * Math.sin(angle);
+    const robotY = surfaceY - wheelRadius * Math.sin(angle);
+    const robotZ = surfaceZ + wheelRadius * Math.cos(angle);
+
+    // Frente para a descida e chassi paralelo à rampa:
+    // quaternion Rz(-90 graus) * Ry(+angle), convertido para eixo-ângulo.
+    const halfSqrt = Math.SQRT1_2;
+    const halfAngle = angle / 2;
+    const quaternionW = halfSqrt * Math.cos(halfAngle);
+    const quaternionX = halfSqrt * Math.sin(halfAngle);
+    const quaternionY = halfSqrt * Math.sin(halfAngle);
+    const quaternionZ = -halfSqrt * Math.cos(halfAngle);
+    const rotationAngle = 2 * Math.acos(quaternionW);
+    const axisLength = Math.sqrt(
+      quaternionX * quaternionX +
+      quaternionY * quaternionY +
+      quaternionZ * quaternionZ
+    );
+    const axisX = quaternionX / axisLength;
+    const axisY = quaternionY / axisLength;
+    const axisZ = quaternionZ / axisLength;
+  >%
+  FourWheelRobot {
+    translation 0 %<= robotY >% %<= robotZ >%
+    rotation %<= axisX >% %<= axisY >% %<= axisZ >% %<= rotationAngle >%
+    name IS name
+    controller IS controller
+    controllerArgs IS controllerArgs
+    window IS window
+  }
+}

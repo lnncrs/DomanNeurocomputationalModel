@@ -381,7 +381,7 @@ conda activate webots
 Abrir o Webots:
 
 ```bash
-& "C:\Program Files\Webots\msys64\mingw64\bin\webots.exe" --stdout --stderr
+& "C:\Program Files\Webots\msys64\mingw64\bin\webots.exe" --stdout --stderr --clear-cache
 ```
 
 A linha de comando do Webots depende da instalação, o caminho apresentado é o caminho padrão, mas pode variar dependendo do local onde o Webots foi instalado. Certifique-se de ajustar o caminho conforme necessário para a sua instalação.

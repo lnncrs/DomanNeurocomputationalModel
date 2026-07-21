@@ -2,7 +2,8 @@
 
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
-EXTERNPROTO "../protos/CompactInclinedPlaneExperiment.proto"
+EXTERNPROTO "../protos/CompactInclinedPlane.proto"
+EXTERNPROTO "../protos/InclinedFourWheelRobot.proto"
 
 WorldInfo {
   title "Compact Inclined Plane Experiment"
@@ -20,7 +21,7 @@ TexturedBackground {
 TexturedBackgroundLight {
   texture "mars"
 }
-CompactInclinedPlaneExperiment {
+CompactInclinedPlane {
   # angle 0.08726646259972 # 05°
   # angle 0.13962634015955 # 08°
   # angle 0.17453292519943 # 10°
@@ -28,5 +29,16 @@ CompactInclinedPlaneExperiment {
   # angle 0.26179938779915 # 15°
   # angle 0.52359877559830 # 30°
   # angle 0.78539816339745 # 45°
-  arrivalSize 1
+  platformSize 1
+}
+InclinedFourWheelRobot {
+  # IMPORTANTE: mantenha este ângulo igual ao da rampa acima.
+  # angle 0.08726646259972 # 05°
+  # angle 0.13962634015955 # 08°
+  # angle 0.17453292519943 # 10°
+  angle 0.20943951023932 # 12°
+  # angle 0.26179938779915 # 15°
+  # angle 0.52359877559830 # 30°
+  # angle 0.78539816339745 # 45°
+  platformSize 1
 }
