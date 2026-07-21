@@ -6,7 +6,7 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 EXTERNPROTO "../protos/FourWheelRobot.proto"
 
 WorldInfo {
-  title "Normal Plane with Robot"
+  title "Normal Plane (Full Size) with FourWheelRobot"
   basicTimeStep 16
   randomSeed 42
 }

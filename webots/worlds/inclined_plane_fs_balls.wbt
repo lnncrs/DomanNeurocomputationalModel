@@ -3,11 +3,10 @@
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
-
 EXTERNPROTO "../protos/physics/Ball.proto"
 
 WorldInfo {
-  title "Inclined Plane"
+  title "Inclined Plane (Full Size) with Balls"
   basicTimeStep 16
   randomSeed 42
 }

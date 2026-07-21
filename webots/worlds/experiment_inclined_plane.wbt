@@ -3,6 +3,7 @@
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "../protos/CompactInclinedPlane.proto"
+EXTERNPROTO "../protos/GoalArea.proto"
 EXTERNPROTO "../protos/InclinedFourWheelRobot.proto"
 
 WorldInfo {
@@ -30,6 +31,22 @@ CompactInclinedPlane {
   # angle 0.52359877559830 # 30°
   # angle 0.78539816339745 # 45°
   platformSize 1
+  rampColor 0.35 0.2 0.1
+  platformColor 0.35 0.2 0.1
+  customPlatformColor TRUE
+  showStripes TRUE
+  stripeSpacing 0.1
+  stripeWidth 0.01
+  showFinishLine TRUE
+  finishLineColor 1 1 1
+  finishLineWidth 0.02
+}
+DEF GOAL_AREA GoalArea {
+  translation 0 0 0.002
+  size 0.96 0.96
+  color 0.18 0.28 0.1
+  detectionHeight 0.3
+  dwellTime 0.5
 }
 InclinedFourWheelRobot {
   # IMPORTANTE: mantenha este ângulo igual ao da rampa acima.

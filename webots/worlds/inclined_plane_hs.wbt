@@ -3,10 +3,9 @@
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "../protos/CompactInclinedPlane.proto"
-EXTERNPROTO "../protos/FourWheelRobot.proto"
 
 WorldInfo {
-  title "Compact Inclined Plane - Half Size with Robot"
+  title "Compact Inclined Plane (Half Size)"
   basicTimeStep 16
   randomSeed 42
 }
@@ -22,17 +21,5 @@ TexturedBackgroundLight {
   texture "mars"
 }
 CompactInclinedPlane {
-  # angle 0.08726646259972 # 05°
-  # angle 0.13962634015955 # 08°
-  # angle 0.17453292519943 # 10°
-  angle 0.20943951023932 # 12°
-  # angle 0.26179938779915 # 15°
-}
-FourWheelRobot {
-  translation 0 2.45 0.48
-  rotation 0 0 -1 1.5707963267948966
-  controller "four_wheels_manual"
-  controllerArgs [
-    "--manual"
-  ]
+  angle 0.20943951023932
 }
