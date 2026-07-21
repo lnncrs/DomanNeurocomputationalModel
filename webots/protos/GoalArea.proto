@@ -1,0 +1,35 @@
+#VRML_SIM R2025a utf8
+
+PROTO GoalArea [
+  field SFVec3f  translation      0 0 0.001
+  field SFRotation rotation       0 0 1 0
+  field SFVec2f  size             1 1
+  field SFColor  color            0.18 0.28 0.1
+  field SFFloat  visualThickness  0.002
+  field SFFloat  detectionHeight  0.3
+  field SFFloat  dwellTime        0.5
+  field SFBool   visible          TRUE
+  field SFString name             "goal_area"
+]
+{
+  Solid {
+    translation IS translation
+    rotation IS rotation
+    children [
+      %< if (fields.visible.value && fields.visualThickness.value > 0) { >%
+        Shape {
+          appearance PBRAppearance {
+            baseColor IS color
+            roughness 1
+            metalness 0
+          }
+          geometry Box {
+            size %<= fields.size.value.x >% %<= fields.size.value.y >% %<= fields.visualThickness.value >%
+          }
+        }
+      %< } >%
+    ]
+    name IS name
+    # Intentionally no boundingObject: the goal is a visual/logical region only.
+  }
+}

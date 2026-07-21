@@ -10,6 +10,15 @@ PROTO CompactInclinedPlane [
   field SFFloat  rampLength   2
   field SFFloat  rampWidth    1
   field SFFloat  wallHeight   0.1
+  field SFColor  rampColor    0.72 0.48 0.24
+  field SFColor  platformColor 0.72 0.48 0.24
+  field SFBool   customPlatformColor FALSE
+  field SFBool   showStripes  FALSE
+  field SFFloat  stripeSpacing 0.1
+  field SFFloat  stripeWidth   0.01
+  field SFBool   showFinishLine FALSE
+  field SFColor  finishLineColor 1 1 1
+  field SFFloat  finishLineWidth 0.02
 ]
 {
   %<
@@ -18,7 +27,14 @@ PROTO CompactInclinedPlane [
     const rampLength = fields.rampLength.value;
     const rampWidth = fields.rampWidth.value;
     const wallHeight = fields.wallHeight.value;
+    const customPlatformColor = fields.customPlatformColor.value;
+    const showStripes = fields.showStripes.value;
+    const stripeSpacing = fields.stripeSpacing.value;
+    const stripeWidth = fields.stripeWidth.value;
+    const showFinishLine = fields.showFinishLine.value;
+    const finishLineWidth = fields.finishLineWidth.value;
     const floorThickness = 0.05;
+    const stripeThickness = 0.001;
     const wallThickness = 0.02;
     const halfWallHeight = wallHeight / 2;
     const openingSegment = (platformSize - rampWidth) / 2;
@@ -32,6 +48,13 @@ PROTO CompactInclinedPlane [
       Floor {
         size %<= platformSize >% %<= platformSize >%
         tileSize 1 1
+        %< if (customPlatformColor) { >%
+          appearance PBRAppearance {
+            baseColor IS platformColor
+            roughness 0.8
+            metalness 0
+          }
+        %< } >%
       }
       Solid {
         translation %<= platformSize / 2 >% 0 %<= halfWallHeight >%
@@ -96,14 +119,56 @@ PROTO CompactInclinedPlane [
         children [
           DEF RAMP_SURFACE Shape {
             appearance PBRAppearance {
-              baseColor 0.333333 0.333333 0
-              roughness 0.7
+              baseColor IS rampColor
+              roughness 0.8
               metalness 0
             }
             geometry Box {
               size %<= rampWidth >% %<= rampLength >% %<= floorThickness >%
             }
           }
+          %<
+            if (showStripes && stripeSpacing > 0 && stripeWidth > 0) {
+              const stripeCount = Math.floor(rampLength / stripeSpacing + 1e-9);
+              for (let index = 1; index < stripeCount; ++index) {
+                const stripeY = -rampLength / 2 + index * stripeSpacing;
+          >%
+            Transform {
+              translation 0 %<= stripeY >% %<= floorThickness / 2 + stripeThickness / 2 >%
+              children [
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.95 0.95 0.95
+                    roughness 1
+                    metalness 0
+                  }
+                  geometry Box {
+                    size %<= rampWidth >% %<= stripeWidth >% %<= stripeThickness >%
+                  }
+                }
+              ]
+            }
+          %<
+              }
+            }
+          >%
+          %< if (showFinishLine && finishLineWidth > 0) { >%
+            Transform {
+              translation 0 %<= -rampLength / 2 + finishLineWidth / 2 >% %<= floorThickness / 2 + stripeThickness / 2 >%
+              children [
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor IS finishLineColor
+                    roughness 1
+                    metalness 0
+                  }
+                  geometry Box {
+                    size %<= rampWidth >% %<= finishLineWidth >% %<= stripeThickness >%
+                  }
+                }
+              ]
+            }
+          %< } >%
           Solid {
             translation %<= -rampWidth / 2 >% 0 %<= floorThickness / 2 + halfWallHeight >%
             children [
