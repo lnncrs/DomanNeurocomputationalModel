@@ -25,6 +25,7 @@ main { display: grid; gap: 12px; padding: 12px; }
 .button-map b { color: #e8edf5; }
 .mode { padding: 7px 10px; border-radius: 6px; background: #263449; color: #9fc2ff; font-size: 11px; }
 .mode.manual { background: #403315; color: #ffd166; }
+.mode.passive-free, .mode.passive-realistic { background: #173f46; color: #79d8e8; }
 .mode.learning { background: #34234d; color: #c9a7ff; }
 .mode.emergency-stop { background: #5a2020; color: #ff9b98; }
 button { padding: 10px 16px; border: 0; border-radius: 7px; background: #ef5350; color: white; font-weight: 700; cursor: pointer; }

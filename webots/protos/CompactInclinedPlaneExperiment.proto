@@ -1,0 +1,60 @@
+#VRML_SIM R2025a utf8
+# template language: javascript
+
+EXTERNPROTO "CompactInclinedPlane.proto"
+EXTERNPROTO "FourWheelRobot.proto"
+
+PROTO CompactInclinedPlaneExperiment [
+  field SFFloat angle 0.20943951023932
+]
+{
+  %<
+    const angle = fields.angle.value;
+
+    // O ponto de referência é medido ao longo da rampa, e não em coordenadas
+    // globais. Assim ele permanece dentro da superfície mesmo em ângulos altos.
+    const platformHalfSize = 1.0;
+    const robotDistanceAlongRamp = 1.45;
+    const wheelRadius = 0.04;
+
+    // A origem do robô fica um raio de roda acima da superfície, medido na
+    // direção normal à rampa. Isso evita queda ou interpenetração inicial.
+    const surfaceY = platformHalfSize + robotDistanceAlongRamp * Math.cos(angle);
+    const surfaceZ = robotDistanceAlongRamp * Math.sin(angle);
+    const robotY = surfaceY - wheelRadius * Math.sin(angle);
+    const robotZ = surfaceZ + wheelRadius * Math.cos(angle);
+
+    // Orientação composta: frente para a descida e chassi paralelo à rampa.
+    // Quaternion de Rz(-90 graus) * Ry(+angle), convertido para eixo-ângulo.
+    const halfSqrt = Math.SQRT1_2;
+    const halfAngle = angle / 2;
+    const quaternionW = halfSqrt * Math.cos(halfAngle);
+    const quaternionX = halfSqrt * Math.sin(halfAngle);
+    const quaternionY = halfSqrt * Math.sin(halfAngle);
+    const quaternionZ = -halfSqrt * Math.cos(halfAngle);
+    const rotationAngle = 2 * Math.acos(quaternionW);
+    const axisLength = Math.sqrt(
+      quaternionX * quaternionX +
+      quaternionY * quaternionY +
+      quaternionZ * quaternionZ
+    );
+    const axisX = quaternionX / axisLength;
+    const axisY = quaternionY / axisLength;
+    const axisZ = quaternionZ / axisLength;
+  >%
+  Group {
+    children [
+      CompactInclinedPlane {
+        angle IS angle
+      }
+      FourWheelRobot {
+        translation 0 %<= robotY >% %<= robotZ >%
+        rotation %<= axisX >% %<= axisY >% %<= axisZ >% %<= rotationAngle >%
+        controller "four_wheels_manual"
+        controllerArgs [
+          "--passive-realistic"
+        ]
+      }
+    ]
+  }
+}

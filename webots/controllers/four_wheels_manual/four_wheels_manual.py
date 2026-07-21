@@ -19,6 +19,7 @@ TURN_RIGHT_SPEED = -1.0
 PROXIMITY_THRESHOLD = 950.0
 AVOIDANCE_STEPS = 100
 DPAD_AXIS_THRESHOLD = 16000
+PASSIVE_REALISTIC_TORQUE = 0.03 # N·m por roda
 
 DISTANCE_SENSOR_NAMES = ("ds_left", "ds_right")
 WHEEL_NAMES = ("wheel1", "wheel2", "wheel3", "wheel4")
@@ -35,6 +36,8 @@ BUTTON_Y = 11
 class ControlMode(Enum):
     AUTOMATIC = auto()
     MANUAL = auto()
+    PASSIVE_FREE = auto()
+    PASSIVE_REALISTIC = auto()
     LEARNING = auto()
     EMERGENCY_STOP = auto()
 
@@ -159,6 +162,7 @@ def main() -> None:
         sensor.enable(TIME_STEP)
 
     wheels = [robot.getDevice(name) for name in WHEEL_NAMES]
+    wheel_max_torques = [wheel.getMaxTorque() for wheel in wheels]
     for wheel in wheels:
         wheel.setPosition(float("inf"))
         wheel.setVelocity(0.0)
@@ -167,11 +171,14 @@ def main() -> None:
     joystick.enable(TIME_STEP)
 
     collision_avoidance = CollisionAvoidance(distance_sensors)
-    mode = (
-        ControlMode.MANUAL
-        if "--manual" in sys.argv[1:]
-        else ControlMode.AUTOMATIC
-    )
+    if "--passive-free" in sys.argv[1:] or "--passive" in sys.argv[1:]:
+        mode = ControlMode.PASSIVE_FREE
+    elif "--passive-realistic" in sys.argv[1:]:
+        mode = ControlMode.PASSIVE_REALISTIC
+    elif "--manual" in sys.argv[1:]:
+        mode = ControlMode.MANUAL
+    else:
+        mode = ControlMode.AUTOMATIC
     previous_buttons: set[int] = set()
     joystick_was_connected = False
     axis_centers: list[float] = []
@@ -212,17 +219,22 @@ def main() -> None:
 
         previous_mode = mode
 
-        # Y tem prioridade e trava a parada. START é a única liberação.
-        if BUTTON_Y in newly_pressed:
+        # X tem prioridade e trava a parada. START é a única liberação.
+        if BUTTON_X in newly_pressed:
             mode = ControlMode.EMERGENCY_STOP
         elif mode == ControlMode.EMERGENCY_STOP:
             if BUTTON_START in newly_pressed:
                 mode = ControlMode.AUTOMATIC
         elif BUTTON_A in newly_pressed:
-            mode = ControlMode.AUTOMATIC
+            passive_cycle = {
+                ControlMode.AUTOMATIC: ControlMode.PASSIVE_FREE,
+                ControlMode.PASSIVE_FREE: ControlMode.PASSIVE_REALISTIC,
+                ControlMode.PASSIVE_REALISTIC: ControlMode.AUTOMATIC,
+            }
+            mode = passive_cycle.get(mode, ControlMode.AUTOMATIC)
         elif BUTTON_B in newly_pressed:
             mode = ControlMode.MANUAL
-        elif BUTTON_X in newly_pressed:
+        elif BUTTON_Y in newly_pressed:
             mode = ControlMode.LEARNING
 
         if mode != previous_mode:
@@ -231,8 +243,24 @@ def main() -> None:
                 collision_avoidance.reset()
             elif mode == ControlMode.MANUAL:
                 print("Use the D-pad to drive; releasing it stops the robot.")
+            elif mode == ControlMode.PASSIVE_FREE:
+                print("Motor torque disabled; wheels are completely free.")
+            elif mode == ControlMode.PASSIVE_REALISTIC:
+                print(
+                    "Limited motor resistance enabled: "
+                    f"{PASSIVE_REALISTIC_TORQUE:.3f} N.m per wheel."
+                )
             if mode == ControlMode.LEARNING:
                 print("Learning mode is reserved and keeps the motors stopped.")
+
+        for wheel, max_torque in zip(wheels, wheel_max_torques):
+            if mode == ControlMode.PASSIVE_FREE:
+                available_torque = 0.0
+            elif mode == ControlMode.PASSIVE_REALISTIC:
+                available_torque = min(PASSIVE_REALISTIC_TORQUE, max_torque)
+            else:
+                available_torque = max_torque
+            wheel.setAvailableTorque(available_torque)
 
         if mode == ControlMode.EMERGENCY_STOP:
             left_speed, right_speed = 0.0, 0.0
@@ -243,6 +271,11 @@ def main() -> None:
                 left_speed, right_speed = manual_dpad_drive(joystick)
             else:
                 left_speed, right_speed = 0.0, 0.0
+        elif mode in (
+            ControlMode.PASSIVE_FREE,
+            ControlMode.PASSIVE_REALISTIC,
+        ):
+            left_speed, right_speed = 0.0, 0.0
         else:  # ControlMode.LEARNING
             left_speed, right_speed = 0.0, 0.0
 
