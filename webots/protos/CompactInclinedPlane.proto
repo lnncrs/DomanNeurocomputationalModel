@@ -69,25 +69,27 @@ PROTO CompactInclinedPlane [
         name "platform_wall_rear"
         boundingObject USE PLATFORM_END_WALL
       }
-      Solid {
-        translation %<= -openingCenter >% %<= platformSize / 2 >% %<= halfWallHeight >%
-        children [
-          DEF PLATFORM_OPEN_WALL Shape {
-            appearance USE WALL_APPEARANCE
-            geometry Box {
-              size %<= openingSegment >% %<= wallThickness >% %<= wallHeight >%
+      %< if (openingSegment > 0) { >%
+        Solid {
+          translation %<= -openingCenter >% %<= platformSize / 2 >% %<= halfWallHeight >%
+          children [
+            DEF PLATFORM_OPEN_WALL Shape {
+              appearance USE WALL_APPEARANCE
+              geometry Box {
+                size %<= openingSegment >% %<= wallThickness >% %<= wallHeight >%
+              }
             }
-          }
-        ]
-        name "platform_wall_front_left"
-        boundingObject USE PLATFORM_OPEN_WALL
-      }
-      Solid {
-        translation %<= openingCenter >% %<= platformSize / 2 >% %<= halfWallHeight >%
-        children [ USE PLATFORM_OPEN_WALL ]
-        name "platform_wall_front_right"
-        boundingObject USE PLATFORM_OPEN_WALL
-      }
+          ]
+          name "platform_wall_front_left"
+          boundingObject USE PLATFORM_OPEN_WALL
+        }
+        Solid {
+          translation %<= openingCenter >% %<= platformSize / 2 >% %<= halfWallHeight >%
+          children [ USE PLATFORM_OPEN_WALL ]
+          name "platform_wall_front_right"
+          boundingObject USE PLATFORM_OPEN_WALL
+        }
+      %< } >%
       Solid {
         translation 0 %<= rampCenterY >% %<= rampCenterZ >%
         rotation 1 0 0 %<= angle >%
@@ -103,7 +105,7 @@ PROTO CompactInclinedPlane [
             }
           }
           Solid {
-            translation %<= -rampWidth / 2 - wallThickness / 2 >% 0 %<= floorThickness / 2 + halfWallHeight >%
+            translation %<= -rampWidth / 2 >% 0 %<= floorThickness / 2 + halfWallHeight >%
             children [
               DEF RAMP_SIDE_WALL Shape {
                 appearance USE WALL_APPEARANCE
@@ -116,7 +118,7 @@ PROTO CompactInclinedPlane [
             boundingObject USE RAMP_SIDE_WALL
           }
           Solid {
-            translation %<= rampWidth / 2 + wallThickness / 2 >% 0 %<= floorThickness / 2 + halfWallHeight >%
+            translation %<= rampWidth / 2 >% 0 %<= floorThickness / 2 + halfWallHeight >%
             children [ USE RAMP_SIDE_WALL ]
             name "ramp_guardrail_right"
             boundingObject USE RAMP_SIDE_WALL
@@ -127,7 +129,7 @@ PROTO CompactInclinedPlane [
               DEF RAMP_END_WALL Shape {
                 appearance USE WALL_APPEARANCE
                 geometry Box {
-                  size %<= rampWidth >% %<= wallThickness >% %<= wallHeight >%
+                  size %<= rampWidth + wallThickness >% %<= wallThickness >% %<= wallHeight >%
                 }
               }
             ]

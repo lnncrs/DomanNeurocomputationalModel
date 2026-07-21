@@ -5,15 +5,17 @@ EXTERNPROTO "CompactInclinedPlane.proto"
 EXTERNPROTO "FourWheelRobot.proto"
 
 PROTO CompactInclinedPlaneExperiment [
-  field SFFloat angle 0.20943951023932
+  field SFFloat angle       0.20943951023932
+  field SFFloat arrivalSize 1
 ]
 {
   %<
     const angle = fields.angle.value;
+    const arrivalSize = fields.arrivalSize.value;
 
     // O ponto de referência é medido ao longo da rampa, e não em coordenadas
     // globais. Assim ele permanece dentro da superfície mesmo em ângulos altos.
-    const platformHalfSize = 1.0;
+    const platformHalfSize = arrivalSize / 2;
     const robotDistanceAlongRamp = 1.45;
     const wheelRadius = 0.04;
 
@@ -46,6 +48,7 @@ PROTO CompactInclinedPlaneExperiment [
     children [
       CompactInclinedPlane {
         angle IS angle
+        platformSize IS arrivalSize
       }
       FourWheelRobot {
         translation 0 %<= robotY >% %<= robotZ >%
