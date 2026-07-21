@@ -318,13 +318,16 @@ O repositório do projeto está organizado da seguinte forma:
     ├── controllers/                      # Controladores Webots
     │
     ├── protos/                           # Definições de objetos Webots
-    │   ├── Ball.proto                    # Bola para testes de física
-    │   ├── DifferentialDriveRobot.proto  # Robô diferencial para o experimento
-    │   ├── Robot.proto                   # Robô genérico
-    │   ├── SimpleRobot.proto             # Robô simplificado
-    │   ├── StableDifferentialRobot.proto # Robô diferencial estável
-    │   ├── StableRobot.proto             # Robô estável
-    │   └── VeriSimpleRobot.proto         # Robô simples para testes
+    │   ├── FourWheelRobot.proto          # Robô principal de quatro rodas
+    │   ├── SimpleRobot.proto             # Robô simplificado legado
+    │   ├── physics/                      # Objetos para validação de física
+    │   │   ├── Ball.proto
+    │   │   └── MotorizedCube.proto
+    │   └── differential/                 # Evolução dos robôs diferenciais
+    │       ├── DifferentialDriveRobot.proto
+    │       ├── StableDifferentialRobot.proto
+    │       ├── StableRobot.proto
+    │       └── VeriSimpleRobot.proto
     │
     ├── tutorials/                        # Mundos do tutorial Webots
     │   ├── 4_wheels_robot.wbt
@@ -336,8 +339,7 @@ O repositório do projeto está organizado da seguinte forma:
     │
     └── worlds/                           # Mundos de simulação
         ├── normal_plane.wbt              # Plano nivelado
-        ├── inclined_plane.wbt            # Plano inclinado (experimento)
-        ├── inclined_plane_new.wbt        # Versão alternativa do plano inclinado
+        ├── inclined_plane.wbt            # Plano inclinado canônico do experimento
         ├── inclined_plane_with_balls.wbt # Teste de física
         ├── inclined_plane_with_robot.wbt # Experimento com robô
         ├── hexapod.wbt                   # Teste com hexápode

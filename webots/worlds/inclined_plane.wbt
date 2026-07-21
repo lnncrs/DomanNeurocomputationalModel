@@ -11,8 +11,8 @@ WorldInfo {
 }
 Viewpoint {
   fieldOfView 1
-  orientation -0.18376352166775548 -0.4572182808863266 0.8701622904536928 5.417795657873913
-  position -9.860447020187241 9.288276199384097 5.103513234181289
+  orientation -0.13566655776236775 -0.23407040943568902 0.9627074470115617 5.199335550022904
+  position -3.186305617931912 6.516557820595335 2.553279343013385
 }
 TexturedBackground {
   texture "mars"
@@ -37,7 +37,7 @@ Solid {
       }
     }
     Solid {
-      translation -0.92 0.2 0
+      translation -0.92 0.14 0
       children [
         Shape {
           appearance PBRAppearance {
@@ -54,7 +54,7 @@ Solid {
       }
     }
     Solid {
-      translation 0.92 0.2 0
+      translation 0.92 0.14 0
       children [
         Shape {
           appearance PBRAppearance {
@@ -71,7 +71,7 @@ Solid {
       }
     }
     Solid {
-      translation 0 0.2 2.5
+      translation 0 0.14 2.5
       children [
         Shape {
           appearance PBRAppearance {
@@ -100,7 +100,7 @@ Solid {
           }
         }
         Solid {
-          translation -1.15 0.15 0
+          translation -1.13 0.12 0
           children [
             Shape {
               appearance PBRAppearance {
@@ -117,7 +117,7 @@ Solid {
           }
         }
         Solid {
-          translation 1.15 0.15 0
+          translation 1.12 0.12 0
           children [
             Shape {
               appearance PBRAppearance {
@@ -134,7 +134,7 @@ Solid {
           }
         }
         Solid {
-          translation 0 0.15 -0.8
+          translation 0 0.12 -0.78
           children [
             Shape {
               appearance PBRAppearance {
