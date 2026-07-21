@@ -89,9 +89,14 @@ Solid {
         size 1.7 0.12 0.05
       }
     }
-    Solid {
-      translation 0 0 -3.2
-      rotation 1 0 0 0.21
+  ]
+  boundingObject Box {
+    size 1.8 0.1 5
+  }
+}
+Solid {
+      translation 0 2.2046004763407923 0.3730969684018005
+      rotation 1 0 0 1.5707963267948966
       children [
         Shape {
           appearance PBRAppearance {
@@ -158,11 +163,6 @@ Solid {
         size 2.2 0.1 1.5
       }
     }
-  ]
-  boundingObject Box {
-    size 1.8 0.1 5
-  }
-}
 Ball {
   translation 0 0 2
 }
