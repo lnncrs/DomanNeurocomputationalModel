@@ -4,7 +4,7 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
 
-EXTERNPROTO "../protos/SimpleRobot.proto"
+EXTERNPROTO "../protos/FourWheelRobot.proto"
 
 WorldInfo {
   title "Inclined Plane"
@@ -90,8 +90,8 @@ Solid {
       }
     }
     Solid {
-      translation 0 0 -3.2
-      rotation 1 0 0 0.21
+      translation 0 0.158853722534314 -3.243741129083515
+      rotation 1 0 0 0.211896020694471
       children [
         Shape {
           appearance PBRAppearance {
@@ -163,7 +163,8 @@ Solid {
     size 1.8 0.1 5
   }
 }
-SimpleRobot {
+FourWheelRobot {
   translation 0 -2.5 2.5
   rotation 0 0 1 1.5
+  controller "four_wheels_manual"
 }
