@@ -1,0 +1,25 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "../protos/CompactInclinedPlane.proto"
+
+WorldInfo {
+  title "Compact Inclined Plane - Half Size"
+  basicTimeStep 16
+  randomSeed 42
+}
+Viewpoint {
+  fieldOfView 1
+  orientation 0.1833479679630301 -0.08060676090918385 -0.9797377571266496 3.9550207707390603
+  position 1.89004730056726 -1.9338872240270275 1.385805257373757
+}
+TexturedBackground {
+  texture "mars"
+}
+TexturedBackgroundLight {
+  texture "mars"
+}
+CompactInclinedPlane {
+  angle 0.20943951023932
+}

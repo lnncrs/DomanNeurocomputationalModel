@@ -348,3 +348,6 @@ _other/
 
 ### Webots hidden files ###
 /webots/**/.*
+.codex-doc-review/
+.agents/
+tmp/

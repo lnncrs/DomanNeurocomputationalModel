@@ -7,6 +7,7 @@ aprendizado (reservado) ou parada de emergência.
 
 from enum import Enum, auto
 import json
+import sys
 
 from controller import Robot
 
@@ -166,7 +167,11 @@ def main() -> None:
     joystick.enable(TIME_STEP)
 
     collision_avoidance = CollisionAvoidance(distance_sensors)
-    mode = ControlMode.AUTOMATIC
+    mode = (
+        ControlMode.MANUAL
+        if "--manual" in sys.argv[1:]
+        else ControlMode.AUTOMATIC
+    )
     previous_buttons: set[int] = set()
     joystick_was_connected = False
     axis_centers: list[float] = []

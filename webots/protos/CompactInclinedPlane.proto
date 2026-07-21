@@ -1,0 +1,144 @@
+#VRML_SIM R2025a utf8
+# template language: javascript
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
+
+PROTO CompactInclinedPlane [
+  field SFVec3f  translation  0 0 0
+  field SFFloat  angle        0.20943951023932
+  field SFFloat  platformSize 2
+  field SFFloat  rampLength   2
+  field SFFloat  rampWidth    1
+  field SFFloat  wallHeight   0.1
+]
+{
+  %<
+    const angle = fields.angle.value;
+    const platformSize = fields.platformSize.value;
+    const rampLength = fields.rampLength.value;
+    const rampWidth = fields.rampWidth.value;
+    const wallHeight = fields.wallHeight.value;
+    const floorThickness = 0.05;
+    const wallThickness = 0.02;
+    const halfWallHeight = wallHeight / 2;
+    const openingSegment = (platformSize - rampWidth) / 2;
+    const openingCenter = (platformSize + rampWidth) / 4;
+    const rampCenterY = platformSize / 2 + rampLength * Math.cos(angle) / 2 + floorThickness * Math.sin(angle) / 2;
+    const rampCenterZ = rampLength * Math.sin(angle) / 2 - floorThickness * Math.cos(angle) / 2;
+  >%
+  Solid {
+    translation IS translation
+    children [
+      Floor {
+        size %<= platformSize >% %<= platformSize >%
+        tileSize 1 1
+      }
+      Solid {
+        translation %<= platformSize / 2 >% 0 %<= halfWallHeight >%
+        children [
+          DEF PLATFORM_SIDE_WALL Shape {
+            appearance DEF WALL_APPEARANCE PBRAppearance {
+              baseColor 0.12549 0.368627 0.729412
+              roughness 1
+              metalness 0
+            }
+            geometry Box {
+              size %<= wallThickness >% %<= platformSize >% %<= wallHeight >%
+            }
+          }
+        ]
+        name "platform_wall_right"
+        boundingObject USE PLATFORM_SIDE_WALL
+      }
+      Solid {
+        translation %<= -platformSize / 2 >% 0 %<= halfWallHeight >%
+        children [ USE PLATFORM_SIDE_WALL ]
+        name "platform_wall_left"
+        boundingObject USE PLATFORM_SIDE_WALL
+      }
+      Solid {
+        translation 0 %<= -platformSize / 2 >% %<= halfWallHeight >%
+        children [
+          DEF PLATFORM_END_WALL Shape {
+            appearance USE WALL_APPEARANCE
+            geometry Box {
+              size %<= platformSize >% %<= wallThickness >% %<= wallHeight >%
+            }
+          }
+        ]
+        name "platform_wall_rear"
+        boundingObject USE PLATFORM_END_WALL
+      }
+      Solid {
+        translation %<= -openingCenter >% %<= platformSize / 2 >% %<= halfWallHeight >%
+        children [
+          DEF PLATFORM_OPEN_WALL Shape {
+            appearance USE WALL_APPEARANCE
+            geometry Box {
+              size %<= openingSegment >% %<= wallThickness >% %<= wallHeight >%
+            }
+          }
+        ]
+        name "platform_wall_front_left"
+        boundingObject USE PLATFORM_OPEN_WALL
+      }
+      Solid {
+        translation %<= openingCenter >% %<= platformSize / 2 >% %<= halfWallHeight >%
+        children [ USE PLATFORM_OPEN_WALL ]
+        name "platform_wall_front_right"
+        boundingObject USE PLATFORM_OPEN_WALL
+      }
+      Solid {
+        translation 0 %<= rampCenterY >% %<= rampCenterZ >%
+        rotation 1 0 0 %<= angle >%
+        children [
+          DEF RAMP_SURFACE Shape {
+            appearance PBRAppearance {
+              baseColor 0.333333 0.333333 0
+              roughness 0.7
+              metalness 0
+            }
+            geometry Box {
+              size %<= rampWidth >% %<= rampLength >% %<= floorThickness >%
+            }
+          }
+          Solid {
+            translation %<= -rampWidth / 2 - wallThickness / 2 >% 0 %<= floorThickness / 2 + halfWallHeight >%
+            children [
+              DEF RAMP_SIDE_WALL Shape {
+                appearance USE WALL_APPEARANCE
+                geometry Box {
+                  size %<= wallThickness >% %<= rampLength >% %<= wallHeight >%
+                }
+              }
+            ]
+            name "ramp_guardrail_left"
+            boundingObject USE RAMP_SIDE_WALL
+          }
+          Solid {
+            translation %<= rampWidth / 2 + wallThickness / 2 >% 0 %<= floorThickness / 2 + halfWallHeight >%
+            children [ USE RAMP_SIDE_WALL ]
+            name "ramp_guardrail_right"
+            boundingObject USE RAMP_SIDE_WALL
+          }
+          Solid {
+            translation 0 %<= rampLength / 2 >% %<= floorThickness / 2 + halfWallHeight >%
+            children [
+              DEF RAMP_END_WALL Shape {
+                appearance USE WALL_APPEARANCE
+                geometry Box {
+                  size %<= rampWidth >% %<= wallThickness >% %<= wallHeight >%
+                }
+              }
+            ]
+            name "ramp_guardrail_high_end"
+            boundingObject USE RAMP_END_WALL
+          }
+        ]
+        name "inclined_ramp"
+        boundingObject USE RAMP_SURFACE
+      }
+    ]
+    name "compact_inclined_plane"
+  }
+}

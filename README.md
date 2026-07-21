@@ -476,6 +476,20 @@ msys64\usr\bin
 Compilar usando make em
 \webots\controllers\four_wheels_collision_avoidance
 
+# ! TODO
+
+https://www.domaninternational.org/blog/the-inclined-floor-the-ideal-environment-to-become-independently-mobile
+
+# ! TODO
+
+| Graus | Radianos |
+|---:|---:|
+| 5° | `0.08726646259972` |
+| 8° | `0.13962634015955` |
+| 10° | `0.17453292519943` |
+| 12° | `0.20943951023932` |
+| 15° | `0.26179938779915` |
+
 ## Referências
 
 Francisco Javier Ropero Peláez, Lucas Galdiano Ribeiro Santana<br />

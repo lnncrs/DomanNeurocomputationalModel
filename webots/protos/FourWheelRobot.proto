@@ -5,6 +5,7 @@ PROTO FourWheelRobot [
   field SFRotation rotation     0 0 0 0
   field SFString   name         "four_wheel_robot"
   field SFString   controller   "four_wheels_collision_avoidance"
+  field MFString   controllerArgs []
   field SFString   window       "four_wheel_robot_window"
 ]
 {
@@ -12,6 +13,7 @@ PROTO FourWheelRobot [
     translation IS translation
     rotation IS rotation
     name IS name
+    controllerArgs IS controllerArgs
     children [
       DEF BODY Shape {
         appearance PBRAppearance {
