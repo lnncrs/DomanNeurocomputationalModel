@@ -168,3 +168,30 @@ def test_enter_creates_logs_only_when_directory_is_configured(tmp_path):
     assert len(run_directories) == 1
     assert (run_directories[0] / "metadata.json").is_file()
     assert (run_directories[0] / "iterations.jsonl").is_file()
+
+
+def test_goal_completion_generates_standalone_html_report(tmp_path):
+    runtime = LearningRuntime(
+        goal=GOAL,
+        config=LearningRuntimeConfig(action_duration_seconds=0.5, random_seed=10),
+        runs_directory=tmp_path,
+    )
+    runtime.enter(time=0.0, position=position(2.0), longitudinal_acceleration=2.0)
+    runtime.step(
+        time=0.25,
+        position=position(1.8),
+        longitudinal_acceleration=2.1,
+    )
+    runtime.step(
+        time=0.3,
+        position=position(0.0),
+        longitudinal_acceleration=2.2,
+    )
+
+    run_directory = next(tmp_path.iterdir())
+    report_path = run_directory / "report.html"
+    assert report_path.is_file()
+    report = report_path.read_text(encoding="utf-8")
+    assert "GOAL_REACHED" in report
+    assert "FRONT_CLOCKWISE" in report
+    assert "Saídas brutas dos neurônios" in report

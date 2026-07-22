@@ -318,6 +318,12 @@ class LearningRuntime:
                     "learning": self.telemetry(),
                 }
             )
+            try:
+                report_path = self.logger.write_report()
+                print(f"Learning report generated: {report_path}")
+            except Exception as error:
+                # Um relatório derivado nunca deve invalidar os dados científicos.
+                print(f"WARNING: could not generate learning report: {error}")
         print(f"Learning experiment completed: {reason}")
 
     def _open_logger(self) -> None:

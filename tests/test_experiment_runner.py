@@ -93,6 +93,7 @@ def test_logger_writes_metadata_iteration_and_summary(tmp_path):
     logger = ExperimentLogger(tmp_path / "run", {"seed": 0})
     logger.log_iteration(result)
     logger.write_summary({"success": True})
+    report_path = logger.write_report()
 
     metadata = json.loads((tmp_path / "run" / "metadata.json").read_text())
     iteration = json.loads((tmp_path / "run" / "iterations.jsonl").read_text())
@@ -100,3 +101,8 @@ def test_logger_writes_metadata_iteration_and_summary(tmp_path):
     assert metadata == {"seed": 0}
     assert iteration["direction"] == "DOWN"
     assert summary == {"success": True}
+    report = report_path.read_text(encoding="utf-8")
+    assert "Relatório do experimento neural" in report
+    assert "Rede neural treinada" in report
+    assert "Matriz final de pesos" in report
+    assert "<svg" in report

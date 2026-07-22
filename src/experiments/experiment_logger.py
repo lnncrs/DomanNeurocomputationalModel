@@ -36,6 +36,13 @@ class ExperimentLogger:
     def write_summary(self, summary: Mapping[str, Any]) -> None:
         self._write_json(self.run_directory / "summary.json", summary)
 
+    def write_report(self) -> Path:
+        """Materializa a análise visual após JSON e JSONL estarem completos."""
+
+        from .experiment_report import generate_experiment_report
+
+        return generate_experiment_report(self.run_directory)
+
     @staticmethod
     def _write_json(path: Path, value: Any) -> None:
         path.write_text(
