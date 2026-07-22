@@ -86,11 +86,11 @@ Caminho pretendido do estímulo:
 Conjunto de sensores → 4 neurônios → 2 motores → 2 conjuntos de rodas
 ```
 
-Mapeamento pretendido:
+Mapeamento reconstruído a partir do artigo:
 
 ```text
-N1/N2 → lado esquerdo
-N3/N4 → lado direito
+N1/N2 → conjunto frontal, sentidos opostos
+N3/N4 → conjunto traseiro, sentidos opostos
 ```
 
 Comportamentos emergentes esperados:
@@ -100,7 +100,7 @@ Comportamentos emergentes esperados:
 - Rotação
 - Correção de trajetória
 
-O sistema motor é composto por dois motores independentes em configuração *differential drive*, cada um controlando um conjunto de rodas de um lado do robô. A rede neural possui quatro neurônios, sendo que cada neurônio está associado a um movimento específico (sentido horário ou anti-horário) de um dos motores, resultando em quatro primitivas de ação: esquerda-frente, esquerda-trás, direita-frente, direita-trás. O comportamento motor emerge da combinação das ativações desses quatro neurônios."
+O sistema original possui dois servomotores atuando sobre os conjuntos frontal e traseiro. A rede possui quatro neurônios, cada um associado a um sentido de rotação de um desses conjuntos. No robô virtual, que preserva quatro motores independentes, esse agrupamento será realizado somente pelo adaptador do modo de aprendizagem; os modos diferencial e manual permanecem inalterados.
 
 ## Metodologia
 
@@ -309,7 +309,7 @@ O repositório do projeto está organizado da seguinte forma:
 │   │
 │   ├── control/                          # Controladores do robô
 │   │
-│   ├── interfaces/                       # Interfaces de comunicação
+│   ├── experiments/                      # Protocolo causal e logging
 │   │
 │   └── neural/                           # Implementação da rede neural
 │
@@ -388,7 +388,15 @@ A linha de comando do Webots depende da instalação, o caminho apresentado é o
 
 ### Ambiente virtual e instalação de dependências
 
-Vamos mostrar a seguir um exemplo de como criar o ambiente necessário usando duas abordagens: **pip** e **conda**.
+O `pyproject.toml` é a fonte principal das dependências. `requirements.txt` e
+`environment.yml` são alternativas convenientes para pip e Conda.
+
+#### Usando uv (recomendado)
+
+```bash
+uv sync --all-groups --all-extras
+uv run pytest
+```
 
 #### Usando pip
 
@@ -410,42 +418,11 @@ Utilize a referência oficial **Conda-Forge** para instalar o conda no seu ambie
 
 Ou utilize a referência oficial **Anaconda** para instalar o miniconda no seu ambiente https://docs.anaconda.com/miniconda/install/
 
-##### Criando o ambiente virtual
-
-Para criar um ambiente virtual chamado `webots` com Python 3.13 utilizando o conda, use o comando:
-
-```bash
-conda create -n webots python=3.13
-```
-
-##### Ativando o ambiente
-
-Após a criação do ambiente virtual, ative ele com
-
-```bash
-conda activate webots
-```
-
-##### Instalando dependências
-
-Com o ambiente virtual ativado, instale as dependências do projeto com:
-
-```bash
-pip install -r requirements.txt
-```
-
-##### Criando o ambiente a partir de arquivo (Alternativo)
-
-Para criar o ambiente com os pacotes base a partir de arquivo requirements.txt, utilize o comando:
-
-```bash
-pip install -r requirements.txt
-```
-
-Ou para criar o ambiente com os pacotes base a partir de arquivo yml, utilize o comando:
+Crie diretamente o ambiente reproduzível descrito no arquivo YAML:
 
 ```bash
 conda env create -f environment.yml
+conda activate webots
 ```
 
 Dentro do repositório do projeto.
@@ -489,6 +466,10 @@ https://www.domaninternational.org/blog/the-inclined-floor-the-ideal-environment
 | 10° | `0.17453292519943` |
 | 12° | `0.20943951023932` |
 | 15° | `0.26179938779915` |
+
+# ! TODO
+
+foi alterado o entendimento de comoos eixos de rodas funcionam
 
 ## Referências
 
