@@ -62,5 +62,11 @@ InclinedFourWheelRobot {
   controllerArgs [
     "--passive-realistic"
     "--goal=0,0,0,0.96,0.96,0.3,0.5"
+    "--learning-seed=42"
+    "--learning-action-duration=0.5"
+    "--learning-speed=3.0"
+    "--learning-acceleration-scale=1.0"
+    "--learning-front-clockwise-sign=1"
+    "--learning-rear-clockwise-sign=1"
   ]
 }

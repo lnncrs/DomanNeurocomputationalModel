@@ -126,6 +126,7 @@ deslocamento físico observado durante cada iteração.
 
 - A entrada visual ainda precisa de um detector de transições de faixas.
 - Normalização e agregação temporal da aceleração devem ser calibradas.
-- O adaptador Webots ainda não foi conectado ao modo `LEARNING`.
+- O modo `LEARNING` já usa uma ponte temporal no Webots, mas os sentidos
+  físicos horário/anti-horário ainda precisam de validação visual.
 - Os sinais físicos de rotação horária de cada eixo precisam ser validados no
   robô virtual antes da integração.

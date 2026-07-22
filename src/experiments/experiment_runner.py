@@ -19,7 +19,7 @@ class MovementDirection(str, Enum):
 class ExperimentConfig:
     movement_duration_seconds: float = 0.5
     stationary_threshold: float = 0.005
-    sound_intensity: float = 1.0
+    sound_intensity: float = 0.1
     downhill_sign: int = -1
     learning_streak: int = 5
 
@@ -42,6 +42,12 @@ class LearningStatus:
     downward_count: int
     paper_criterion_reached: bool
     downward_criterion_reached: bool
+    ever_paper_criterion_reached: bool
+    ever_downward_criterion_reached: bool
+    first_paper_criterion_iteration: int | None
+    first_downward_criterion_iteration: int | None
+    maximum_same_direction_count: int
+    maximum_downward_count: int
 
 
 class LearningCriterion:
@@ -55,6 +61,13 @@ class LearningCriterion:
         self._last_direction: MovementDirection | None = None
         self._same_direction_count = 0
         self._downward_count = 0
+        self._iteration = 0
+        self._ever_paper_criterion_reached = False
+        self._ever_downward_criterion_reached = False
+        self._first_paper_criterion_iteration: int | None = None
+        self._first_downward_criterion_iteration: int | None = None
+        self._maximum_same_direction_count = 0
+        self._maximum_downward_count = 0
 
     def update(self, direction: MovementDirection) -> LearningStatus:
         if direction == self._last_direction:
@@ -68,17 +81,40 @@ class LearningCriterion:
         else:
             self._downward_count = 0
 
-        return LearningStatus(
+        paper_criterion_reached = (
+            direction != MovementDirection.STATIONARY
+            and self._same_direction_count >= self.required_streak
+        )
+        downward_criterion_reached = self._downward_count >= self.required_streak
+        self._maximum_same_direction_count = max(
+            self._maximum_same_direction_count, self._same_direction_count
+        )
+        self._maximum_downward_count = max(
+            self._maximum_downward_count, self._downward_count
+        )
+        if paper_criterion_reached and not self._ever_paper_criterion_reached:
+            self._ever_paper_criterion_reached = True
+            self._first_paper_criterion_iteration = self._iteration
+        if downward_criterion_reached and not self._ever_downward_criterion_reached:
+            self._ever_downward_criterion_reached = True
+            self._first_downward_criterion_iteration = self._iteration
+
+        status = LearningStatus(
             same_direction_count=self._same_direction_count,
             downward_count=self._downward_count,
-            paper_criterion_reached=(
-                direction != MovementDirection.STATIONARY
-                and self._same_direction_count >= self.required_streak
+            paper_criterion_reached=paper_criterion_reached,
+            downward_criterion_reached=downward_criterion_reached,
+            ever_paper_criterion_reached=self._ever_paper_criterion_reached,
+            ever_downward_criterion_reached=self._ever_downward_criterion_reached,
+            first_paper_criterion_iteration=self._first_paper_criterion_iteration,
+            first_downward_criterion_iteration=(
+                self._first_downward_criterion_iteration
             ),
-            downward_criterion_reached=(
-                self._downward_count >= self.required_streak
-            ),
+            maximum_same_direction_count=self._maximum_same_direction_count,
+            maximum_downward_count=self._maximum_downward_count,
         )
+        self._iteration += 1
+        return status
 
 
 @dataclass(frozen=True)

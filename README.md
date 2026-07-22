@@ -182,18 +182,20 @@ Não somente código, mas testes adicionais de mundo e colisão, esquetes de dif
 
 #### Fase atual
 
-A fase atual é a que já temos controle manual sobre o robô no ambiente virtual via interface, ou seja, estamos prontos do ponto de vista do simulador para implementar e conectar a camada de rede neural para aprendizado.
+A fase atual já possui controle manual e uma primeira integração isolada da rede neural com o modo `LEARNING`. A ponte mantém uma ação neural por janela temporal, agrega os sensores, produz a maraca após progresso e traduz as quatro ações abstratas para os eixos frontal e traseiro.
 
 **Atualmente:**
 
 - Ambiente físico validado
 - Robô funcional
 - Controle comunicando com o ambiente virtual
+- Rede de quatro neurônios validada fora do Webots
+- Ponte neural conectada ao modo `LEARNING`
 
 **Próximos passos:**
 
-- Integração da rede neural
-- Execução de ciclos de aprendizado
+- Validação visual dos quatro sentidos motores no Webots
+- Execução e calibração dos primeiros ciclos de aprendizado
 
 **Testes realizados**
 
@@ -242,9 +244,9 @@ As peças rotacionando com controle foi necessário criar do zero porque era nec
 
 ### Próximos passos
 
-#### Modelagem da rede neural
+#### Validação da rede neural
 
-A próxima etapa é a modelagem da rede neural, que está nas camadas 4 e 5 do experimento. A implementação da rede neural será feita em Python, utilizando as funções de ativação e dinâmica descritas no artigo original. A rede será integrada com a interface de controle para permitir que o comportamento emergente seja observado e analisado.
+A rede foi implementada em Python com as equações e hipóteses documentadas, testada independentemente e conectada ao Webots por uma ponte específica do modo `LEARNING`. A próxima etapa é validar os sentidos físicos das quatro ações, calibrar duração, velocidade e normalização da aceleração e então executar séries de aprendizado.
 
 #### Diversidade de sensores
 
@@ -256,7 +258,7 @@ Foi escolha de projeto simular em ambiente virtual para a montagem e testagem da
 
 ## Conclusão
 
-Apesar de desafios iniciais, principalmente no aprendizado e adaptação ao ambiente Webots, o projeto evoluiu para um estado funcional sólido de simulação com controle mas ainda sem a rede neural integrada. A construção em camadas permitiu validar cada componente isoladamente, garantindo que o sistema como um todo esteja pronto para a integração da rede neural e a observação do comportamento emergente.
+Apesar de desafios iniciais, principalmente no aprendizado e adaptação ao ambiente Webots, o projeto evoluiu para um estado funcional de simulação, controle e integração neural inicial. A construção em camadas permitiu validar a rede fora do simulador e conectá-la sem substituir os modos de controle existentes; a integração física ainda precisa ser calibrada no Webots antes dos ensaios comparativos.
 
 A abordagem em camadas permitiu:
 

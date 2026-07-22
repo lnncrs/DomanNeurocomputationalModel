@@ -11,6 +11,12 @@ import math
 import sys
 
 from controller import Robot
+from learning_runtime import (
+    GoalRegion,
+    LearningRuntime,
+    LearningRuntimeConfig,
+    PROJECT_ROOT,
+)
 
 
 TIME_STEP = 64
@@ -62,6 +68,22 @@ def parse_goal_argument(arguments: list[str]):
                 return values
             print("--goal expects x,y,z,width,length,height,dwell_seconds")
     return None
+
+
+def parse_float_argument(arguments: list[str], name: str, default: float) -> float:
+    prefix = f"--{name}="
+    for argument in arguments:
+        if argument.startswith(prefix):
+            try:
+                return float(argument[len(prefix):])
+            except ValueError:
+                print(f"Invalid value for {prefix}: {argument}")
+                return default
+    return default
+
+
+def parse_int_argument(arguments: list[str], name: str, default: int) -> int:
+    return int(parse_float_argument(arguments, name, float(default)))
 
 
 class ExperimentMonitor:
@@ -260,11 +282,9 @@ class CollisionAvoidance:
         return left_speed, right_speed
 
 
-def set_side_velocities(wheels, left: float, right: float) -> None:
-    wheels[0].setVelocity(left)
-    wheels[1].setVelocity(right)
-    wheels[2].setVelocity(left)
-    wheels[3].setVelocity(right)
+def set_wheel_velocities(wheels, velocities) -> None:
+    for wheel, velocity in zip(wheels, velocities):
+        wheel.setVelocity(velocity)
 
 
 def print_mode(mode: ControlMode) -> None:
@@ -297,8 +317,33 @@ def main() -> None:
     joystick = robot.getJoystick()
     joystick.enable(TIME_STEP)
 
+    arguments = sys.argv[1:]
+    goal_values = parse_goal_argument(arguments)
     collision_avoidance = CollisionAvoidance(distance_sensors)
-    experiment_monitor = ExperimentMonitor(parse_goal_argument(sys.argv[1:]))
+    experiment_monitor = ExperimentMonitor(goal_values)
+    learning_runtime = LearningRuntime(
+        goal=GoalRegion.from_controller_argument(goal_values),
+        config=LearningRuntimeConfig(
+            action_duration_seconds=parse_float_argument(
+                arguments, "learning-action-duration", 0.5
+            ),
+            wheel_speed=parse_float_argument(arguments, "learning-speed", 3.0),
+            sound_intensity=parse_float_argument(
+                arguments, "learning-sound-intensity", 0.1
+            ),
+            acceleration_scale=parse_float_argument(
+                arguments, "learning-acceleration-scale", 1.0
+            ),
+            random_seed=parse_int_argument(arguments, "learning-seed", 42),
+            front_clockwise_sign=parse_float_argument(
+                arguments, "learning-front-clockwise-sign", 1.0
+            ),
+            rear_clockwise_sign=parse_float_argument(
+                arguments, "learning-rear-clockwise-sign", 1.0
+            ),
+        ),
+        runs_directory=PROJECT_ROOT / "experiments" / "runs",
+    )
     if "--passive-free" in sys.argv[1:] or "--passive" in sys.argv[1:]:
         mode = ControlMode.PASSIVE_FREE
     elif "--passive-realistic" in sys.argv[1:]:
@@ -366,6 +411,8 @@ def main() -> None:
             mode = ControlMode.LEARNING
 
         if mode != previous_mode:
+            if previous_mode == ControlMode.LEARNING:
+                learning_runtime.pause()
             print_mode(mode)
             if mode == ControlMode.AUTOMATIC:
                 collision_avoidance.reset()
@@ -379,7 +426,22 @@ def main() -> None:
                     f"{PASSIVE_REALISTIC_TORQUE:.3f} N.m per wheel."
                 )
             if mode == ControlMode.LEARNING:
-                print("Learning mode is reserved and keeps the motors stopped.")
+                learning_runtime.enter(
+                    time=robot.getTime(),
+                    position=gps.getValues(),
+                    longitudinal_acceleration=accelerometer.getValues()[0],
+                )
+                state = learning_runtime.telemetry()
+                if state["status"] == "BLOCKED":
+                    print(f"Learning mode blocked: {state['blockedReason']}")
+                elif state["status"] == "COMPLETED":
+                    print("Learning experiment is already complete; reload to reset.")
+                else:
+                    print(
+                        "Learning mode active: "
+                        f"{learning_runtime.config.action_duration_seconds:.3f}s per action, "
+                        f"speed {learning_runtime.config.wheel_speed:.3f} rad/s."
+                    )
 
         for wheel, max_torque in zip(wheels, wheel_max_torques):
             if mode == ControlMode.PASSIVE_FREE:
@@ -392,29 +454,52 @@ def main() -> None:
 
         if mode == ControlMode.EMERGENCY_STOP:
             left_speed, right_speed = 0.0, 0.0
+            wheel_speeds = (0.0, 0.0, 0.0, 0.0)
         elif mode == ControlMode.AUTOMATIC:
             left_speed, right_speed = collision_avoidance.step()
+            wheel_speeds = (left_speed, right_speed, left_speed, right_speed)
         elif mode == ControlMode.MANUAL:
             if connected:
                 left_speed, right_speed = manual_dpad_drive(joystick)
             else:
                 left_speed, right_speed = 0.0, 0.0
+            wheel_speeds = (left_speed, right_speed, left_speed, right_speed)
         elif mode in (
             ControlMode.PASSIVE_FREE,
             ControlMode.PASSIVE_REALISTIC,
         ):
             left_speed, right_speed = 0.0, 0.0
-        else:  # ControlMode.LEARNING
-            left_speed, right_speed = 0.0, 0.0
+            wheel_speeds = (0.0, 0.0, 0.0, 0.0)
+        else:  # ControlMode.LEARNING: quatro motores independentes por eixo.
+            wheel_speeds = learning_runtime.step(
+                time=robot.getTime(),
+                position=gps.getValues(),
+                longitudinal_acceleration=accelerometer.getValues()[0],
+            )
+            left_speed = (wheel_speeds[0] + wheel_speeds[2]) / 2
+            right_speed = (wheel_speeds[1] + wheel_speeds[3]) / 2
 
-        set_side_velocities(wheels, left_speed, right_speed)
+        set_wheel_velocities(wheels, wheel_speeds)
         experiment_state = experiment_monitor.update(
             robot.getTime(),
             gps.getValues(),
             accelerometer.getValues(),
             gyro.getValues(),
-            (left_speed, right_speed),
+            wheel_speeds,
         )
+        learning_state = learning_runtime.telemetry()
+        experiment_state["learning"] = learning_state
+        if mode == ControlMode.LEARNING:
+            learning_direction = {
+                "DOWN": "DESCENDO",
+                "UP": "SUBINDO",
+                "STATIONARY": "PARADO",
+            }.get(learning_state["direction"])
+            if learning_direction is not None:
+                experiment_state["direction"] = learning_direction
+            experiment_state["maraca"] = (
+                "ATIVA" if learning_state["maraca"] else "INATIVA"
+            )
         send_telemetry(
             robot,
             proximity_sensors,

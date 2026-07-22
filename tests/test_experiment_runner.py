@@ -65,6 +65,25 @@ def test_learning_criterion_distinguishes_paper_and_downward_goal():
     assert down is not None
     assert down.paper_criterion_reached is True
     assert down.downward_criterion_reached is True
+    assert down.ever_paper_criterion_reached is True
+    assert down.ever_downward_criterion_reached is True
+    assert down.first_paper_criterion_iteration == 4
+    assert down.first_downward_criterion_iteration == 9
+    assert down.maximum_same_direction_count == 5
+    assert down.maximum_downward_count == 5
+
+
+def test_learning_criterion_preserves_a_previously_reached_streak():
+    criterion = LearningCriterion(required_streak=2)
+    criterion.update(MovementDirection.DOWN)
+    reached = criterion.update(MovementDirection.DOWN)
+    interrupted = criterion.update(MovementDirection.STATIONARY)
+
+    assert reached.downward_criterion_reached is True
+    assert interrupted.downward_criterion_reached is False
+    assert interrupted.ever_downward_criterion_reached is True
+    assert interrupted.first_downward_criterion_iteration == 1
+    assert interrupted.maximum_downward_count == 2
 
 
 def test_logger_writes_metadata_iteration_and_summary(tmp_path):
