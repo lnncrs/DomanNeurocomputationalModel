@@ -18,6 +18,23 @@ function renderVector(id, values) {
   ).join('');
 }
 
+function renderExperiment(data) {
+  if (!data)
+    return;
+  document.getElementById('experiment-terrain').textContent = data.terrain;
+  document.getElementById('experiment-inclination').textContent = `${format(data.inclination)}°`;
+  document.getElementById('experiment-acceleration').textContent = `${format(data.longitudinalAcceleration)} m/s²`;
+  document.getElementById('experiment-direction').textContent = data.direction;
+  const goal = document.getElementById('experiment-goal');
+  goal.textContent = data.goal;
+  goal.classList.toggle('inside', data.goal === 'DENTRO');
+  goal.classList.toggle('reached', data.goal === 'ALCANCADA');
+
+  const maraca = document.getElementById('experiment-maraca');
+  maraca.textContent = data.maraca;
+  maraca.classList.toggle('active', data.maraca === 'ATIVA');
+}
+
 function render(data) {
   Object.entries(data.distance).forEach(([name, value]) => setText(name, value));
   data.motors.forEach((value, index) => setText(`motor-${index}`, value));
@@ -25,6 +42,7 @@ function render(data) {
   renderVector('gyro', data.gyro);
   renderVector('gps', data.gps);
   renderVector('compass', data.compass);
+  renderExperiment(data.experiment);
   setText('simulation-time', data.time);
 
   document.getElementById('connection-dot').classList.add('online');

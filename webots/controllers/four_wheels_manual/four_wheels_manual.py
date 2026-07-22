@@ -7,6 +7,7 @@ aprendizado (reservado) ou parada de emergência.
 
 from enum import Enum, auto
 import json
+import math
 import sys
 
 from controller import Robot
@@ -22,7 +23,12 @@ DPAD_AXIS_THRESHOLD = 16000
 PASSIVE_REALISTIC_TORQUE = 0.03 # N·m por roda
 
 DISTANCE_SENSOR_NAMES = ("ds_left", "ds_right")
+PROXIMITY_SENSOR_NAMES = (
+    "ds_left", "ds_right", "ps_front", "ps_back", "ps_left", "ps_right"
+)
 WHEEL_NAMES = ("wheel1", "wheel2", "wheel3", "wheel4")
+PLANE_ANGLE_TOLERANCE_DEG = 2.0
+MOTION_SPEED_THRESHOLD = 0.005
 
 # Mapeamento observado no controle "Controller (Xbox One For Windows)"
 # conectado via USB. O console continua imprimindo os índices para diagnóstico.
@@ -40,6 +46,91 @@ class ControlMode(Enum):
     PASSIVE_REALISTIC = auto()
     LEARNING = auto()
     EMERGENCY_STOP = auto()
+
+
+def parse_goal_argument(arguments: list[str]):
+    """Lê x,y,z,largura,comprimento,altura,permanência de --goal."""
+    prefix = "--goal="
+    for argument in arguments:
+        if argument.startswith(prefix):
+            try:
+                values = tuple(float(value) for value in argument[len(prefix):].split(","))
+            except ValueError:
+                print(f"Invalid goal parameters: {argument}")
+                return None
+            if len(values) == 7:
+                return values
+            print("--goal expects x,y,z,width,length,height,dwell_seconds")
+    return None
+
+
+class ExperimentMonitor:
+    def __init__(self, goal) -> None:
+        self.goal = goal
+        self.previous_position = None
+        self.previous_distance = None
+        self.inside_since = None
+        self.reached = False
+
+    def update(self, time, position, accelerometer, gyro, motor_command):
+        ax, ay, az = accelerometer
+        gravity_magnitude = math.sqrt(ax * ax + ay * ay + az * az)
+        tilt = (
+            math.degrees(math.acos(min(1.0, abs(az) / gravity_magnitude)))
+            if gravity_magnitude > 1e-9
+            else 0.0
+        )
+        angular_speed = math.sqrt(sum(value * value for value in gyro))
+        if angular_speed > 0.25:
+            terrain = "INDETERMINADO"
+        elif tilt <= PLANE_ANGLE_TOLERANCE_DEG:
+            terrain = "PLANO"
+        else:
+            terrain = "INCLINADO"
+
+        direction = "PARADO"
+        goal_state = "NÃO CONFIGURADA"
+        progress_speed = 0.0
+        inside = False
+
+        if self.goal is not None:
+            goal_x, goal_y, goal_z, width, length, height, dwell = self.goal
+            distance = math.hypot(position[0] - goal_x, position[1] - goal_y)
+            if self.previous_distance is not None:
+                elapsed = TIME_STEP / 1000.0
+                progress_speed = (self.previous_distance - distance) / elapsed
+                if progress_speed > MOTION_SPEED_THRESHOLD:
+                    direction = "DESCENDO"
+                elif progress_speed < -MOTION_SPEED_THRESHOLD:
+                    direction = "SUBINDO"
+
+            inside = (
+                abs(position[0] - goal_x) <= width / 2
+                and abs(position[1] - goal_y) <= length / 2
+                and goal_z <= position[2] <= goal_z + height
+            )
+            if inside:
+                if self.inside_since is None:
+                    self.inside_since = time
+                if time - self.inside_since >= dwell:
+                    self.reached = True
+                goal_state = "ALCANCADA" if self.reached else "DENTRO"
+            else:
+                self.inside_since = None
+                goal_state = "ALCANCADA" if self.reached else "FORA"
+            self.previous_distance = distance
+
+        commanded = max(abs(motor_command[0]), abs(motor_command[1])) > 1e-6
+        maraca = commanded and progress_speed > MOTION_SPEED_THRESHOLD and not self.reached
+        self.previous_position = tuple(position)
+        return {
+            "terrain": terrain,
+            "inclination": tilt,
+            "longitudinalAcceleration": ax,
+            "direction": direction,
+            "goal": goal_state,
+            "maraca": "ATIVA" if maraca else "INATIVA",
+        }
 
 
 def read_pressed_buttons(joystick) -> set[int]:
@@ -119,6 +210,28 @@ def send_control_state(robot, joystick, mode, pressed_buttons) -> None:
     robot.wwiSendText(json.dumps(message))
 
 
+def send_telemetry(
+    robot, proximity_sensors, wheels, accelerometer, gyro, gps, compass,
+    experiment_state
+) -> None:
+    message = {
+        "type": "telemetry",
+        "time": robot.getTime(),
+        "distance": {
+            name: sensor.getValue()
+            for name, sensor in proximity_sensors.items()
+        },
+        "motors": [wheel.getVelocity() for wheel in wheels],
+        "accelerometer": list(accelerometer.getValues()),
+        "gyro": list(gyro.getValues()),
+        "gps": list(gps.getValues()),
+        "compass": list(compass.getValues()),
+        "experiment": experiment_state,
+        "stopped": False,
+    }
+    robot.wwiSendText(json.dumps(message))
+
+
 class CollisionAvoidance:
     def __init__(self, distance_sensors) -> None:
         self.distance_sensors = distance_sensors
@@ -157,8 +270,18 @@ def print_mode(mode: ControlMode) -> None:
 def main() -> None:
     robot = Robot()
 
-    distance_sensors = [robot.getDevice(name) for name in DISTANCE_SENSOR_NAMES]
-    for sensor in distance_sensors:
+    proximity_sensors = {
+        name: robot.getDevice(name) for name in PROXIMITY_SENSOR_NAMES
+    }
+    for sensor in proximity_sensors.values():
+        sensor.enable(TIME_STEP)
+    distance_sensors = [proximity_sensors[name] for name in DISTANCE_SENSOR_NAMES]
+
+    accelerometer = robot.getDevice("accelerometer")
+    gyro = robot.getDevice("gyro")
+    gps = robot.getDevice("gps")
+    compass = robot.getDevice("compass")
+    for sensor in (accelerometer, gyro, gps, compass):
         sensor.enable(TIME_STEP)
 
     wheels = [robot.getDevice(name) for name in WHEEL_NAMES]
@@ -171,6 +294,7 @@ def main() -> None:
     joystick.enable(TIME_STEP)
 
     collision_avoidance = CollisionAvoidance(distance_sensors)
+    experiment_monitor = ExperimentMonitor(parse_goal_argument(sys.argv[1:]))
     if "--passive-free" in sys.argv[1:] or "--passive" in sys.argv[1:]:
         mode = ControlMode.PASSIVE_FREE
     elif "--passive-realistic" in sys.argv[1:]:
@@ -280,6 +404,23 @@ def main() -> None:
             left_speed, right_speed = 0.0, 0.0
 
         set_side_velocities(wheels, left_speed, right_speed)
+        experiment_state = experiment_monitor.update(
+            robot.getTime(),
+            gps.getValues(),
+            accelerometer.getValues(),
+            gyro.getValues(),
+            (left_speed, right_speed),
+        )
+        send_telemetry(
+            robot,
+            proximity_sensors,
+            wheels,
+            accelerometer,
+            gyro,
+            gps,
+            compass,
+            experiment_state,
+        )
         send_control_state(robot, joystick, mode, current_buttons)
         previous_buttons = current_buttons
         joystick_was_connected = connected

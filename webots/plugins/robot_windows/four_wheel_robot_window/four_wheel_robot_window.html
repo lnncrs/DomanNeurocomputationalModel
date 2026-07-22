@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>Four Wheel Robot</title>
-  <link rel="stylesheet" href="four_wheel_robot_window.css">
+  <link rel="stylesheet" href="four_wheel_robot_window.css?v=20260722002036">
 </head>
 <body>
   <header>
@@ -47,6 +50,18 @@
       <button id="motor-toggle" type="button">Parar motores</button>
     </section>
 
+    <section class="card experiment-status">
+      <h2>Estado do experimento</h2>
+      <div class="metric-grid experiment-grid">
+        <div class="metric"><span>Terreno</span><strong id="experiment-terrain">—</strong></div>
+        <div class="metric"><span>Inclinação</span><strong id="experiment-inclination">—</strong></div>
+        <div class="metric"><span>Aceleração longitudinal</span><strong id="experiment-acceleration">—</strong></div>
+        <div class="metric"><span>Direção</span><strong id="experiment-direction">—</strong></div>
+        <div class="metric"><span>Meta</span><strong id="experiment-goal">—</strong></div>
+        <div class="metric"><span>Maraca</span><strong id="experiment-maraca">—</strong></div>
+      </div>
+    </section>
+
     <section class="card">
       <h2>Proximidade</h2>
       <div class="robot-map">
@@ -82,6 +97,6 @@
   </main>
 
   <footer>Tempo de simulação: <strong id="simulation-time">—</strong> s</footer>
-  <script type="module" src="four_wheel_robot_window.js"></script>
+  <script type="module" src="four_wheel_robot_window.js?v=20260722002036"></script>
 </body>
 </html>

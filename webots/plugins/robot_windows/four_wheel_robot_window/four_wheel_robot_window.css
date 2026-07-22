@@ -41,6 +41,11 @@ button.stopped { background: #2bb673; }
 .sensor strong, .metric strong { color: #ffb74d; font-family: Consolas, monospace; font-size: 14px; }
 .robot-body { display: grid; place-items: center; min-height: 58px; border: 2px solid #4285f4; border-radius: 9px; background: #1b3355; color: #9fc2ff; font-weight: 800; }
 .metric-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.experiment-grid { grid-template-columns: repeat(2, 1fr); }
+.experiment-grid .metric strong { color: #9fc2ff; }
+#experiment-goal.inside { color: #ffd166; }
+#experiment-goal.reached { color: #62dc91; text-shadow: 0 0 8px rgba(98, 220, 145, .45); }
+#experiment-maraca.active { color: #62dc91; text-shadow: 0 0 8px rgba(98, 220, 145, .45); }
 .metric { display: flex; flex-direction: column; gap: 6px; color: #95a5ba; font-size: 11px; }
 .telemetry-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
 .vector > div { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }

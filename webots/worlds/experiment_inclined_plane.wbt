@@ -49,6 +49,7 @@ DEF GOAL_AREA GoalArea {
   dwellTime 0.5
 }
 InclinedFourWheelRobot {
+  name "inclined_four_wheel_robot_experiment"
   # IMPORTANTE: mantenha este ângulo igual ao da rampa acima.
   # angle 0.08726646259972 # 05°
   # angle 0.13962634015955 # 08°
@@ -58,4 +59,8 @@ InclinedFourWheelRobot {
   # angle 0.52359877559830 # 30°
   # angle 0.78539816339745 # 45°
   platformSize 1
+  controllerArgs [
+    "--passive-realistic"
+    "--goal=0,0,0,0.96,0.96,0.3,0.5"
+  ]
 }
