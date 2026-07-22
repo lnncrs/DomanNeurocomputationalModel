@@ -4,15 +4,27 @@ version = "0.1.0"
 description = "Doman project"
 requires-python = "==3.13.*"
 dependencies = [
-    "numpy",
-    "matplotlib",
-    "tqdm",
-    "python-dotenv",
+]
+
+[project.optional-dependencies]
+analysis = [
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.0",
+    "numpy>=2.1.0",
 ]
 
 [build-system]
 requires = ["setuptools>=75.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-packages = []
+[tool.setuptools.packages.find]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]

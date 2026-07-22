@@ -1,11 +1,3 @@
-numpy
-matplotlib
-tqdm
-python-dotenv
-pandas
-jupyter
-scipy
-statsmodels
-tomli
-seaborn
-plotly
+# Alternativa pip. As dependências são definidas no pyproject.toml.
+-e .[analysis]
+pytest>=9.1.1
