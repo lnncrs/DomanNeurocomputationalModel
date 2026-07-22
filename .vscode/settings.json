@@ -9,5 +9,13 @@
   "files.associations": {
     "*.proto": "webots-proto",
     "*.wbt": "webots-proto"
-  }
+  },
+  "python.analysis.extraPaths": [
+    ".",
+    "./src"
+  ],
+  "python.autoComplete.extraPaths": [
+    ".",
+    "./src"
+  ]
 }
