@@ -95,7 +95,11 @@ class ExperimentMonitor:
 
         if self.goal is not None:
             goal_x, goal_y, goal_z, width, length, height, dwell = self.goal
-            distance = math.hypot(position[0] - goal_x, position[1] - goal_y)
+            # Menor distância até o retângulo da meta, não até seu centro.
+            # Dentro de seus limites horizontais, a distância é zero.
+            distance_x = max(abs(position[0] - goal_x) - width / 2, 0.0)
+            distance_y = max(abs(position[1] - goal_y) - length / 2, 0.0)
+            distance = math.hypot(distance_x, distance_y)
             if self.previous_distance is not None:
                 elapsed = TIME_STEP / 1000.0
                 progress_speed = (self.previous_distance - distance) / elapsed
