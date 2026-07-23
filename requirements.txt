@@ -1,3 +1,3 @@
-# Alternativa pip. As dependências são definidas no pyproject.toml.
+# Alternativa pip, as dependências estão definidas no pyproject.toml
 -e .[analysis]
 pytest>=9.1.1
