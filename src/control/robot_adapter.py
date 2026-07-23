@@ -32,7 +32,9 @@ class MotorActionMapper:
         rear = self.speed * self.rear_clockwise_sign
         commands = {
             MotorAction.FRONT_CLOCKWISE: FourWheelCommand(front, front, 0.0, 0.0),
-            MotorAction.FRONT_COUNTERCLOCKWISE: FourWheelCommand(-front, -front, 0.0, 0.0),
+            MotorAction.FRONT_COUNTERCLOCKWISE: FourWheelCommand(
+                -front, -front, 0.0, 0.0
+            ),
             MotorAction.REAR_CLOCKWISE: FourWheelCommand(0.0, 0.0, rear, rear),
             MotorAction.REAR_COUNTERCLOCKWISE: FourWheelCommand(0.0, 0.0, -rear, -rear),
         }

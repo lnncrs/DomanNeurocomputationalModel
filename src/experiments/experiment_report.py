@@ -10,7 +10,6 @@ from pathlib import Path
 from statistics import median
 from typing import Iterable, Sequence
 
-
 ACTION_NAMES = (
     "FRONT_CLOCKWISE",
     "FRONT_COUNTERCLOCKWISE",
@@ -161,7 +160,9 @@ def _network_diagram(rows: Sequence[dict]) -> tuple[str, str]:
             if source == target:
                 continue
             delta = final[target][source] - initial[target][source]
-            candidates.append((abs(delta), final[target][source], source, target, delta))
+            candidates.append(
+                (abs(delta), final[target][source], source, target, delta)
+            )
     changed = [item for item in candidates if item[0] > 1e-10]
     selected = changed[:]
     for item in sorted(candidates, key=lambda value: value[1], reverse=True):
@@ -186,7 +187,7 @@ def _network_diagram(rows: Sequence[dict]) -> tuple[str, str]:
         edges.append(
             f'<path d="M {sx:.1f} {sy:.1f} Q {mx:.1f} {my:.1f} {ex:.1f} {ey:.1f}" '
             f'class="{edge_class}" style="stroke-width:{1 + 4 * min(abs(weight), 1):.2f}" marker-end="url(#arrow)">'
-            f'<title>{SHORT_ACTION_NAMES[source]} → {SHORT_ACTION_NAMES[target]}: peso {weight:.4f}, Δ {delta:+.4f}</title></path>'
+            f"<title>{SHORT_ACTION_NAMES[source]} → {SHORT_ACTION_NAMES[target]}: peso {weight:.4f}, Δ {delta:+.4f}</title></path>"
             f'<text x="{label_x:.1f}" y="{label_y:.1f}" text-anchor="middle" class="edge-label">{weight:.3f}</text>'
         )
 
@@ -199,7 +200,7 @@ def _network_diagram(rows: Sequence[dict]) -> tuple[str, str]:
             f'<text y="5" text-anchor="middle">{SHORT_ACTION_NAMES[index]}</text>'
             f'<text y="24" text-anchor="middle">wins {wins[index]} · shift {shifts[index]:.3f}</text>'
             f'<text y="41" text-anchor="middle">self {final[index][index]:.3f}</text>'
-            f'</g>'
+            f"</g>"
         )
 
     diagram = f"""
@@ -222,7 +223,9 @@ def _network_diagram(rows: Sequence[dict]) -> tuple[str, str]:
             cells.append(
                 f'<td class="num"><strong>{final[target][source]:.4f}</strong><br><span class="muted">Δ {delta:+.4f}</span></td>'
             )
-        body.append(f"<tr><th>{escape(SHORT_ACTION_NAMES[target])}</th>{''.join(cells)}</tr>")
+        body.append(
+            f"<tr><th>{escape(SHORT_ACTION_NAMES[target])}</th>{''.join(cells)}</tr>"
+        )
     matrix = f"""
     <section>
       <h2>Matriz final de pesos</h2>
@@ -236,7 +239,10 @@ def _longest_run(rows: Sequence[dict]) -> tuple[int, int, int, int]:
     best_action = best_start = best_end = best_length = 0
     start = 0
     for index in range(1, len(rows) + 1):
-        if index == len(rows) or rows[index]["previous_action"] != rows[start]["previous_action"]:
+        if (
+            index == len(rows)
+            or rows[index]["previous_action"] != rows[start]["previous_action"]
+        ):
             length = index - start
             if length > best_length:
                 best_action = int(rows[start]["previous_action"])
@@ -267,7 +273,11 @@ def _analysis(rows: Sequence[dict], summary: dict) -> tuple[dict, list[str]]:
     first_criterion = learning.get("firstDownwardCriterionIteration")
     if first_criterion is None:
         first_criterion = next(
-            (row["iteration"] for row in rows if row["learning"].get("downward_criterion_reached")),
+            (
+                row["iteration"]
+                for row in rows
+                if row["learning"].get("downward_criterion_reached")
+            ),
             None,
         )
     metrics = {
@@ -315,7 +325,9 @@ def generate_experiment_report(run_directory: str | Path) -> Path:
         raise ValueError("cannot generate a report without iterations")
 
     metrics, notes = _analysis(rows, summary)
-    runtime = metadata.get("runtimeConfig", metadata.get("config", {}).get("runtime", {}))
+    runtime = metadata.get(
+        "runtimeConfig", metadata.get("config", {}).get("runtime", {})
+    )
     action_duration = float(runtime.get("action_duration_seconds", 0.5))
     cumulative = []
     total = 0.0
@@ -344,7 +356,7 @@ def generate_experiment_report(run_directory: str | Path) -> Path:
             else 0.0
         )
         action_rows.append(
-            f"<tr><th>{escape(ACTION_NAMES[action])}</th><td class=\"num\">{len(selected)}</td>"
+            f'<tr><th>{escape(ACTION_NAMES[action])}</th><td class="num">{len(selected)}</td>'
             f"<td class=\"num\">{counts['DOWN']}</td><td class=\"num\">{counts['STATIONARY']}</td>"
             f"<td class=\"num\">{counts['UP']}</td><td class=\"num\">{mean_displacement:.6f}</td></tr>"
         )
@@ -357,7 +369,9 @@ def generate_experiment_report(run_directory: str | Path) -> Path:
         ("Intensidade da maraca", runtime.get("sound_intensity", "—")),
         ("Escala da aceleração", runtime.get("acceleration_scale", "—")),
     ):
-        config_rows.append(f"<tr><th>{escape(label)}</th><td>{escape(str(value))}</td></tr>")
+        config_rows.append(
+            f"<tr><th>{escape(label)}</th><td>{escape(str(value))}</td></tr>"
+        )
 
     report = f"""<!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -389,4 +403,3 @@ def generate_experiment_report(run_directory: str | Path) -> Path:
     destination = directory / "report.html"
     destination.write_text(report, encoding="utf-8", newline="\n")
     return destination
-

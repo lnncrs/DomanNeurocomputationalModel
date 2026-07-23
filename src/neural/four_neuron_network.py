@@ -14,7 +14,6 @@ import math
 import random
 from typing import Sequence
 
-
 NEURON_COUNT = 4
 
 
@@ -202,11 +201,13 @@ class FourNeuronNetwork:
         self._rng.seed(self.config.random_seed)
         self._weights = [
             [
-                self.config.recurrent_weight
-                if i == j
-                else self._rng.uniform(
-                    self.config.initial_weight_min,
-                    self.config.initial_weight_max,
+                (
+                    self.config.recurrent_weight
+                    if i == j
+                    else self._rng.uniform(
+                        self.config.initial_weight_min,
+                        self.config.initial_weight_max,
+                    )
                 )
                 for j in range(NEURON_COUNT)
             ]
@@ -238,9 +239,7 @@ class FourNeuronNetwork:
             for i in range(NEURON_COUNT)
         )
         raw_output = tuple(
-            sigmoid_output(
-                activation[i], self._shifts[i], self.config.sigmoid_gain
-            )
+            sigmoid_output(activation[i], self._shifts[i], self.config.sigmoid_gain)
             for i in range(NEURON_COUNT)
         )
         winner = self._select_winner(raw_output)
