@@ -7,7 +7,6 @@ para a futura inclusão de controle manual por joystick.
 
 from controller import Robot
 
-
 TIME_STEP = 64
 FORWARD_SPEED = 10.0
 TURN_LEFT_SPEED = 1.0
@@ -22,9 +21,7 @@ WHEEL_NAMES = ("wheel1", "wheel2", "wheel3", "wheel4")
 def main() -> None:
     robot = Robot()
 
-    distance_sensors = [
-        robot.getDevice(name) for name in DISTANCE_SENSOR_NAMES
-    ]
+    distance_sensors = [robot.getDevice(name) for name in DISTANCE_SENSOR_NAMES]
     for sensor in distance_sensors:
         sensor.enable(TIME_STEP)
 

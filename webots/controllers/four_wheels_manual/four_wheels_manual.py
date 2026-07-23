@@ -18,7 +18,6 @@ from learning_runtime import (
     PROJECT_ROOT,
 )
 
-
 TIME_STEP = 64
 MAX_SPEED = 10.0
 TURN_LEFT_SPEED = 1.0
@@ -26,11 +25,16 @@ TURN_RIGHT_SPEED = -1.0
 PROXIMITY_THRESHOLD = 950.0
 AVOIDANCE_STEPS = 100
 DPAD_AXIS_THRESHOLD = 16000
-PASSIVE_REALISTIC_TORQUE = 0.03 # N·m por roda
+PASSIVE_REALISTIC_TORQUE = 0.03  # N·m por roda
 
 DISTANCE_SENSOR_NAMES = ("ds_left", "ds_right")
 PROXIMITY_SENSOR_NAMES = (
-    "ds_left", "ds_right", "ps_front", "ps_back", "ps_left", "ps_right"
+    "ds_left",
+    "ds_right",
+    "ps_front",
+    "ps_back",
+    "ps_left",
+    "ps_right",
 )
 WHEEL_NAMES = ("wheel1", "wheel2", "wheel3", "wheel4")
 PLANE_ANGLE_TOLERANCE_DEG = 2.0
@@ -44,6 +48,7 @@ BUTTON_A = 8
 BUTTON_B = 9
 BUTTON_X = 10
 BUTTON_Y = 11
+
 
 class ControlMode(Enum):
     AUTOMATIC = auto()
@@ -60,7 +65,9 @@ def parse_goal_argument(arguments: list[str]):
     for argument in arguments:
         if argument.startswith(prefix):
             try:
-                values = tuple(float(value) for value in argument[len(prefix):].split(","))
+                values = tuple(
+                    float(value) for value in argument[len(prefix) :].split(",")
+                )
             except ValueError:
                 print(f"Invalid goal parameters: {argument}")
                 return None
@@ -75,7 +82,7 @@ def parse_float_argument(arguments: list[str], name: str, default: float) -> flo
     for argument in arguments:
         if argument.startswith(prefix):
             try:
-                return float(argument[len(prefix):])
+                return float(argument[len(prefix) :])
             except ValueError:
                 print(f"Invalid value for {prefix}: {argument}")
                 return default
@@ -147,7 +154,9 @@ class ExperimentMonitor:
             self.previous_distance = distance
 
         commanded = max(abs(motor_command[0]), abs(motor_command[1])) > 1e-6
-        maraca = commanded and progress_speed > MOTION_SPEED_THRESHOLD and not self.reached
+        maraca = (
+            commanded and progress_speed > MOTION_SPEED_THRESHOLD and not self.reached
+        )
         self.previous_position = tuple(position)
         return {
             "terrain": terrain,
@@ -237,15 +246,20 @@ def send_control_state(robot, joystick, mode, pressed_buttons) -> None:
 
 
 def send_telemetry(
-    robot, proximity_sensors, wheels, accelerometer, gyro, gps, compass,
-    experiment_state
+    robot,
+    proximity_sensors,
+    wheels,
+    accelerometer,
+    gyro,
+    gps,
+    compass,
+    experiment_state,
 ) -> None:
     message = {
         "type": "telemetry",
         "time": robot.getTime(),
         "distance": {
-            name: sensor.getValue()
-            for name, sensor in proximity_sensors.items()
+            name: sensor.getValue() for name, sensor in proximity_sensors.items()
         },
         "motors": [wheel.getVelocity() for wheel in wheels],
         "accelerometer": list(accelerometer.getValues()),
@@ -294,9 +308,7 @@ def print_mode(mode: ControlMode) -> None:
 def main() -> None:
     robot = Robot()
 
-    proximity_sensors = {
-        name: robot.getDevice(name) for name in PROXIMITY_SENSOR_NAMES
-    }
+    proximity_sensors = {name: robot.getDevice(name) for name in PROXIMITY_SENSOR_NAMES}
     for sensor in proximity_sensors.values():
         sensor.enable(TIME_STEP)
     distance_sensors = [proximity_sensors[name] for name in DISTANCE_SENSOR_NAMES]
@@ -385,8 +397,7 @@ def main() -> None:
             ]
             print(f"Joystick axes: {axis_values}")
             pov_values = [
-                joystick.getPovValue(pov)
-                for pov in range(joystick.getNumberOfPovs())
+                joystick.getPovValue(pov) for pov in range(joystick.getNumberOfPovs())
             ]
             print(f"Joystick POVs: {pov_values}")
 

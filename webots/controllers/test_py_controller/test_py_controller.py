@@ -50,7 +50,7 @@ if motor is None:
     print("Motor não encontrado")
     exit()
 
-motor.setPosition(float('inf'))
+motor.setPosition(float("inf"))
 motor.setVelocity(10)
 
 while robot.step(timestep) != -1:

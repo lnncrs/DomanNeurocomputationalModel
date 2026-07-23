@@ -12,7 +12,6 @@ from pathlib import Path
 import math
 import sys
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
@@ -30,7 +29,6 @@ from src.neural import (  # noqa: E402
     SensoryInput,
     SensoryNormalization,
 )
-
 
 STOPPED_WHEELS = (0.0, 0.0, 0.0, 0.0)
 
@@ -261,9 +259,7 @@ class LearningRuntime:
                 else None
             ),
             "maximumSameDirectionCount": (
-                last.learning.maximum_same_direction_count
-                if last is not None
-                else 0
+                last.learning.maximum_same_direction_count if last is not None else 0
             ),
             "maximumDownwardCount": (
                 last.learning.maximum_downward_count if last is not None else 0
