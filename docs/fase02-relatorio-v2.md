@@ -1,3 +1,12 @@
+<!--
+Documento de trabalho da Fase 2.
+Base histórica: docs/fase01-relatorio.md.
+O conteúdo está sendo revisado incrementalmente e permanece sujeito às tags editoriais.
+-->
+
+<!--
+> **Documento de trabalho da Fase 2:** Este arquivo foi criado como cópia integral de `docs/fase01-relatorio.md` para permitir uma revisão incremental e rastreável. As seções marcadas como `[preservar]` já foram revistas, as demais ainda podem conter descrições, próximos passos e conclusões obsoletas.
+-->
 
 ## [atualizar] Atualização de entrega da Fase 2
 
@@ -111,6 +120,10 @@ Imagem: Tela de acompanhamento da telemetria do robo
 Os planos inclinados e normais devem ser revisados para garantir que estao sendo usados os artefatos mais recentes e mesma perspectiva, plano com boxes precisa ser renomeado para melhor entendimento
 -->
 
+<!--
+Os ensaios exploratórios já demonstram o funcionamento do fluxo completo, enquanto a avaliação do aprendizado e do comportamento emergente será realizada posteriormente por meio de uma série de experimentos controlados.
+-->
+
 ## [preservar] Objetivo do Projeto
 
 Os objetivos centrais do experimento original são:
@@ -189,6 +202,32 @@ O modelo não pretende reproduzir toda a complexidade de um sistema neural biol�
 
 > **Nota:** Numa primeira visita a aula *Modelagem de redes bioinspiradas. Prof. Javier Ropero Peláez (UFABC)* disponível em: https://www.youtube.com/watch?v=j9ElSxpLWzw acredito que este modelo pode ser considerado fenomenológico (porque não modelamos detalhadamente canais ionicos, potenciais, membranas etc) e frequencial pela característica de *taxa de disparo* usada
 
+<!-- ! TODO
+duvida se esta exata a sessao seguinte inclinado a omitir na fase 2 do relatorio e retornar com ela na fase 3
+-->
+
+<!--
+### [esclarecer] Resumo das diferenças
+
+Em comparação com redes neurais convencionalmente treinadas, o modelo apresenta:
+
+- quatro neurônios excitadores totalmente interconectados;
+
+- conexões recorrentes fixas e conexões não diagonais plásticas;
+
+- função de ativação sigmoidal com deslocamento adaptável;
+
+- plasticidade sináptica e intrínseca;
+
+- competição entre os neurônios;
+
+- adaptação contínua durante a interação com o ambiente;
+
+- ausência de retropropagação de erro e de dados rotulados.
+
+Esse conjunto de características permite observar diretamente como o estado da rede se modifica durante o experimento e como sequências de atividade neural se relacionam com as ações motoras executadas.
+-->
+
 ### [preservar] Mapeamento motor
 
 O fluxo geral do sistema é:
@@ -208,10 +247,7 @@ ação anterior
 → próxima iteração
 ```
 
-<mark>
 No robô virtual, cada roda possui um motor independente. Para preservar a organização funcional do experimento original, o adaptador do modo `LEARNING` agrupa esses motores em conjuntos frontal e traseiro. Cada neurônio corresponde assim a uma primitiva motora e a competição mantém apenas um neurônio ativo por iteração, o modelo neural conhece apenas as ações abstratas e a conversão para os quatro motores do robô é feita por um adaptador.
-</mark>
-<br/><br/>
 
 <!--
 | Neurônio | Ação abstrata | Comando no robô virtual |
@@ -237,11 +273,11 @@ Imagem: *Closeup* no robo onde se vêem os dois eixos frontal / traseiro em pers
 
 > **Nota sobre a implementação atual:** O retorno de **aceleração** é calculado a partir da variação da aceleração longitudinal medida durante cada janela motora. O retorno do estímulo sonoro da **maraca** é produzido sinteticamente quando existe redução da distância até a área retangular da meta e ela é suficiente para que o movimento seja classificado como descendente. Portanto, a implementação atual não utiliza um par físico de microfone e alto-falante e o canal visual de detecção de listras permanece não implementado nesta etapa. Esses mecanismos serão detalhados nas seções de funções, equações e protocolo experimental.
 
-> **Nota histórica:** Nas primeiras versões da simulação, o mapeamento `neuronios → movimento` foi interpretado incorretamente como uma configuração diferencial entre os lados esquerdo e direito. A releitura do artigo levou à correção do modo `LEARNING` para a organização `neuronios → movimento` para os eixos frontal/traseiro em sentido horário e anti-horário. Os modos manual de controle `MANUAL` e automático anti colisão `AUTOMATIC` continuam utilizando controle diferencial e não foram afetados por essa mudança.
+> **Nota histórica:** Nas primeiras versões da simulação, o mapeamento `neuronios → movimento` foi interpretado como uma configuração diferencial entre os lados esquerdo e direito. A releitura do artigo levou à correção do modo `LEARNING` para a organização `neuronios → movimento` para os eixos frontal/traseiro em sentido horário e anti-horário. Os modos manual de controle `MANUAL` e automático anti colisão `AUTOMATIC` continuam utilizando controle diferencial e não foram afetados por essa mudança.
 
 ### [preservar] Sensoriamento
 
-O Robo usado como base é do tutorial do Webots preservado em `webots\tutorials\4_wheels_robot.wbt`, ele foi adaptado e ganhou 4 sensores de proximidade externos adicionais em cada direção, teve mantido os sensores de proximidade frontais diagonais originais e recebeu os seguintes sensores adicionais não visíveis:
+O Robo usado como base é o do tutorial do Webots preservado em `webots\tutorials\4_wheels_robot.wbt`, ele foi adaptado e ganhou 4 sensores de proximidade externos adicionais em cada direção, teve mantido os sensores de proximidade frontais diagonais originais e recebeu os seguintes sensores adicionais não visíveis:
 
 - Acelerômetro
 - Giroscópio
@@ -251,6 +287,88 @@ O Robo usado como base é do tutorial do Webots preservado em `webots\tutorials\
 ![experiment with robot](../assets/robot_sensors.png)
 
 Imagem: *Closeup* no robo onde se vêem os sensores de proximidade originais e adicionais (somente estes são visíveis)
+
+<!--
+## [atualizar] Arquitetura detalhada da rede
+-->
+
+<!-- ! todo
+paragrafo seguinte nao conecta com o texto, talvez uma introducao simples
+-->
+
+<!--
+A implementação mantém separadas a arquitetura descrita no artigo e as hipóteses necessárias para torná-la executável. A rede não depende do Webots: ela recebe três valores sensoriais e devolve uma das quatro ações motoras abstratas.
+-->
+
+<!-- ! todo
+incluir referencia ao arquivo principal e classe da implementacao neuronal
+-->
+
+<!-- ! todo
+esse trecho seguinte em parte esta redundante com a explicacao em tabela anterior, talvez remontar os paragrafos seguintes
+-->
+
+<!--
+### [atualizar] Topologia e conectividade
+
+A rede possui quatro neurônios excitatórios do tipo *rate-code*, totalmente
+interconectados. A matriz `W[i][j]` representa a conexão do neurônio `j` para o
+neurônio `i`. As quatro conexões diagonais são recorrentes e permanecem fixas
+em `0,7`; as doze conexões não diagonais são plásticas.
+
+A mesma soma sensorial chega aos quatro neurônios. A diferença entre suas
+ativações surge do estado recorrente, dos pesos e dos deslocamentos individuais
+das funções sigmoidais. Após o cálculo das saídas, uma competição mantém ativo
+somente o neurônio vencedor.
+-->
+
+<!--
+### [atualizar] Mapeamento neural-motor
+
+Cada neurônio corresponde a uma primitiva motora,o modelo neural conhece apenas as ações abstratas e a conversão para os quatro motores do robô é feita
+por um adaptador.
+
+| Neurônio | Ação abstrata | Comando no robô virtual |
+|---|---|---|
+| N1 | conjunto frontal, horário | rodas 1 e 2 com velocidade positiva |
+| N2 | conjunto frontal, anti-horário | rodas 1 e 2 com velocidade negativa |
+| N3 | conjunto traseiro, horário | rodas 3 e 4 com velocidade positiva |
+| N4 | conjunto traseiro, anti-horário | rodas 3 e 4 com velocidade negativa |
+
+Tabela 4: Tradução das açoes abstratas em primitivas motoras
+-->
+
+<!-- ! todo
+incluir referencia do codigo onde é feita a tradução acao -> primitiva
+-->
+
+<!-- ! todo
+escolhe como? criterio? e esse trecho nao duplica a explicacao inicial sobre a ordem de etapas?
+-->
+
+<!--
+### [atualizar] Ordem temporal e fluxo causal
+
+Uma iteração representa a consequência de uma ação já selecionada. No início, a rede recebe entradas nulas e escolhe a primeira ação. Em seguida, cada ciclo obedece à ordem:
+
+
+```text
+ação anterior
+-> movimento mantido durante uma janela temporal
+-> deslocamento e aceleração observados
+-> classificação do movimento
+-> produção dos estímulos sensoriais
+-> ativação e competição neural
+-> plasticidade sináptica e intrínseca
+-> seleção da próxima ação
+```
+
+Essa ordem impede que a maraca influencie a ação que a produziu: o som gerado por uma descida alimenta somente a decisão neural seguinte.
+-->
+
+<!-- ! todo
+incluir como esse "impede" é implementado no codigo
+-->
 
 ## [preservar] Metodologia
 
@@ -264,43 +382,49 @@ A reconstrução do experimento envolve componentes interdependentes:
 - o controle motor;
 - a rede neural.
 
-Alterações nestes elementos podem modificar o comportamento observado e, consequentemente, dificultar a identificação da origem de falhas. No experimento original, a estrutura robótica foi construída com *LEGO Mindstorms NXT*, enquanto a rede neural e os comandos sensório-motores foram implementados em *MATLAB* por meio da *RWTH Mindstorms NXT Toolbox*. A reprodução direta dessa estrutura em uma nova plataforma física exigiria que problemas mecânicos, eletrônicos, sensoriais e computacionais fossem tratados simultaneamente.
+Alterações em qualquer um desses elementos podem modificar o comportamento observado e, consequentemente, dificultar a identificação da origem de eventuais falhas.
+
+No experimento original, a estrutura robótica foi construída com *LEGO Mindstorms NXT*, enquanto a rede neural e os comandos sensório-motores foram implementados em *MATLAB* por meio da *RWTH Mindstorms NXT Toolbox*.
+
+A reprodução direta dessa estrutura em uma nova plataforma física exigiria que problemas mecânicos, eletrônicos, sensoriais e computacionais fossem tratados simultaneamente.
 
 ### [preservar] Estratégia incremental de construção e validação
 
-Para reduzir a chance de falha não identificada ou não rastreável, foi adotada uma estratégia incremental em camadas. Cada componente é construído e validado de forma isolada e, posteriormente, integrado aos demais. Essa abordagem permite distinguir problemas relacionados ao ambiente, à física, ao robô, ao controle e ao modelo neural.
+Para reduzir essa complexidade, foi adotada uma estratégia incremental em camadas. Cada componente é inicialmente construído e validado de forma isolada e, posteriormente, integrado aos demais. Essa abordagem permite distinguir problemas relacionados ao ambiente, à física, ao robô, ao controle e ao modelo neural.
 
 A simulação foi utilizada como ambiente inicial de desenvolvimento porque permite:
 
 - controlar as condições experimentais;
+
 - repetir ensaios sob configurações equivalentes;
+
 - observar diretamente posições, velocidades, acelerações e comandos motores;
+
 - testar componentes isoladamente;
+
 - reduzir o custo de alterações mecânicas;
+
 - registrar de forma sistemática as variáveis de cada execução.
 
 A construção de um robô físico foi mantida como uma etapa posterior à validação do comportamento no ambiente simulado. O núcleo neural e o protocolo experimental foram separados da interface do simulador para favorecer sua reutilização futura.
 
 > **Nota:** Por mais que a estrutura em camadas favoreça o reuso de código, uma implementação física ainda exigirá um adaptador específico para os sensores, motores, unidades de medida e restrições temporais da plataforma escolhida.
 
-<mark>
-Para evitar confusão com as fases de entrega e documentação do projeto, os cinco blocos de desenvolvimento são tratados neste relatório como etapas técnicas de implementação.
-<mark/>
-<br/><br/>
+Para evitar confusão com as fases de entrega e documentação do projeto, os cinco blocos de desenvolvimento são tratados neste relatório como **etapas técnicas de implementação**.
 
 | Etapa | Escopo | Estado ao final da Fase 2 |
 |---|---|---|
 | 1 - Ambiente | Construção dos planos inclinado e horizontal e validação de sua geometria | concluída |
 | 2 - Física | Testes de gravidade, colisão, contato com a rampa e comportamento de sólidos | concluída |
 | 3 - Robô | Modelagem do corpo, das rodas, dos motores, das juntas e dos sensores | concluída |
-| 4 - Controle e instrumentação | Implementação dos modos de controle `MANUAL` e `AUTOMATIC`, telemetria e aquisição das variáveis experimentais | concluída |
-| 5 - Integração neural | Implementação da rede inicial de quatro neurônios e integração ao modo `LEARNING` | integração concluída validação pendente |
+| 4 - Controle e instrumentação | Implementação dos modos de controle `MANUAL` e `AUTO`, telemetria e aquisição das variáveis experimentais | concluída |
+| 5 - Integração neural | Implementação da rede de quatro neurônios, protocolo temporal e integração ao modo `LEARNING` | integração concluída; validação científica pendente |
 
 Tabela 3: Completude técnica do projeto
 
-> **Nota:** Na etapa técnica 4, foi necessário implementar dois modos adicionais de controle não previstos: `PASSIVE_FREE` e `PASSIVE_REALISTIC`. No primeiro, o torque disponível dos motores é desativado, deixando as rodas livres. No segundo, o torque disponível é limitado a 0,03 N·m por roda, representando uma pequena resistência dos motores. Esses modos foram imprescindíveis para testar o deslizamento e a influência da gravidade sobre o robô nos planos inclinados.
+> **Nota:** Na etapa técnica 4, foi necessário implementar dois modos adicionais de controle não previstos: `PASSIVE_FREE` e `PASSIVE_REALISTIC`. No primeiro, o torque disponível dos motores é desativado, deixando as rodas livres. No segundo, o torque disponível é limitado a 0,03 N·m por roda, representando uma pequena resistência dos motores. Esses modos foram utilizados para testar o deslizamento e a influência da gravidade sobre o robô nos planos inclinados.
 
-A conclusão de uma etapa técnica indica que seus componentes essenciais estão implementados e funcionalmente integrados.
+A conclusão de uma etapa técnica indica que seus componentes essenciais estão implementados e funcionalmente integrados. Isso não significa, por si só, que todas as hipóteses científicas associadas tenham sido validadas. Em particular, a integração neural permite executar o experimento completo, mas a atribuição do comportamento observado à plasticidade exige ensaios controlados e comparações com condições de referência.
 
 ### [preservar] Simulação de mundo
 
@@ -313,9 +437,13 @@ Para a simulação, foi realizada uma pesquisa na qual foram considerados dois a
 Os principais motivos para a escolha do Webots foram:
 
 - modelagem integrada de sensores, motores e atuadores;
+
 - suporte a controladores em Python, C e C++;
+
 - simulação da interação entre corpos, juntas e superfícies;
+
 - biblioteca de mundos e componentes reutilizáveis;
+
 - proximidade conceitual com uma futura implementação física.
 
 Um ponto importante do Webots é permitir o desenvolvimento inicial dos controladores em Python, oferecendo maior flexibilidade para a implementação e validação do modelo neural. A plataforma também suporta controladores em C e C++, o que amplia as possibilidades de integração com outras plataformas e de futuras adaptações para hardware físico.
@@ -332,7 +460,9 @@ A biblioteca de mundos, objetos e exemplos disponibilizada pelo Webots parcialme
 
 **O projeto foi desenvolvido com ferramentas abertas e organizado para favorecer a reprodução dos experimentos.**
 
-O Webots é utilizado para a simulação física, enquanto Python implementa a rede neural, a integração com o controlador e a geração dos artefatos de cada execução. As dependências de sistema como o *gcc* e o *make* tão bem como dependências Python estão integralmente mapeadas no apêndice.
+O Webots é utilizado para a simulação física, enquanto Python implementa a rede neural, o protocolo experimental, a integração com o controlador e a geração dos artefatos de cada execução.
+
+As dependências de sistema como o *gcc* e o *make* tão bem como dependências Python estão integralmente mapeadas no apêndice.
 
 Uma listagem preliminar do *software* utilizado é a que segue:
 
@@ -354,152 +484,49 @@ Uma listagem preliminar do *software* utilizado é a que segue:
 
 ### [preservar] Estado do projeto ao final da Fase 2
 
-<mark>
-Ao final da Fase 2, o ambiente físico, o robô, a instrumentação e a primeira rede neural encontram-se integrados no modo `LEARNING`. <!--Cada ação neural é mantida durante uma janela temporal, após a qual o deslocamento e a aceleração são agregados. O movimento é então classificado, a maraca é produzida quando ocorre descida e os estímulos resultantes alimentam o passo neural seguinte.-->
-<mark>
-<br/><br/>
+**Ao final da Fase 2, o ambiente físico, o robô, a instrumentação e a rede neural encontram-se integrados no modo `LEARNING`.** Cada ação neural é mantida durante uma janela temporal, após a qual o deslocamento e a aceleração são agregados. O movimento é então classificado, a maraca é produzida quando ocorre descida e os estímulos resultantes alimentam o passo neural seguinte.
 
-<mark>
-A rede neural executa um deslocamento que é classificado se "desceu ou não" em direção a meta, e caso positivo, a "maraca virtual" é ativada e combinada ao estimulo do acelerômetro alimentam o passo neural seguinte.
-<mark>
-<br/><br/>
-
-<mark>
-O fluxo experimental completo já produz telemetria, registros por iteração, metadados, resumos e relatórios HTML. Os testes automatizados validam os componentes de software, e as execuções exploratórias demonstram que o robô consegue completar o percurso. Esses resultados confirmam a integração do sistema somente, ainda não é possivel atribuir o comportamento observado (de f ato o carrinho aprende a descer) à plasticidade neural, diversas rodadas experimentais para validar a rede e suas equações são necessárias.
-<mark>
-<br/><br/>
+O fluxo experimental completo já produz telemetria, registros por iteração, metadados, resumos e relatórios HTML. Os testes automatizados validam os componentes de software, e as execuções exploratórias demonstram que o robô consegue completar o percurso. Esses resultados confirmam a integração do sistema, mas ainda não permitem atribuir o comportamento observado à plasticidade neural.
 
 Uma lista com *features* chave do projeto funcionais nesta fase é a que segue:
 
-- Mapas webots foram criados em separado dos artefatos de robo, que por sua vez tem sensoriamento embarcado independente do mapa, isso pode permitir reutilizacao do robo e da rede gerada em diferentes mapas, e no futuro medição da robustez do treinamento, treinando num mapa e testando no outro;
-- Area de meta criada em verde para facil identificacao (essa cor é usada só na meta), desacoplada e parametrizada para facilitar o reuso em difrentes mapas;
-- Robo com suporte a diferentes modos e controle incluindo modo manual por *joystick*;
-- Variaveis de simulacao e experimento identificadas;
+- Mapas webots criados em separado dos artefatos de robo para permitir reutilizacao com exemplares planos e inclinados
+
+- Area de meta criada em verde para facil identificacao e parametrizada para reuso
+
+- Instrumentacao embarcada do robo criada acoplada ao robo e independente do mapa
+
+- Controle do robo independente e parametrizavel
+
+- Todas as variaveis de simulacao e experimento identificadas e parametrizaveis centralmente para facilitar alteracao
+
 - Tela interativa de acompanhamento da simulacao com telemetria e dados de treinamento em tempo real;
+
+- Controle manual baseado em joystic para exploracao livre do mapa;
+
 - Geração de metadados e logs do experimento em JSONL acompanhados de um relatório HTML com detalhes da rede gerada;
 
-> **Nota:** Existe duplicidade na entrega do parâmetro da meta e do controlador, os dois tem de receber a localização da meta, será removida no futuro
-
-> **Nota:** As variáveis e parâmetros do experimento estão mapeadas mas não centralizadas, elas serão centralizadas e completamente desacopladas (possivelmente em locais distintos) no futuro
-
-### [preservar] Execução de uma simulação
-
-<mark>
-A seguir é descrito como iniciar uma simulação e interagir com o ambiente.
-<mark/>
-<br/><br/>
-
-> **Nota:** É necessário montar o ambiente de desenvolvimento como descrito no apendice *Guia de reprodução* antes de iniciar a simulação
-
-Após validar o ambiente de simulação:
-
-1. Conecte o controle compatível.
-
-2. Inicie o Webots a partir do terminal associado ao ambiente Python configurado para a simulação.
-
-![experiment with robot](../assets/webots.png)
-
-Imagem: Icone do webots na bandeja do sistema
-
-3. Abra o mundo `webots/worlds/experiment_inclined_plane.wbt`.
-
-4. Inicie ou reinicie a simulação no botão "play".
-
-5. Abra a janela de telemetria do experimento clicando com o botão direito do mouse sobre o item "InclinedFourWheelRobot" e depois em "Show Robot Window"
-
-![experiment with robot](../assets/telemetry_open.png)
-
-Imagem: Localização do comando de abertura da janela de telemetria
-
-6. Observe a abertura de uma janela no browser como esta:
-
-![experiment with robot](../assets/telemetry_control.png)
-
-Imagem: Topo da janela de telemetria
-
-> **Nota:** O mundo integrado inicia em `PASSIVE_REALISTIC`, conforme seus `controllerArgs` portanto, apenas iniciar a simulação não ativa automaticamente o aprendizado. Na implementação atual, a seleção de `LEARNING` é feita pelo controle.
-
-6. Pressione o botão do modo desejado no controle (exemplo: **A** para `AUTOMATIC`, **B** para `MANUAL`, **Y** para `LEARNING`).
-
-![experiment with robot](../assets/robot_control.png)
-
-Imagem: Diagrama do mapeamento dos botões para o *joystick* modelo Xbox One S
-
-> **Nota:** A matriz de mapeamento é aberta para adaptar outros controles e existe retorno dos botoes pressionados no console do Webots o que facilita portar para outros controles, será adicionado suporte a teclado no futuro
-
-8. Acompanhe no console e na telemetria a ação selecionada, estado do experimento, sensores de proximidade, motores e sensores internos.
-
-![experiment with robot](../assets/telemetry_experiment.png)
-
-Imagem: Sessão da telemetria correspondente ao estado do experimento
-
-9. Somente no modo `LEARNING`: Cada simulação de aprendizagem gera um diretório dentro de `experiments/runs`:
-
-```text
-experiments/runs/learning_{timestamp_UTC}_{seed}/
-```
-
-Esse diretório contém:
-
-- `metadata.json`, com a configuração neural, experimental e de runtime;
-
-- `iterations.jsonl`, com um registro estruturado para cada iteração;
-
-- `summary.json`, com o resultado consolidado da execução;
-
-- `report.html`, com a visualização derivada dos registros.
-
-Os arquivos de uma rodada devem permanecer juntos, pois o relatório HTML e o resumo são derivados dos mesmos metadados e registros por iteração.
-
-![experiment with robot](../assets/report_summary.png)
-
-Imagem: Topo do relatório HTML gerado numa rodada
-
-![experiment with robot](../assets/report_neural.png)
-
-Imagem: Sessão do relatório com o esboço da rede gerada
-
-> Nota: Assim como a rede o relatório neste ponto do desenvolvimento é fornecido como funcionalidade em beta
-
-### [preservar] Mapeamento detalhado dos modos de controle
-
-| Modo | Acionamento no joystick | Descrição |
-|---|---|---|
-| `AUTOMATIC` | botão **A**, ao completar o ciclo dos modos passivos; ou botão **START**, ao sair da parada de emergência | Executa o controle automático de desvio de obstáculos. Utiliza os sensores de proximidade e controle diferencial das rodas. Também é o modo inicial quando nenhum modo é informado nos argumentos do controlador. |
-| `MANUAL` | botão **B** | Permite conduzir o robô manualmente pelo direcional digital (*D-pad*). Ao soltar o direcional, as rodas recebem velocidade zero. |
-| `PASSIVE_FREE` | botão **A**, a partir de `AUTOMATIC` | Desativa o torque disponível dos quatro motores, deixando as rodas livres para os testes de deslizamento e ação da gravidade. |
-| `PASSIVE_REALISTIC` | botão **A**, a partir de `PASSIVE_FREE` | Mantém as rodas sem comando de movimento, mas limita o torque disponível a `0,03 N·m` por roda, representando uma pequena resistência dos motores. |
-| `LEARNING` | botão **Y** | Ativa o protocolo experimental controlado pela rede neural. Cada neurônio vencedor seleciona uma das quatro primitivas motoras, enquanto sensores, estímulos, plasticidade e telemetria são atualizados a cada janela de ação. |
-| `EMERGENCY_STOP` | botão **X** | Interrompe imediatamente os comandos motores e mantém todas as velocidades em zero. Enquanto esse modo estiver ativo, os demais botões de seleção são ignorados. |
-
-Tabela: Modos de controle do robo
-
-O botão **A** percorre ciclicamente os modos:
-
-```text
-AUTOMATIC
-→ PASSIVE_FREE
-→ PASSIVE_REALISTIC
-→ AUTOMATIC
-```
+<!-- ! todo
+aqui entram duas imagens de um close no carrinho e da tela de treinamento lado a lado
+-->
 
 ## [preservar] Funções e equações
 
-<mark>
-O conjunto das funções utilizadas foi extraído prioritariamente do artigo original e quando não explícitas lá de adaptações. Para distinguir cada caso foi montada uma tabela:
-<mark/>
-<br/><br/>
+As funções utilizadas na reconstrução possuem origens diferentes. Algumas são
+apresentadas explicitamente no artigo original; outras foram necessárias para
+transformar sua descrição em um protocolo executável no ambiente simulado. Para
+distinguir esses casos, cada subseção apresenta a notação matemática, define
+seus símbolos, registra a origem da expressão e indica resumidamente sua
+implementação.
 
 | Função ou equação | Finalidade | Origem | Classificação |
 |---|---|---|---|
-| normalização e soma sensorial | transformar e combinar aceleração, visão e som | soma sensorial descrita no artigo; normalização explicitada na sesão específica | adaptação |
-| ativação, saída sigmoidal e competição | calcular a atividade e selecionar o neurônio vencedor | sigmoide correspondente à equação 3 do artigo; ativação e competição adaptadas | publicada e adaptada |
-| plasticidade sináptica | atualizar os pesos entre neurônios diferentes | equação 2 do artigo | publicada (em aberto escopo da atualização) |
-| plasticidade intrínseca | atualizar o deslocamento da função sigmoidal | equação 4 do artigo | publicada (em aberto a saída utilizada) |
-| distância, deslocamento e classificação | medir a aproximação à meta e classificar o movimento | não apresentada como equação no artigo | decisão geométrica simples |
-| aceleração, maraca e critérios | agregar o estímulo, produzir o estímulo e registrar aprendizagem | critério descrito no artigo; agregação e critério adicional adaptados | publicada e adaptada |
-
-> **Nota:** Com uma implementação inicial das equações definidas, a complexidade de adaptá-las é consideravelmente menor
+| normalização e soma sensorial | transformar e combinar aceleração, visão e som | soma sensorial descrita no artigo; normalização explicitada na reconstrução | adaptação operacional |
+| ativação, saída sigmoidal e competição | calcular a atividade e selecionar o neurônio vencedor | sigmoide correspondente à equação 3 do artigo; ativação e competição completadas pela reconstrução | publicada e adaptada |
+| plasticidade sináptica | atualizar os pesos entre neurônios diferentes | equação 2 do artigo | publicada, com hipótese sobre o escopo da atualização |
+| plasticidade intrínseca | atualizar o deslocamento da função sigmoidal | equação 4 do artigo | publicada, com hipótese sobre a saída utilizada |
+| distância, deslocamento e classificação | medir a aproximação à meta e classificar o movimento | não apresentada como equação no artigo | decisão geométrica e operacional |
+| aceleração, maraca e critérios | agregar o estímulo vestibular, produzir o estímulo sonoro e registrar aprendizagem | critério principal descrito no artigo; agregação e critério adicional definidos na reconstrução | publicada e adaptada |
 
 ### [preservar] Normalização e soma sensorial
 
@@ -927,7 +954,9 @@ Onde:
 - $\left|\,\right|$: valor absoluto, que considera a magnitude da diferença
   sem preservar seu sinal.
 
-> **Esta equação quer dizer:** Compare cada leitura longitudinal com uma referência, desconsidere o sinal dessas diferenças e calcule sua média durante a janela motora.
+> **Esta equação quer dizer:** Compare cada leitura longitudinal com uma
+> referência, desconsidere o sinal dessas diferenças e calcule sua média
+> durante a janela motora.
 
 Na configuração atual:
 
@@ -939,9 +968,12 @@ Na configuração atual:
 - uma janela parcial também é finalizada e registrada quando o robô entra na
   meta.
 
-<!--
-> **Ponto a revisar:** O valor $a_{x,0}$ é capturado ao entrar no modo `LEARNING` e não é reiniciado no começo de cada nova janela motora. Portanto, a implementação atual mede a diferença em relação ao início da execução ou retomada do aprendizado, e não em relação ao início de cada ação. Caso a intenção experimental seja medir a variação dentro de cada ação, o runtime deverá atualizar essa referência ao abrir cada janela.
--->
+> **Ponto a revisar:** O valor $a_{x,0}$ é capturado ao entrar no modo
+> `LEARNING` e não é reiniciado no começo de cada nova janela motora. Portanto,
+> a implementação atual mede a diferença em relação ao início da execução ou
+> retomada do aprendizado, e não em relação ao início de cada ação. Caso a
+> intenção experimental seja medir a variação dentro de cada ação, o runtime
+> deverá atualizar essa referência ao abrir cada janela.
 
 Depois da conclusão da janela, o movimento é classificado. Quando a direção é
 `DOWN`, o protocolo produz o estímulo lógico da maraca:
@@ -997,7 +1029,7 @@ Onde:
   direção atual;
 - $n_{\mathrm{descida}}(t)$: quantidade de classificações `DOWN`
   consecutivas;
-- $\land$: operador lógico "e"; as duas condições precisam ser verdadeiras.
+- $\land$: operador lógico “e”; as duas condições precisam ser verdadeiras.
 
 > **Estas equações querem dizer:** O primeiro critério é alcançado após cinco
 > movimentos não estacionários consecutivos na mesma direção, seja subida ou
@@ -1501,6 +1533,37 @@ Os testes cobrem as equações e a plasticidade da rede, a causalidade do protoc
 - as mensagens do controlador aparecem no terminal;
 - o modo `LEARNING` pode ser selecionado;
 - uma execução produz os arquivos esperados em `experiments/runs`.
+
+#### [preservar] Execução da simulação integrada
+
+Após validar o ambiente:
+
+1. Inicie o Webots a partir do terminal associado ao ambiente Python.
+2. Abra o mundo `webots/worlds/experiment_inclined_plane.wbt`.
+3. Conecte o controle compatível com *joystick*, quando for utilizar a interface interativa atual.
+4. Inicie ou reinicie a simulação.
+5. Pressione o botão **Y** do mapeamento documentado para selecionar o modo `LEARNING`.
+6. Acompanhe no console e na interface a ação selecionada, o neurônio vencedor, a direção observada, a maraca e os critérios de aprendizagem.
+
+O mundo integrado inicia em `PASSIVE_REALISTIC`, conforme seus `controllerArgs`; portanto, apenas iniciar a simulação não ativa automaticamente o aprendizado. Na implementação atual, a seleção de `LEARNING` é feita pelo controle.
+
+Cada simulação de aprendizagem gera um diretório dentro de `experiments/runs`:
+
+```text
+experiments/runs/learning_{timestamp_UTC}_{seed}/
+```
+
+Esse diretório contém:
+
+- `metadata.json`, com a configuração neural, experimental e de runtime;
+
+- `iterations.jsonl`, com um registro estruturado para cada iteração;
+
+- `summary.json`, com o resultado consolidado da execução;
+
+- `report.html`, com a visualização derivada dos registros.
+
+Os arquivos de uma rodada devem permanecer juntos, pois o relatório HTML e o resumo são derivados dos mesmos metadados e registros por iteração.
 
 ### [preservar] Apêndice B - Estrutura do repositório
 
