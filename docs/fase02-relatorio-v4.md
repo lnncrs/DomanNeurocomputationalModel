@@ -1,11 +1,13 @@
 
-# [atualizar] Atualização de entrega da Fase 2
+## [atualizar] Atualização de entrega da Fase 2
 
 O relatório a seguir consolida a evolução do projeto na segunda entrega.
 
 A Fase 2 compreende a correção e parametrização do mundo inclinado, a definição lógica da área da meta (onde o experimento termina), a aquisição do estímulo da aceleração e a aquisição do estimulo da maraca, a implementação **inicial** da rede plástica de quatro neurônios com uma **primeira versão** das equações envolvidas e sua integração ao modo `LEARNING` da simulação, a telemetria experimental e a geração de artefatos a cada execução também fazem parte dessa entrega.
 
-No estado atual, a implementação de engenharia e o fluxo experimental estão concluídos mas as execuções realizadas neste ponto ainda têm caráter exploratório: demonstram o funcionamento do sistema mas não constituem um experimento controlado nem evidência suficiente para atribuir o comportamento observado à plasticidade neural.
+O objetivo de conectar a rede a simulação validou
+
+No estado atual, a implementação de engenharia e o fluxo experimental de ponta a ponta estão concluídos mas as execuções realizadas neste ponto têm caráter exploratório: demonstram o funcionamento do sistema mas não constituem um experimento controlado nem evidência suficiente para atribuir o comportamento observado à plasticidade neural.
 
 No entanto, a simulação implementada com um protocolo de experimento definido e posterior análise dos artefatos gerados podem sim ser a base para uma análise desse tipo.
 
@@ -104,6 +106,10 @@ Esta simulação conta também com controle motor, aquisição de telemetria det
 ![experiment with robot](../assets/experiment_telemetry.png)
 
 Imagem: Tela de acompanhamento da telemetria do robo
+
+<!-- ! TODO
+Os planos inclinados e normais devem ser revisados para garantir que estao sendo usados os artefatos mais recentes e mesma perspectiva, plano com boxes precisa ser renomeado para melhor entendimento
+-->
 
 ## [preservar] Objetivo do Projeto
 
@@ -207,6 +213,15 @@ No robô virtual, cada roda possui um motor independente. Para preservar a organ
 </mark>
 <br/><br/>
 
+<!--
+| Neurônio | Ação abstrata | Comando no robô virtual |
+|---|---|---|
+| N1 | conjunto frontal, horário | rodas 1 e 2 com velocidade positiva |
+| N2 | conjunto frontal, anti-horário | rodas 1 e 2 com velocidade negativa |
+| N3 | conjunto traseiro, horário | rodas 3 e 4 com velocidade positiva |
+| N4 | conjunto traseiro, anti-horário | rodas 3 e 4 com velocidade negativa |
+-->
+
 | Neurônio | Primitiva motora |
 |---|---|
 | N1 | conjunto frontal, sentido horário |
@@ -288,6 +303,10 @@ Tabela 3: Completude técnica do projeto
 A conclusão de uma etapa técnica indica que seus componentes essenciais estão implementados e funcionalmente integrados.
 
 ### [preservar] Simulação de mundo
+
+<!-- ! TODO
+Nomes de produtos como Webots, PyBullet e Jupyter, etc em paragrafos ou titulos que nao sejam em paths ou semalhante devem estar em italico
+-->
 
 Para a simulação, foi realizada uma pesquisa na qual foram considerados dois ambientes principais: *Webots* e *PyBullet*. O Webots foi escolhido por oferecer maior capacidade de representar motores, atuadores e sensores de maneira próxima a uma implementação física, dentro de um ambiente integrado de simulação. A plataforma também oferece suporte a controladores em Python, C e C++, além de uma biblioteca de mundos e componentes reutilizáveis.
 
@@ -538,6 +557,24 @@ Na configuração atual:
 - Todos os *offsets* são zero e todas as escalas são `1,0`.
 - O canal visual permanece desativado e recebe `0,0`.
 - O canal sonoro recebe `0,1` quando a iteração anterior é classificada como descendente e `0,0` nos demais casos.
+
+<!--
+**Origem e adaptação:** O artigo descreve aceleração, visão e som como entradas
+sensoriais comuns à rede, mas não especifica integralmente uma transformação de
+normalização para a reconstrução. A transformação linear torna explícitos o
+deslocamento e a escala de cada canal. A soma preserva a organização comum das
+entradas sensoriais descrita no modelo original.
+
+> **Hipótese operacional:** Com escalas unitárias, os canais são somados sem
+> uma calibração adicional de suas magnitudes. A adequação relativa dessas
+> escalas deverá ser avaliada nos ensaios formais.
+
+**Implementação:** `src/neural/four_neuron_network.py`, método
+`SensoryNormalization.normalize`. O valor total é armazenado em
+`NormalizedSensoryInput.total` e utilizado por `FourNeuronNetwork.step`. A
+escala da aceleração é encaminhada pelo runtime em
+`webots/controllers/four_wheels_manual/learning_runtime.py`.
+-->
 
 ### [preservar] Ativação, saída sigmoidal e competição
 
@@ -932,6 +969,10 @@ Na configuração atual:
 - uma janela parcial também é finalizada e registrada quando o robô entra na
   meta.
 
+<!--
+> **Ponto a revisar:** O valor $a_{x,0}$ é capturado ao entrar no modo `LEARNING` e não é reiniciado no começo de cada nova janela motora. Portanto, a implementação atual mede a diferença em relação ao início da execução ou retomada do aprendizado, e não em relação ao início de cada ação. Caso a intenção experimental seja medir a variação dentro de cada ação, o runtime deverá atualizar essa referência ao abrir cada janela.
+-->
+
 Depois da conclusão da janela, o movimento é classificado. Quando a direção é
 `DOWN`, o protocolo produz o estímulo lógico da maraca:
 
@@ -1088,9 +1129,143 @@ Gravidade, atrito e alguns parâmetros de contato permanecem herdados dos defaul
 | aceleração usada na rede | componente longitudinal do acelerômetro |
 | som usado na rede | estímulo lógico, sem microfone ou alto-falante |
 
+<!-- ! todo
+esta sessao abaixo esta potencialmente repetida
+-->
+
+<!--
+## [atualizar] Implementação e reprodutibilidade
+
+O código separa quatro responsabilidades principais:
+
+- `src/neural`: estado, competição e plasticidade da rede;
+
+- `src/experiments`: ordem causal, critérios, registro e relatório;
+
+- `src/control`: tradução das ações abstratas para comandos de rodas;
+
+- `webots\controllers\four_wheels_manual`: controlador Webots com aquisição dos sensores, controle motor, execução da janela de acompanhamento.
+
+Cada execução produz `metadata.json`, `iterations.jsonl`, `summary.json` e um relatório HTML `report.html`derivado na pasta `\experiments\runs\learning_{ISO UTC Timestamp}_{seed}\`.
+
+Os metadados registram as configurações neural,
+experimental, do runtime e da meta. A seed torna a inicialização reproduzível;
+-->
+
+<!-- ! todo
+a sessao abaixo sobre testes e como rodar potencialmente vai para os anexos
+-->
+
+<!--
+### [remover?] Testes automatizados
+
+A implementação possui testes automatizados distribuídos entre quatro conjuntos:
+
+- equações, inicialização, competição e plasticidade da rede;
+
+- causalidade, classificação do movimento, critérios e arquivos de execução;
+
+- mapeamento das quatro ações para os motores;
+
+- integração temporal, meta, telemetria e geração do relatório HTML.
+
+Esses testes verificam a consistência do software fora do Webots, mas não
+substituem a validação visual dos sentidos motores nem os ensaios científicos.
+
+O ambiente Python 3.13 é descrito pelo `pyproject.toml` e pelo `uv.lock`. O
+comando recomendado para instalar dependências e executar os testes é:
+
+```bash
+uv sync --all-groups --all-extras
+uv run pytest
+```
+-->
+
+<!--
+### [remover?] Ensaios exploratórios
+
+Há seis execuções exploratórias registradas, todas encerradas por chegada à
+meta. O número de iterações variou entre 43 e 129, e três execuções geraram o
+relatório HTML completo. Cinco registros já utilizam o esquema atual dos dois
+critérios de aprendizagem.
+
+Essas execuções foram realizadas enquanto a implementação ainda evoluía e não
+devem ser agregadas como repetições de um mesmo experimento. Elas demonstram o
+funcionamento do fluxo completo, mas não permitem atribuir a chegada à meta à
+plasticidade da rede.
+-->
+
+<!-- ! todo
+isso aqui vira uma explicacao de operacao do experimento
+incluir imagem do mapa
+incluir imagem da tela explicando cada grupo de controles
+incluir mapoeamento do joystic com cada botao e funcao
+incluir nota que a versao fase 3 tera mapeamento no teclado tambem
+-->
+
+<!--
+### [atualizar] Telas da interface e da telemetria
+
+Esta subseção deverá destacar a execução do modo `LEARNING`, incluindo o
+neurônio vencedor, a ação selecionada, a direção observada, o estado da maraca,
+os contadores dos critérios e a chegada à meta. Também deverá apresentar uma
+tela do relatório HTML produzido ao final da execução.
+-->
+
+<!-- ! todo
+incluir imagem de uma execucao
+incluir video no youtube (url) de uma execucao
+-->
+
+<!--
+### [remover?] Execuções de exemplo
+
+Serão selecionados vídeos curtos que mostrem as quatro primitivas motoras, uma execução completa no plano inclinado e a correspondência entre movimento, telemetria e estímulo sonoro. Os vídeos deverão informar a versão do código e a
+configuração utilizada.
+-->
+
+<!-- ! todo
+isso aqui vira uma sessao de limitacoes e proximos passos
+-->
+
+<!--
+## [remover?] Limitações e hipóteses operacionais
+
+Na configuração atual, a rede utiliza a aceleração longitudinal e o estímulo
+sonoro produzido logicamente após movimentos descendentes. O canal visual
+permanece desativado e recebe valor zero. A normalização da aceleração e os
+parâmetros temporais ainda deverão ser calibrados antes dos ensaios formais.
+
+A meta possui permanência nominal de `0,5 s` em sua configuração, mas o runtime
+de aprendizagem encerra a execução assim que o robô entra na região. Esse
+comportamento deverá ser mantido como decisão explícita ou alinhado ao tempo de
+permanência antes da campanha experimental.
+
+A implementação foi validada no ambiente simulado. Uma futura plataforma
+física exigirá um adaptador próprio para sensores, motores, unidades de medida
+e restrições temporais.
+-->
+
+<!-- ! todo
+ressaltar que a fase 3 permitira executar um batch de experimentos com variacoes de parametros para permitir comparar alteracoes de variaveis a plasticidade gerada
+-->
+
+<!--
+## [remover?] Protocolo dos ensaios formais
+
+Antes da campanha experimental, deverão ser congelados os parâmetros, a versão
+do código e as condições de execução. Os ensaios deverão incluir repetições com
+seeds registradas e condições de referência capazes de separar o efeito da
+plasticidade do deslocamento produzido pela física da rampa.
+-->
+
 ## [atualizar] Conclusão
 
 A Fase 2 inicia uma etapa importante no projeto: O mundo inclinado, o robô, os sensores, os modos de controle, a primeira versão da rede neural plástica de quatro neurônios e o protocolo de aprendizagem agora operam em conjunto no modo `LEARNING`.
+
+<!--
+A separação entre mundo, física, robô, interface de controle e rede neural permitiu validar cada parte antes da integração, e de fato reduziu a complexidade da investigação de falhas e facilitou manter componentes que podem ser reutilizados e configurações experimentais.
+-->
 
 Durante uma simulação, a rede seleciona as ações motoras, o deslocamento do robô é observado e classificado, e os estímulos de aceleração e maraca retornam como entrada para a iteração seguinte. Ao mesmo tempo, a simulação registra os parâmetros utilizados, o estado da rede, os neurônios vencedores, as ações executadas e os critérios de aprendizagem. Esses dados são preservados em artefatos estruturados e em um relatório HTML, tornando possível acompanhar o experimento e posteriormente comparar diferentes execuções.
 
@@ -1517,6 +1692,32 @@ O diretório `tests` reproduz a mesma divisão funcional do código:
 | `test_learning_runtime.py` | integração temporal, telemetria, meta e funcionamento do runtime usado pelo Webots |
 
 > **Nota:** Esses testes validam o comportamento computacional somente.
+
+<!--
+#### [avaliar] Relação entre os componentes
+
+O caminho principal de uma execução integrada pode ser resumido da seguinte forma:
+
+```text
+webots/worlds/experiment_inclined_plane.wbt
+        |
+        v
+webots/protos/InclinedFourWheelRobot.proto
+        |
+        v
+webots/controllers/four_wheels_manual/four_wheels_manual.py
+        |
+        v
+webots/controllers/four_wheels_manual/learning_runtime.py
+        |
+        +-> src/neural/four_neuron_network.py
+        +-> src/control/robot_adapter.py
+        `-> src/experiments/
+                    |
+                    v
+        experiments/runs/learning_{timestamp}_{seed}/
+```
+-->
 
 ### [preservar] Apêndice C - Evolução histórica da simulação
 
