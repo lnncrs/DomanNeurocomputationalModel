@@ -13,7 +13,7 @@ O experimento e a simulação até este ponto foram criados com reprodutibilidad
 
 Como o relatório ficou extenso mesmo após repetidas remoções de conteúdo, e uma boa parte dele foi somente modificada do relatório 1, tomei a liberdade de marcar trechos com informação realmente nova ou de especial interesse para a entrega da `Fase 2` com <mark>MARCADOR DE TEXTO</mark>. Uma leitura rápida do relatório pode ser feita apenas com a leitura dos trechos marcados.
 
-![logotipo-ufabc-extenso](../assets/logotipo-ufabc-extenso.png)
+![logotipo-ufabc-extenso](assets/logotipo-ufabc-extenso.png)
 
 # Modelo neurocomputacional de reorganização motora
 
@@ -43,12 +43,14 @@ Resumo. Este trabalho tem como objetivo a reprodução computacional e robótica
   - Execução de uma simulação
   - Mapeamento detalhado dos modos de controle
 - Funções e equações
+  <!--
   - Normalização e soma sensorial
   - Ativação, saída sigmoidal e competição
   - Plasticidade sináptica
   - Plasticidade intrínseca
   - Distância, deslocamento e classificação do movimento
   - Aceleração, maraca e critérios de aprendizagem
+  -->
 - Parâmetros experimentais
   - Parâmetros da rede neural
   - Parâmetros do protocolo de aprendizagem
@@ -101,7 +103,7 @@ Foram criados ambientes de simulação do Webots versionados em `webots\worlds`,
 </mark>
 <br/><br/>
 
-![experiment with robot](../assets/experiment.png)
+![experiment with robot](assets/experiment.png)
 
 Imagem: Simulador pronto para o experimento
 
@@ -110,7 +112,7 @@ Esta simulação conta também com tela de acompanhamento do experimento com tel
 </mark>
 <br/><br/>
 
-![experiment with robot](../assets/experiment_telemetry.png)
+![experiment with robot](assets/experiment_telemetry.png)
 
 Imagem: Tela de acompanhamento da telemetria do robô
 
@@ -227,7 +229,7 @@ No robô virtual, cada roda possui um motor independente. Para preservar a organ
 
 Tabela: Tradução das ações abstratas em primitivas motoras
 
-![experiment with robot](../assets/robot_axes.png)
+![experiment with robot](assets/robot_axes.png)
 
 Imagem: *Closeup* no robô onde se vêem os dois eixos frontal / traseiro em perspectiva
 
@@ -247,7 +249,7 @@ O robô usado como base é do tutorial do Webots preservado em `webots\tutorials
 - GPS
 - Bússola
 
-![experiment with robot](../assets/robot_sensors.png)
+![experiment with robot](assets/robot_sensors.png)
 
 Imagem: *Closeup* no robô onde se vêem os sensores de proximidade originais e adicionais (somente estes são visíveis)
 
@@ -320,7 +322,7 @@ A implementação foi organizada de forma que o modelo neural e o protocolo expe
 </mark>
 <br/><br/>
 
-![experiment with robot](../assets/normal_plane.png)
+![experiment with robot](assets/normal_plane.png)
 
 Imagem: Plano *half-size* não inclinado utilizado em testes
 
@@ -475,7 +477,7 @@ Os controles iniciais do Webots em C, C++ e Python igualmente tiveram de ser ada
 
 Já na Fase 2, as mesmas ferramentas assistivas foram capazes de fazer ajustes finos nestes elementos, como por exemplo unir superficies levemente desniveladas, adicionar sensores e alterar parâmetros de física, acredito que o contexto gerado pelos arquivos Webots e Proto válidos no repositório fez com que a assistência de IA fosse capaz de fazer estes ajustes não possíveis para ela na Fase 1.
 
-![experiment with robot](../assets/experiment_llm.png)
+![experiment with robot](assets/experiment_llm.png)
 
 Imagem: Exemplo de ajuste fino na simulação que antes era impossível para a LLM, deixado deliberadamente incompleto na simulação para ser usado aqui como exemplo
 
@@ -497,7 +499,7 @@ Após validar o ambiente de simulação:
 
 2. Inicie o Webots a partir do terminal associado ao ambiente Python configurado para a simulação.
 
-![experiment with robot](../assets/webots.png)
+![experiment with robot](assets/webots.png)
 
 Imagem: Icone do webots na bandeja do sistema
 
@@ -507,13 +509,13 @@ Imagem: Icone do webots na bandeja do sistema
 
 5. Abra a janela de telemetria do experimento clicando com o botão direito do mouse sobre o item "InclinedFourWheelRobot" e depois em "Show Robot Window"
 
-![experiment with robot](../assets/telemetry_open.png)
+![experiment with robot](assets/telemetry_open.png)
 
 Imagem: Localização do comando de abertura da janela de telemetria
 
 6. Observe a abertura de uma janela no browser como esta:
 
-![experiment with robot](../assets/telemetry_control.png)
+![experiment with robot](assets/telemetry_control.png)
 
 Imagem: Topo da janela de telemetria
 
@@ -521,7 +523,7 @@ Imagem: Topo da janela de telemetria
 
 6. Pressione o botão do modo desejado no controle (exemplo: **A** para `AUTOMATIC`, **B** para `MANUAL`, **Y** para `LEARNING`).
 
-![experiment with robot](../assets/robot_control.png)
+![experiment with robot](assets/robot_control.png)
 
 Imagem: Diagrama do mapeamento dos botões para o *joystick* modelo Xbox One S
 
@@ -529,7 +531,7 @@ Imagem: Diagrama do mapeamento dos botões para o *joystick* modelo Xbox One S
 
 8. Acompanhe no console e na telemetria a ação selecionada, estado do experimento, sensores de proximidade, motores e sensores internos.
 
-![experiment with robot](../assets/telemetry_experiment.png)
+![experiment with robot](assets/telemetry_experiment.png)
 
 Imagem: Sessão da telemetria correspondente ao estado do experimento
 
@@ -552,11 +554,11 @@ Esse diretório contém:
 Os arquivos de uma rodada devem permanecer juntos, pois o relatório HTML e o resumo são derivados dos mesmos metadados e registros por iteração.
 
 
-![experiment with robot](../assets/report_summary.png)
+![experiment with robot](assets/report_summary.png)
 
 Imagem: Topo do relatório HTML gerado numa rodada
 
-![experiment with robot](../assets/report_neural.png)
+![experiment with robot](assets/report_neural.png)
 
 Imagem: Sessão do relatório com o esboço da rede gerada
 
@@ -1669,7 +1671,7 @@ O primeiro desafio foi reproduzir física com parâmetros de mundo terrestre com
 
 inclined_plane: https://youtu.be/qvbR1wQidVg
 
-![inclined plane](../assets/inclined_plane.png)
+![inclined plane](assets/inclined_plane.png)
 
 Imagem: inclined_plane
 
@@ -1684,7 +1686,7 @@ inclined_plane_with_robot: https://youtu.be/1YhcI6GHoAs
 
 inclined_plane_with_robot_1: https://youtu.be/zjciixsm578
 
-![inclined plane with robot](../assets/inclined_plane_with_robot.png)
+![inclined plane with robot](assets/inclined_plane_with_robot.png)
 
 Imagem: inclined_plane_with_robot
 
@@ -1696,7 +1698,7 @@ Por fim era necessário conseguir que uma interface de controle baseada em códi
 
 normal_plane_with_rotation: https://youtu.be/ZKbbiObtkQ8
 
-![normal plane with rotation](../assets/normal_plane_with_rotation.png)
+![normal plane with rotation](assets/normal_plane_with_rotation.png)
 
 Imagem: normal_plane_with_rotation
 
