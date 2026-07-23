@@ -1380,80 +1380,88 @@ O repositório separa o modelo neural, o protocolo experimental e a adaptação 
 
 ```text
 DomanNeurocomputationalModel/
-|-- README.md
-|-- pyproject.toml
-|-- uv.lock
-|-- requirements.txt
-|-- environment.yml
-|-- .python-version
-|
-|-- src/
-|   |-- neural/
-|   |   `-- four_neuron_network.py
-|   |-- control/
-|   |   `-- robot_adapter.py
-|   `-- experiments/
-|       |-- experiment_runner.py
-|       |-- experiment_logger.py
-|       `-- experiment_report.py
-|
-|-- tests/
-|   |-- test_four_neuron_network.py
-|   |-- test_robot_adapter.py
-|   |-- test_experiment_runner.py
-|   `-- test_learning_runtime.py
-|
-|-- webots/
-|   |-- worlds/
-|   |   |-- experiment_inclined_plane.wbt
-|   |   |-- inclined_plane_fs.wbt
-|   |   |-- inclined_plane_fs_balls.wbt
-|   |   |-- inclined_plane_fs_robot.wbt
-|   |   |-- inclined_plane_hs.wbt
-|   |   |-- inclined_plane_hs_robot.wbt
-|   |   |-- normal_plane_fs.wbt
-|   |   |-- normal_plane_fs_boxes.wbt
-|   |   |-- normal_plane_fs_robot.wbt
-|   |   |-- normal_plane_hs.wbt
-|   |   `-- normal_plane_hs_robot.wbt
-|   |-- protos/
-|   |   |-- CompactInclinedPlane.proto
-|   |   |-- CompactInclinedPlaneExperiment.proto
-|   |   |-- FourWheelRobot.proto
-|   |   |-- InclinedFourWheelRobot.proto
-|   |   |-- GoalArea.proto
-|   |   |-- SimpleRobot.proto
-|   |   |-- differential/
-|   |   `-- physics/
-|   |-- controllers/
-|   |   |-- four_wheels_manual/
-|   |   |   |-- four_wheels_manual.py
-|   |   |   `-- learning_runtime.py
-|   |   |-- four_wheels_collision_avoidance/
-|   |   |-- four_wheels_collision_avoidance_py/
-|   |   `-- outros controladores de referência e validação/
-|   |-- plugins/
-|   |   `-- robot_windows/
-|   |       |-- four_wheel_robot_window/
-|   |       `-- custom_robot_window/
-|   `-- tutorials/
-|
-|-- experiments/ [gerado durante o experimento]
+|-- assets/                                     # imagens utilizadas na documentação
+|-- docs/                                       # relatórios e artigo de referência
+|   |-- fase01-relatorio.md
+|   `-- fase02-relatorio.md
+|-- examples/                                   # exemplo mínimo de uso
+|   `-- four_neuron_minimal.py
+|-- experiments/                                # resultados gerados durante as simulações
 |   `-- runs/
 |       `-- learning_{timestamp}_{seed}/
-|           |-- metadata.json
 |           |-- iterations.jsonl
-|           |-- summary.json
-|           `-- report.html
-|
-|-- notebooks/
+|           |-- metadata.json
+|           |-- report.html
+|           `-- summary.json
+|-- notebooks/                                  # execução não conectada da rede
 |   `-- four_neuron_network_validation.ipynb
-|-- examples/
-|   `-- four_neuron_minimal.py
-|-- docs/
-|   |-- fase01-relatorio.md
-|   |-- fase02-relatorio.md
-`-- assets/
+|-- src/                                        # rede e controle
+|   |-- control/
+|   |   `-- robot_adapter.py
+|   |-- experiments/
+|   |   |-- experiment_logger.py
+|   |   |-- experiment_report.py
+|   |   `-- experiment_runner.py
+|   `-- neural/
+|       `-- four_neuron_network.py
+|-- tests/                                       # testes unitários
+|   |-- test_experiment_runner.py
+|   |-- test_four_neuron_network.py
+|   |-- test_learning_runtime.py
+|   `-- test_robot_adapter.py
+|-- webots/                  # mundos, robôs, controladores e interfaces do simulador
+|   |-- controllers/
+|   |   |-- test_cpp_controller/                 # controle mínimo em C++ (Fase 1)
+|   |   |-- test_py_controller/                  # controle mínimo em Python (Fase 1)
+|   |   |-- four_wheels_collision_avoidance/     # controle de colisão em C (Fase 1)
+|   |   |-- four_wheels_collision_avoidance_py/  # controle de colisão em Python (Fase 1)
+|   |   |-- four_wheels_manual/           # controle do experimento em Python (Fase 2)
+|   |   |   |-- four_wheels_manual.py     # controle multimodo
+|   |   |   `-- learning_runtime.py       # ponte Webots -> aprendizagem
+|   |   `-- [...]            # outros controladores usados como referência do Webots
+|   |-- plugins/             # plugins para funcionamento da janela de telemetria
+|   |   `-- robot_windows/
+|   |       |-- custom_robot_window/      # plugin original Webots
+|   |       `-- four_wheel_robot_window/  # plugin adaptado
+|   |-- protos/
+|   |   |-- differential/                 # testes históricos com controle diferencial
+|   |   |-- physics/                      # testes históricos com física ativa
+|   |   |-- CompactInclinedPlane.proto    # plano inclinado principal do experimento
+|   |   |-- CompactInclinedPlaneExperiment.proto # plano inclinado + robo instrumentado
+|   |   |-- FourWheelRobot.proto                 # robo de quatro rodas e instrumentação embarcada
+|   |   |-- GoalArea.proto                # meta ajustável
+|   |   |-- InclinedFourWheelRobot.proto  # wrapper para que o robo seja inclinado junto com a rampa
+|   |   `-- SimpleRobot.proto             # robo derivado/desacoplado de `tutorials/4_wheels_robot.wbt` usado como base
+|   |-- tutorials/                        # tutoriais do Webots usados como base
+|   |   |-- 4_wheels_robot.wbt
+|   |   |-- appearance.wbt
+|   |   |-- collision_avoidance.wbt
+|   |   |-- compound_solid.wbt
+|   |   |-- custom_robot_window.wbt
+|   |   |-- four_wheels.wbt
+|   |   |-- hexapod.wbt
+|   |   |-- my_first_simulation.wbt
+|   |   `-- obstacles.wbt
+|   `-- worlds/                           # mundos criados para o experimento
+|       |-- empty_world.wbt               # mundo vazio usado como ponto de partida
+|       |-- experiment_inclined_plane.wbt # experimento principal da Fase 2, com rampa, robô, meta e aprendizagem
+|       |-- inclined_plane_fs.wbt         # plano inclinado em escala completa (full scale)
+|       |-- inclined_plane_fs_balls.wbt   # plano inclinado em escala completa com bolas para validar a física
+|       |-- inclined_plane_fs_robot.wbt   # plano inclinado em escala completa com robô
+|       |-- inclined_plane_hs.wbt         # plano inclinado em meia escala (half scale)
+|       |-- inclined_plane_hs_robot.wbt   # plano inclinado em meia escala com robô
+|       |-- normal_plane_fs.wbt           # plano horizontal em escala completa
+|       |-- normal_plane_fs_boxes.wbt     # plano horizontal em escala completa com caixas para validar a física
+|       |-- normal_plane_fs_robot.wbt     # plano horizontal em escala completa com robô
+|       |-- normal_plane_hs.wbt           # plano horizontal em meia escala
+|       `-- normal_plane_hs_robot.wbt     # plano horizontal em meia escala com robô
+|-- .gitignore
+|-- .python-version
+|-- environment.yml
+|-- pyproject.toml
+|-- README.md
+|-- requirements.txt
+`-- uv.lock
 ```
 
 > **Nota:** Arquivos de cache, ambientes virtuais, resultados temporários e configurações internas de ferramentas foram omitidos.
