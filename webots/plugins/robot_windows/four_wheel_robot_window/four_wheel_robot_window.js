@@ -1,93 +1,98 @@
-import RobotWindow from 'https://cyberbotics.com/wwi/R2025a/RobotWindow.js';
+import RobotWindow from "https://cyberbotics.com/wwi/R2025a/RobotWindow.js";
 
-const format = value => Number.isFinite(Number(value)) ? Number(value).toFixed(3) : '—';
+const format = (value) =>
+  Number.isFinite(Number(value)) ? Number(value).toFixed(3) : "—";
 
 function setText(id, value) {
   const element = document.getElementById(id);
-  if (element)
-    element.textContent = format(value);
+  if (element) element.textContent = format(value);
 }
 
 function renderVector(id, values) {
   const element = document.getElementById(id);
-  if (!element)
-    return;
-  const labels = ['X', 'Y', 'Z'];
-  element.innerHTML = values.map((value, index) =>
-    `<span>${labels[index]} <strong>${format(value)}</strong></span>`
-  ).join('');
+  if (!element) return;
+  const labels = ["X", "Y", "Z"];
+  element.innerHTML = values
+    .map(
+      (value, index) =>
+        `<span>${labels[index]} <strong>${format(value)}</strong></span>`,
+    )
+    .join("");
 }
 
 function renderExperiment(data) {
-  if (!data)
-    return;
-  document.getElementById('experiment-terrain').textContent = data.terrain;
-  document.getElementById('experiment-inclination').textContent = `${format(data.inclination)}°`;
-  document.getElementById('experiment-acceleration').textContent = `${format(data.longitudinalAcceleration)} m/s²`;
-  document.getElementById('experiment-direction').textContent = data.direction;
-  const goal = document.getElementById('experiment-goal');
+  if (!data) return;
+  document.getElementById("experiment-terrain").textContent = data.terrain;
+  document.getElementById("experiment-inclination").textContent =
+    `${format(data.inclination)}°`;
+  document.getElementById("experiment-acceleration").textContent =
+    `${format(data.longitudinalAcceleration)} m/s²`;
+  document.getElementById("experiment-direction").textContent = data.direction;
+  const goal = document.getElementById("experiment-goal");
   goal.textContent = data.goal;
-  goal.classList.toggle('inside', data.goal === 'DENTRO');
-  goal.classList.toggle('reached', data.goal === 'ALCANCADA');
+  goal.classList.toggle("inside", data.goal === "DENTRO");
+  goal.classList.toggle("reached", data.goal === "ALCANCADA");
 
-  const maraca = document.getElementById('experiment-maraca');
+  const maraca = document.getElementById("experiment-maraca");
   maraca.textContent = data.maraca;
-  maraca.classList.toggle('active', data.maraca === 'ATIVA');
+  maraca.classList.toggle("active", data.maraca === "ATIVA");
 }
 
 function render(data) {
-  Object.entries(data.distance).forEach(([name, value]) => setText(name, value));
+  Object.entries(data.distance).forEach(([name, value]) =>
+    setText(name, value),
+  );
   data.motors.forEach((value, index) => setText(`motor-${index}`, value));
-  renderVector('accelerometer', data.accelerometer);
-  renderVector('gyro', data.gyro);
-  renderVector('gps', data.gps);
-  renderVector('compass', data.compass);
+  renderVector("accelerometer", data.accelerometer);
+  renderVector("gyro", data.gyro);
+  renderVector("gps", data.gps);
+  renderVector("compass", data.compass);
   renderExperiment(data.experiment);
-  setText('simulation-time', data.time);
+  setText("simulation-time", data.time);
 
-  document.getElementById('connection-dot').classList.add('online');
-  document.getElementById('connection-text').textContent = 'Recebendo telemetria';
+  document.getElementById("connection-dot").classList.add("online");
+  document.getElementById("connection-text").textContent =
+    "Recebendo telemetria";
 
-  const button = document.getElementById('motor-toggle');
-  button.dataset.stopped = data.stopped ? 'true' : 'false';
-  button.textContent = data.stopped ? 'Liberar motores' : 'Parar motores';
-  button.classList.toggle('stopped', data.stopped);
+  const button = document.getElementById("motor-toggle");
+  button.dataset.stopped = data.stopped ? "true" : "false";
+  button.textContent = data.stopped ? "Liberar motores" : "Parar motores";
+  button.classList.toggle("stopped", data.stopped);
 }
 
 function renderControlState(data) {
-  const mode = document.getElementById('control-mode');
+  const mode = document.getElementById("control-mode");
   mode.textContent = data.mode;
-  mode.className = `mode ${data.mode.toLowerCase().replace('_', '-')}`;
+  mode.className = `mode ${data.mode.toLowerCase().replace("_", "-")}`;
 
   const joystick = data.joystick;
-  document.getElementById('joystick-model').textContent = joystick.connected
+  document.getElementById("joystick-model").textContent = joystick.connected
     ? `Conectado: ${joystick.model}`
-    : 'Controle não conectado';
-  document.getElementById('dpad-state').textContent = joystick.dpad;
-  document.getElementById('dpad-vertical').textContent = joystick.vertical;
-  document.getElementById('dpad-horizontal').textContent = joystick.horizontal;
-  document.getElementById('pressed-buttons').textContent = joystick.buttons.length
-    ? joystick.buttons.join(', ')
-    : '—';
+    : "Controle não conectado";
+  document.getElementById("dpad-state").textContent = joystick.dpad;
+  document.getElementById("dpad-vertical").textContent = joystick.vertical;
+  document.getElementById("dpad-horizontal").textContent = joystick.horizontal;
+  document.getElementById("pressed-buttons").textContent = joystick.buttons
+    .length
+    ? joystick.buttons.join(", ")
+    : "—";
 }
 
 window.onload = () => {
   window.robotWindow = new RobotWindow();
-  window.robotWindow.setTitle('Four Wheel Robot · Telemetria');
-  window.robotWindow.receive = message => {
+  window.robotWindow.setTitle("Four Wheel Robot · Telemetria");
+  window.robotWindow.receive = (message) => {
     try {
       const data = JSON.parse(message);
-      if (data.type === 'telemetry')
-        render(data);
-      else if (data.type === 'control_state')
-        renderControlState(data);
+      if (data.type === "telemetry") render(data);
+      else if (data.type === "control_state") renderControlState(data);
     } catch (error) {
-      console.error('Mensagem de telemetria inválida:', message, error);
+      console.error("Mensagem de telemetria inválida:", message, error);
     }
   };
 
-  document.getElementById('motor-toggle').addEventListener('click', event => {
-    const stopped = event.currentTarget.dataset.stopped === 'true';
-    window.robotWindow.send(stopped ? 'release motors' : 'stop motors');
+  document.getElementById("motor-toggle").addEventListener("click", (event) => {
+    const stopped = event.currentTarget.dataset.stopped === "true";
+    window.robotWindow.send(stopped ? "release motors" : "stop motors");
   });
 };

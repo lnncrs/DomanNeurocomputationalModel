@@ -1,102 +1,171 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <title>Four Wheel Robot</title>
-  <link rel="stylesheet" href="four_wheel_robot_window.css?v=20260722002036">
-</head>
-<body>
-  <header>
-    <div>
-      <h1>Four Wheel Robot</h1>
-      <p>Telemetria embarcada do robô</p>
-    </div>
-    <div class="connection"><span id="connection-dot"></span><span id="connection-text">Aguardando dados</span></div>
-  </header>
-
-  <main>
-    <section class="card control-status">
-      <div class="status-heading">
-        <div>
-          <h2>Estado do controle</h2>
-          <p id="joystick-model">Controle não conectado</p>
-        </div>
-        <strong id="control-mode" class="mode automatic">AUTOMATIC</strong>
-      </div>
-      <div class="control-grid">
-        <div class="metric"><span>D-pad</span><strong id="dpad-state">NEUTRAL</strong></div>
-        <div class="metric"><span>Eixo vertical</span><strong id="dpad-vertical">0</strong></div>
-        <div class="metric"><span>Eixo horizontal</span><strong id="dpad-horizontal">0</strong></div>
-        <div class="metric"><span>Botões pressionados</span><strong id="pressed-buttons">—</strong></div>
-      </div>
-      <div class="button-map">
-        <span><b>A</b> Auto → livre → realista</span>
-        <span><b>B</b> Manual</span>
-        <span><b>X</b> Parada completa</span>
-        <span><b>Y</b> Treinamento</span>
-        <span><b>START</b> Liberar emergência</span>
-      </div>
-    </section>
-
-    <section class="card controls">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Four Wheel Robot</title>
+    <link
+      rel="stylesheet"
+      href="four_wheel_robot_window.css?v=20260722002036"
+    />
+  </head>
+  <body>
+    <header>
       <div>
-        <h2>Controle de segurança</h2>
-        <p>Interrompe temporariamente os quatro motores.</p>
+        <h1>Four Wheel Robot</h1>
+        <p>Telemetria embarcada do robô</p>
       </div>
-      <button id="motor-toggle" type="button">Parar motores</button>
-    </section>
-
-    <section class="card experiment-status">
-      <h2>Estado do experimento</h2>
-      <div class="metric-grid experiment-grid">
-        <div class="metric"><span>Terreno</span><strong id="experiment-terrain">—</strong></div>
-        <div class="metric"><span>Inclinação</span><strong id="experiment-inclination">—</strong></div>
-        <div class="metric"><span>Aceleração longitudinal</span><strong id="experiment-acceleration">—</strong></div>
-        <div class="metric"><span>Direção</span><strong id="experiment-direction">—</strong></div>
-        <div class="metric"><span>Meta</span><strong id="experiment-goal">—</strong></div>
-        <div class="metric"><span>Maraca</span><strong id="experiment-maraca">—</strong></div>
+      <div class="connection">
+        <span id="connection-dot"></span
+        ><span id="connection-text">Aguardando dados</span>
       </div>
-    </section>
+    </header>
 
-    <section class="card">
-      <h2>Proximidade</h2>
-      <div class="robot-map">
-        <div class="sensor front"><span>Frente</span><strong id="ps_front">—</strong></div>
-        <div class="sensor diagonal-left"><span>Diagonal E</span><strong id="ds_left">—</strong></div>
-        <div class="sensor diagonal-right"><span>Diagonal D</span><strong id="ds_right">—</strong></div>
-        <div class="sensor side-left"><span>Esquerda</span><strong id="ps_left">—</strong></div>
-        <div class="robot-body">ROBÔ</div>
-        <div class="sensor side-right"><span>Direita</span><strong id="ps_right">—</strong></div>
-        <div class="sensor back"><span>Traseira</span><strong id="ps_back">—</strong></div>
-      </div>
-    </section>
+    <main>
+      <section class="card control-status">
+        <div class="status-heading">
+          <div>
+            <h2>Estado do controle</h2>
+            <p id="joystick-model">Controle não conectado</p>
+          </div>
+          <strong id="control-mode" class="mode automatic">AUTOMATIC</strong>
+        </div>
+        <div class="control-grid">
+          <div class="metric">
+            <span>D-pad</span><strong id="dpad-state">NEUTRAL</strong>
+          </div>
+          <div class="metric">
+            <span>Eixo vertical</span><strong id="dpad-vertical">0</strong>
+          </div>
+          <div class="metric">
+            <span>Eixo horizontal</span><strong id="dpad-horizontal">0</strong>
+          </div>
+          <div class="metric">
+            <span>Botões pressionados</span
+            ><strong id="pressed-buttons">—</strong>
+          </div>
+        </div>
+        <div class="button-map">
+          <span><b>A</b> Auto → livre → realista</span>
+          <span><b>B</b> Manual</span>
+          <span><b>X</b> Parada completa</span>
+          <span><b>Y</b> Treinamento</span>
+          <span><b>START</b> Liberar emergência</span>
+        </div>
+      </section>
 
-    <section class="card">
-      <h2>Motores</h2>
-      <div class="metric-grid four">
-        <div class="metric"><span>Wheel 1 · dianteira E</span><strong id="motor-0">—</strong></div>
-        <div class="metric"><span>Wheel 2 · dianteira D</span><strong id="motor-1">—</strong></div>
-        <div class="metric"><span>Wheel 3 · traseira E</span><strong id="motor-2">—</strong></div>
-        <div class="metric"><span>Wheel 4 · traseira D</span><strong id="motor-3">—</strong></div>
-      </div>
-    </section>
+      <section class="card controls">
+        <div>
+          <h2>Controle de segurança</h2>
+          <p>Interrompe temporariamente os quatro motores.</p>
+        </div>
+        <button id="motor-toggle" type="button">Parar motores</button>
+      </section>
 
-    <section class="card">
-      <h2>Movimento e orientação</h2>
-      <div class="telemetry-grid">
-        <div class="vector"><h3>Acelerômetro</h3><div id="accelerometer"></div></div>
-        <div class="vector"><h3>Giroscópio</h3><div id="gyro"></div></div>
-        <div class="vector"><h3>GPS</h3><div id="gps"></div></div>
-        <div class="vector"><h3>Bússola</h3><div id="compass"></div></div>
-      </div>
-    </section>
-  </main>
+      <section class="card experiment-status">
+        <h2>Estado do experimento</h2>
+        <div class="metric-grid experiment-grid">
+          <div class="metric">
+            <span>Terreno</span><strong id="experiment-terrain">—</strong>
+          </div>
+          <div class="metric">
+            <span>Inclinação</span
+            ><strong id="experiment-inclination">—</strong>
+          </div>
+          <div class="metric">
+            <span>Aceleração longitudinal</span
+            ><strong id="experiment-acceleration">—</strong>
+          </div>
+          <div class="metric">
+            <span>Direção</span><strong id="experiment-direction">—</strong>
+          </div>
+          <div class="metric">
+            <span>Meta</span><strong id="experiment-goal">—</strong>
+          </div>
+          <div class="metric">
+            <span>Maraca</span><strong id="experiment-maraca">—</strong>
+          </div>
+        </div>
+      </section>
 
-  <footer>Tempo de simulação: <strong id="simulation-time">—</strong> s</footer>
-  <script type="module" src="four_wheel_robot_window.js?v=20260722002036"></script>
-</body>
+      <section class="card">
+        <h2>Proximidade</h2>
+        <div class="robot-map">
+          <div class="sensor front">
+            <span>Frente</span><strong id="ps_front">—</strong>
+          </div>
+          <div class="sensor diagonal-left">
+            <span>Diagonal E</span><strong id="ds_left">—</strong>
+          </div>
+          <div class="sensor diagonal-right">
+            <span>Diagonal D</span><strong id="ds_right">—</strong>
+          </div>
+          <div class="sensor side-left">
+            <span>Esquerda</span><strong id="ps_left">—</strong>
+          </div>
+          <div class="robot-body">ROBÔ</div>
+          <div class="sensor side-right">
+            <span>Direita</span><strong id="ps_right">—</strong>
+          </div>
+          <div class="sensor back">
+            <span>Traseira</span><strong id="ps_back">—</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Motores</h2>
+        <div class="metric-grid four">
+          <div class="metric">
+            <span>Wheel 1 · dianteira E</span><strong id="motor-0">—</strong>
+          </div>
+          <div class="metric">
+            <span>Wheel 2 · dianteira D</span><strong id="motor-1">—</strong>
+          </div>
+          <div class="metric">
+            <span>Wheel 3 · traseira E</span><strong id="motor-2">—</strong>
+          </div>
+          <div class="metric">
+            <span>Wheel 4 · traseira D</span><strong id="motor-3">—</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Movimento e orientação</h2>
+        <div class="telemetry-grid">
+          <div class="vector">
+            <h3>Acelerômetro</h3>
+            <div id="accelerometer"></div>
+          </div>
+          <div class="vector">
+            <h3>Giroscópio</h3>
+            <div id="gyro"></div>
+          </div>
+          <div class="vector">
+            <h3>GPS</h3>
+            <div id="gps"></div>
+          </div>
+          <div class="vector">
+            <h3>Bússola</h3>
+            <div id="compass"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Tempo de simulação: <strong id="simulation-time">—</strong> s
+    </footer>
+    <script
+      type="module"
+      src="four_wheel_robot_window.js?v=20260722002036"
+    ></script>
+  </body>
 </html>
