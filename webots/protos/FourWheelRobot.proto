@@ -230,9 +230,7 @@ PROTO FourWheelRobot [
         type "infra-red"
       }
 
-      # Instrumentação embarcada para telemetria experimental. A presença dos
-      # dispositivos no PROTO não os habilita nem os expõe automaticamente à
-      # futura rede neural.
+      # Instrumentação embarcada para telemetria experimental abaixo
       Accelerometer {
         name "accelerometer"
       }

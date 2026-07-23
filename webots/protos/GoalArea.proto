@@ -30,6 +30,6 @@ PROTO GoalArea [
       %< } >%
     ]
     name IS name
-    # Intentionally no boundingObject: the goal is a visual/logical region only.
+    # Intencionalmente nao tem boundingObject: a meta e apenas uma regiao visual/logica.
   }
 }

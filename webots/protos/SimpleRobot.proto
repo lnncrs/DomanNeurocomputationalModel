@@ -160,6 +160,7 @@ Robot {
   controller "four_wheels_collision_avoidance"
 }
 }
+# Instância legada usada em testes
 # SimpleRobot {
 #   translation 0 -2.5 2.5
 #   rotation 0 0 1 1.5
