@@ -1,8 +1,6 @@
-"""Controller multimodo do FourWheelRobot.
+"""Controller multimodo do FourWheelRobot
 
-O modo automático reproduz o controller C de anti-colisão. Quando um
-joystick está conectado, os botões selecionam controle manual, automático,
-aprendizado (reservado) ou parada de emergência.
+Este controlador permite alternar entre os modos de controle automático, manual, passivo e de aprendizado.
 """
 
 from enum import Enum, auto
@@ -28,6 +26,7 @@ DPAD_AXIS_THRESHOLD = 16000
 PASSIVE_REALISTIC_TORQUE = 0.03  # N·m por roda
 
 DISTANCE_SENSOR_NAMES = ("ds_left", "ds_right")
+
 PROXIMITY_SENSOR_NAMES = (
     "ds_left",
     "ds_right",
@@ -36,12 +35,18 @@ PROXIMITY_SENSOR_NAMES = (
     "ps_left",
     "ps_right",
 )
+
 WHEEL_NAMES = ("wheel1", "wheel2", "wheel3", "wheel4")
+
+# TODO estas variaveis precisam ser centralizadas e servidas via configuração
+
 PLANE_ANGLE_TOLERANCE_DEG = 2.0
+
 MOTION_SPEED_THRESHOLD = 0.005
 
-# Mapeamento observado no controle "Controller (Xbox One For Windows)"
-# conectado via USB. O console continua imprimindo os índices para diagnóstico.
+# Mapeamento observado no controle "Xbox One For Windows" conectado via USB.
+# Edite aqui se estiver usando outro modelo de joystick, pois os índices podem variar.
+# O console continua imprimindo os índices para diagnóstico.
 BUTTON_LB = 4
 BUTTON_START = 0
 BUTTON_A = 8
@@ -147,16 +152,18 @@ class ExperimentMonitor:
                     self.inside_since = time
                 if time - self.inside_since >= dwell:
                     self.reached = True
-                goal_state = "ALCANCADA" if self.reached else "DENTRO"
+                goal_state = "ALCANCADA" if self.reached else "DENTRO" # O "Ç" gera erros. não alterar por enquanto
             else:
                 self.inside_since = None
-                goal_state = "ALCANCADA" if self.reached else "FORA"
+                goal_state = "ALCANCADA" if self.reached else "FORA"   # O "Ç" gera erros. não alterar por enquanto
             self.previous_distance = distance
 
         commanded = max(abs(motor_command[0]), abs(motor_command[1])) > 1e-6
+
         maraca = (
             commanded and progress_speed > MOTION_SPEED_THRESHOLD and not self.reached
         )
+
         self.previous_position = tuple(position)
         return {
             "terrain": terrain,
@@ -171,17 +178,20 @@ class ExperimentMonitor:
 def read_pressed_buttons(joystick) -> set[int]:
     buttons: set[int] = set()
     button = joystick.getPressedButton()
+
     while button >= 0:
         buttons.add(button)
         button = joystick.getPressedButton()
+
     return buttons
 
 
 def manual_dpad_drive(joystick) -> tuple[float, float]:
-    # Mapeamento observado no controle Xbox/driver atual:
+
+    # TODO incluir calibração aqui?
+    # Mapeamento observado no controle "Xbox One For Windows" conectado via USB.
     # eixo 0: cima = -32767, baixo = +32768
     # eixo 1: esquerda = -32768, direita = +32767
-    # O POV permanece em 0 mesmo solto e, portanto, não é utilizável.
     if joystick.getNumberOfAxes() < 2:
         return 0.0, 0.0
 
@@ -217,6 +227,7 @@ def dpad_state(joystick) -> tuple[str, int, int]:
     vertical = joystick.getAxisValue(0)
     horizontal = joystick.getAxisValue(1)
     directions = []
+
     if vertical <= -DPAD_AXIS_THRESHOLD:
         directions.append("UP")
     elif vertical >= DPAD_AXIS_THRESHOLD:
@@ -225,6 +236,7 @@ def dpad_state(joystick) -> tuple[str, int, int]:
         directions.append("LEFT")
     elif horizontal >= DPAD_AXIS_THRESHOLD:
         directions.append("RIGHT")
+
     return "+".join(directions) or "NEUTRAL", vertical, horizontal
 
 
@@ -454,6 +466,7 @@ def main() -> None:
                         f"speed {learning_runtime.config.wheel_speed:.3f} rad/s."
                     )
 
+        # TODO os modos podem ser alterados para NEUTRAL, AUTOMATIC e DRIVE (os modos de um carro automático) para facilitar o entendimento
         for wheel, max_torque in zip(wheels, wheel_max_torques):
             if mode == ControlMode.PASSIVE_FREE:
                 available_torque = 0.0
@@ -481,7 +494,7 @@ def main() -> None:
         ):
             left_speed, right_speed = 0.0, 0.0
             wheel_speeds = (0.0, 0.0, 0.0, 0.0)
-        else:  # ControlMode.LEARNING: quatro motores independentes por eixo.
+        else:
             wheel_speeds = learning_runtime.step(
                 time=robot.getTime(),
                 position=gps.getValues(),

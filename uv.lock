@@ -283,34 +283,6 @@ wheels = [
 ]
 
 [[package]]
-name = "dorman"
-version = "0.1.0"
-source = { editable = "." }
-
-[package.optional-dependencies]
-analysis = [
-    { name = "jupyter" },
-    { name = "matplotlib" },
-    { name = "numpy" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "pytest" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "jupyter", marker = "extra == 'analysis'", specifier = ">=1.1.1" },
-    { name = "matplotlib", marker = "extra == 'analysis'", specifier = ">=3.10.0" },
-    { name = "numpy", marker = "extra == 'analysis'", specifier = ">=2.1.0" },
-]
-provides-extras = ["analysis"]
-
-[package.metadata.requires-dev]
-dev = [{ name = "pytest", specifier = ">=9.1.1" }]
-
-[[package]]
 name = "executing"
 version = "2.2.1"
 source = { registry = "https://pypi.org/simple" }
@@ -982,6 +954,34 @@ sdist = { url = "https://files.pythonhosted.org/packages/b4/73/731debf26e27e0a03
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c5/3c/3179b85b0e1c3659f0369940200cd6d0fa900e6cefcc7ea0bc6dd0e29ffb/nest_asyncio2-1.7.2-py3-none-any.whl", hash = "sha256:f5dfa702f3f81f6a03857e9a19e2ba578c0946a4ad417b4c50a24d7ba641fe01", size = 7843, upload-time = "2026-02-13T00:34:02.691Z" },
 ]
+
+[[package]]
+name = "neurocomputational-model"
+version = "0.2.0"
+source = { editable = "." }
+
+[package.optional-dependencies]
+analysis = [
+    { name = "jupyter" },
+    { name = "matplotlib" },
+    { name = "numpy" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "jupyter", marker = "extra == 'analysis'", specifier = ">=1.1.1" },
+    { name = "matplotlib", marker = "extra == 'analysis'", specifier = ">=3.10.0" },
+    { name = "numpy", marker = "extra == 'analysis'", specifier = ">=2.1.0" },
+]
+provides-extras = ["analysis"]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=9.1.1" }]
 
 [[package]]
 name = "notebook"

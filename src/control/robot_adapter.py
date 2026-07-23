@@ -10,6 +10,8 @@ from src.neural import MotorAction
 
 @dataclass(frozen=True)
 class FourWheelCommand:
+    """Coleção simples do conjunto de rodas"""
+
     wheel1: float
     wheel2: float
     wheel3: float
@@ -21,7 +23,7 @@ class FourWheelCommand:
 
 @dataclass(frozen=True)
 class MotorActionMapper:
-    """Agrupa motores por eixo somente para as ações da rede do artigo."""
+    """Agrupa motores por eixo transversal para aderência ao artigo"""
 
     speed: float = 1.0
     front_clockwise_sign: float = 1.0
@@ -41,13 +43,13 @@ class MotorActionMapper:
         return commands[action]
 
 
-class RobotAdapter(ABC):
-    """Contrato mínimo a ser implementado pelo Webots ou hardware real."""
+class RobotAdapter(ABC): # Uso futuro
+    """Contrato mínimo futuro a ser implementado pela simulação ou hardware"""
 
     @abstractmethod
     def apply(self, command: FourWheelCommand) -> None:
-        """Aplica simultaneamente as quatro velocidades abstratas."""
+        """Aplica as quatro velocidades"""
 
     @abstractmethod
     def stop(self) -> None:
-        """Interrompe os quatro motores ao final de uma ação."""
+        """Interrompe os quatro motores"""

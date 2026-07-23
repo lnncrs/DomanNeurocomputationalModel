@@ -1,7 +1,6 @@
-"""Ponte entre o loop de tempo do Webots e o experimento neural abstrato.
+"""Ponte entre o Webots e o experimento neural
 
-Este módulo não importa ``controller``. Ele recebe valores de sensores e
-devolve quatro velocidades, permitindo testes unitários fora do Webots.
+Este módulo recebe valores de sensores e devolve quatro velocidades
 """
 
 from __future__ import annotations
@@ -16,14 +15,14 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.control import MotorActionMapper  # noqa: E402
-from src.experiments import (  # noqa: E402
+from src.control import MotorActionMapper
+from src.experiments import (
     ExperimentConfig,
     ExperimentLogger,
     ExperimentRunner,
     MovementDirection,
 )
-from src.neural import (  # noqa: E402
+from src.neural import (
     FourNeuronNetwork,
     NeuralConfig,
     SensoryInput,
@@ -114,8 +113,8 @@ class LearningRuntime:
             movement_duration_seconds=self.config.action_duration_seconds,
             stationary_threshold=self.config.stationary_threshold,
             sound_intensity=self.config.sound_intensity,
-            # displacement = distância_final - distância_inicial;
-            # aproximar-se da meta produz valor negativo.
+            # displacement = distância_final - distância_inicial
+            # Aproximar-se da meta produz valor negativo, não necessariamente ao seu centro
             downhill_sign=-1,
             learning_streak=5,
         )
@@ -173,7 +172,7 @@ class LearningRuntime:
             self._acceleration_samples.append(
                 abs(longitudinal_acceleration - self._acceleration_baseline)
             )
-            # Registra também a ação parcial que efetivamente alcançou a meta.
+            # Registra a ação parcial que efetivamente alcançou a meta
             self._finish_action_window(time, position)
             self._complete("GOAL_REACHED")
             return STOPPED_WHEELS
@@ -318,7 +317,6 @@ class LearningRuntime:
                 report_path = self.logger.write_report()
                 print(f"Learning report generated: {report_path}")
             except Exception as error:
-                # Um relatório derivado nunca deve invalidar os dados científicos.
                 print(f"WARNING: could not generate learning report: {error}")
         print(f"Learning experiment completed: {reason}")
 

@@ -1,4 +1,4 @@
-"""Adaptadores entre a rede abstrata e plataformas robóticas."""
+"""Adaptadores entre a rede e a plataforma robótica"""
 
 from .robot_adapter import FourWheelCommand, MotorActionMapper, RobotAdapter
 
