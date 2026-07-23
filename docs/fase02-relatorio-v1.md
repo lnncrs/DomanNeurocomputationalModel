@@ -823,35 +823,7 @@ A abordagem em camadas permitiu:
 
 O projeto encontra-se próximo da etapa de aprendizado efetivo.
 
-## [corrigir] Referências
-
-Francisco Javier Ropero Peláez, Lucas Galdiano Ribeiro Santana
-Doman's Inclined Floor Method for Early Motor Organization Simulated with a Four Neurons Robot (2011)
-https://www.semanticscholar.org/paper/Doman's-Inclined-Floor-Method-for-Early-Motor-with-Peláez-Santana/a1d9815865dcf65b909aeaf985f2f96c99be9dd5
-
-J. R. Peláez, Marcelo Simoes
-A computational model of synaptic metaplasticity (1999)
-https://www.semanticscholar.org/paper/A-computational-model-of-synaptic-metaplasticity-Peláez-Simoes/ba93f797064a0035c6fe37836b055f84d85c61f1
-
-J. R. Peláez, J. Piqueira
-Biological Clues for Up-to-Date Artificial Neurons (2007)
-https://www.semanticscholar.org/paper/Biological-Clues-for-Up-to-Date-Artificial-Neurons-Peláez-Piqueira/6dc2349c03495f5465df0d6d1ed93c31adde8189
-
-N S Desai, L C Rutherford, G G Turrigiano
-Plasticity in the intrinsic excitability of cortical pyramidal neurons (1999)
-https://pubmed.ncbi.nlm.nih.gov/10448215/
-
-Niraj S Desai
-Homeostatic plasticity in the CNS: synaptic and intrinsic forms (2003)
-https://pubmed.ncbi.nlm.nih.gov/15242651/
-
-## [atualizar] Apendices
-
-### Apêndice A - Guia de reprodução
-
-### Apêndice B - Estrutura do repositório
-
-### Apêndice C - Evolução histórica da simulação
+## [atualizar] Anexos
 
 #### [atualizar] Visão geral do repositório
 
@@ -1038,40 +1010,6 @@ vscode extensoes recomendadas
 
 A reprodução dos experimentos é garantida utilizando plataforma Windows ou Linux com a lista de software apresentada, no entanto outras plataformas podem ser utilizadas, desde que compatíveis com o Webots e Python +3.13.
 
-### Instalar GCC
-
-#### No Linux Ubuntu
-
-#### No Windows
-
-# MSYS2
-# https://github.com/msys2/msys2-installer/releases/download/2025-06-22/msys2-x86_64-20250622.exe
-
-# C:\ProgramData\msys64
-
-pacman -Syu
-
-pacman -S mingw-w64-ucrt-x86_64-gcc
-
-pacman -S \
-  mingw-w64-ucrt-x86_64-toolchain \
-  mingw-w64-ucrt-x86_64-make \
-  mingw-w64-ucrt-x86_64-cmake \
-  mingw-w64-ucrt-x86_64-ninja \
-  mingw-w64-ucrt-x86_64-pkg-config \
-  mingw-w64-ucrt-x86_64-boost \
-  mingw-w64-ucrt-x86_64-doxygen
-
-pacman -S make
-
-### Instalar Git
-
-#### No OInux Ubuntu
-
-#### No Windows
-
-Baixar de git windows
-
 ### [atualizar] Webots
 
 O Webots é o ambiente de simulação utilizado para a construção e teste do experimento. Ele oferece uma plataforma robusta para modelagem de robôs, ambientes físicos e controle de comportamento. Para instalar o Webots, siga as instruções na página oficial: https://cyberbotics.com/doc/guide/installing-webots
@@ -1091,7 +1029,7 @@ conda activate webots
 Abrir o Webots:
 
 ```text
-& "C:\Program Files\Webots\msys64\mingw64\bin\webots.exe" --stdout --stderr --no-cache
+& "C:\Program Files\Webots\msys64\mingw64\bin\webots.exe" --stdout --stderr
 ```
 
 A linha de comando do Webots depende da instalação, o caminho apresentado é o caminho padrão, mas pode variar dependendo do local onde o Webots foi instalado. Certifique-se de ajustar o caminho conforme necessário para a sua instalação.
@@ -1099,12 +1037,6 @@ A linha de comando do Webots depende da instalação, o caminho apresentado é o
 ### [atualizar] Ambiente virtual e instalação de dependências
 
 Vamos mostrar a seguir um exemplo de como criar o ambiente necessário usando duas abordagens: pip e conda.
-
-#### [atualizar] Usando uv
-
-#### Instalar o uv no linux ubuntu
-
-#### Instalar o uv no windows
 
 #### [atualizar] Usando pip
 
@@ -1119,10 +1051,6 @@ Dentro do repositório do projeto.
 Use preferencialmente um ambiente virtual para isolar as dependências do projeto.
 
 #### [atualizar] Usando conda
-
-#### Instalar o conda-forge no linux ubuntu
-
-#### Instalar o conda-forge no windows
 
 Instalando o conda
 
@@ -1172,6 +1100,26 @@ Dentro do repositório do projeto.
 
 Use preferencialmente um ambiente virtual para isolar as dependências do projeto.
 
+## [corrigir] Referências
 
+Francisco Javier Ropero Peláez, Lucas Galdiano Ribeiro Santana
+Doman's Inclined Floor Method for Early Motor Organization Simulated with a Four Neurons Robot (2011)
+https://www.semanticscholar.org/paper/Doman's-Inclined-Floor-Method-for-Early-Motor-with-Peláez-Santana/a1d9815865dcf65b909aeaf985f2f96c99be9dd5
+
+J. R. Peláez, Marcelo Simoes
+A computational model of synaptic metaplasticity (1999)
+https://www.semanticscholar.org/paper/A-computational-model-of-synaptic-metaplasticity-Peláez-Simoes/ba93f797064a0035c6fe37836b055f84d85c61f1
+
+J. R. Peláez, J. Piqueira
+Biological Clues for Up-to-Date Artificial Neurons (2007)
+https://www.semanticscholar.org/paper/Biological-Clues-for-Up-to-Date-Artificial-Neurons-Peláez-Piqueira/6dc2349c03495f5465df0d6d1ed93c31adde8189
+
+N S Desai, L C Rutherford, G G Turrigiano
+Plasticity in the intrinsic excitability of cortical pyramidal neurons (1999)
+https://pubmed.ncbi.nlm.nih.gov/10448215/
+
+Niraj S Desai
+Homeostatic plasticity in the CNS: synaptic and intrinsic forms (2003)
+https://pubmed.ncbi.nlm.nih.gov/15242651/
 
 CMCC - Universidade Federal do ABC (UFABC) - Santo André - SP - Brasil
