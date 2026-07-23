@@ -1,4 +1,4 @@
-"""Modelo neural independente do simulador."""
+"""Modelo neural independente do simulador"""
 
 from .four_neuron_network import (
     CompetitionMode,

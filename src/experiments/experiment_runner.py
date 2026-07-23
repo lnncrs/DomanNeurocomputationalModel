@@ -1,4 +1,4 @@
-"""Protocolo temporal do experimento, independente do Webots."""
+"""Protocolo temporal do experimento, independente do Webots"""
 
 from __future__ import annotations
 

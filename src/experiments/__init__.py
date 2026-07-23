@@ -1,4 +1,4 @@
-"""Protocolo e persistência dos experimentos de aprendizagem."""
+"""Protocolo e persistência dos experimentos de aprendizagem"""
 
 from .experiment_logger import ExperimentLogger
 from .experiment_report import generate_experiment_report

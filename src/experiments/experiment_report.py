@@ -1,4 +1,4 @@
-"""Relatório HTML autocontido para uma execução experimental concluída."""
+"""Relatório HTML autocontido para uma execução experimental concluída"""
 
 from __future__ import annotations
 

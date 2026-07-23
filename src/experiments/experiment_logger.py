@@ -1,4 +1,4 @@
-"""Persistência JSON/JSONL explícita para execuções experimentais."""
+"""Persistência JSON/JSONL explícita para execuções experimentais"""
 
 from __future__ import annotations
 

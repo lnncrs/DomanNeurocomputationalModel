@@ -1,4 +1,4 @@
-"""Fronteira entre ações neurais abstratas e um robô de quatro rodas."""
+"""Adaptador entre ações neurais abstratas e um robô de quatro rodas"""
 
 from __future__ import annotations
 

@@ -1,10 +1,4 @@
-"""Rede recorrente de quatro neurônios descrita por Ropero Peláez e Santana.
-
-O módulo não depende do Webots. As equações publicadas são mantidas próximas
-da ordem temporal em que são executadas, facilitando auditoria científica.
-Hipóteses necessárias para completar a descrição do artigo são configuráveis
-e documentadas em ``src/neural/README.md``.
-"""
+"""Rede recorrente de quatro neurônios descrita por Ropero Peláez e Santana"""
 
 from __future__ import annotations
 
