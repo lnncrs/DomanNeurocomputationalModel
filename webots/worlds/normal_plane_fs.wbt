@@ -5,7 +5,7 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
 
 WorldInfo {
-  title "Normal Plane (Full Size)"
+  title "Plano normal full-size para testes"
   basicTimeStep 16
   randomSeed 42
 }

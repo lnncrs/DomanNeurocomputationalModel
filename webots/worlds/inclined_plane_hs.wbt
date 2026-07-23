@@ -5,7 +5,7 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 EXTERNPROTO "../protos/CompactInclinedPlane.proto"
 
 WorldInfo {
-  title "Compact Inclined Plane (Half Size)"
+  title "Plano inclinado half-size para testes"
   basicTimeStep 16
   randomSeed 42
 }

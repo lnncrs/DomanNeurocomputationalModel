@@ -6,7 +6,7 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 EXTERNPROTO "../protos/FourWheelRobot.proto"
 
 WorldInfo {
-  title "Inclined Plane (Full Size) with FourWheelRobot"
+  title "Teste de plano inclinado full-size com robô de quatro rodas e física"
   basicTimeStep 16
   randomSeed 42
 }

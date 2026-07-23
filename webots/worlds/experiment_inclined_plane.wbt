@@ -7,7 +7,7 @@ EXTERNPROTO "../protos/GoalArea.proto"
 EXTERNPROTO "../protos/InclinedFourWheelRobot.proto"
 
 WorldInfo {
-  title "Compact Inclined Plane Experiment"
+  title "Experimento de rampa inclinada, com robô de quatro rodas instrumentado e área de chegada"
   basicTimeStep 16
   randomSeed 42
 }
@@ -23,6 +23,7 @@ TexturedBackgroundLight {
   texture "mars"
 }
 CompactInclinedPlane {
+  # IMPORTANTE: mantenha este ângulo igual ao do robo abaixo.
   # angle 0.08726646259972 # 05°
   # angle 0.13962634015955 # 08°
   # angle 0.17453292519943 # 10°

@@ -1,7 +1,7 @@
 #VRML_SIM R2025a utf8
 
 WorldInfo {
-  title "Inclined Plane"
+  title "Mundo vazio para servir de base para experimentos"
   basicTimeStep 16
   randomSeed 42
 }
