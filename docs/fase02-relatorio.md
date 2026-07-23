@@ -1,5 +1,5 @@
 
-# [atualizar] Atualização de entrega da Fase 2
+# Atualização de entrega da Fase 2
 
 O relatório a seguir consolida a evolução do projeto na segunda entrega.
 
@@ -11,17 +11,9 @@ No entanto, a simulação implementada com um protocolo de experimento definido 
 
 Está nos planos a implementção na Fase 3 de um modo de disparo não supervisionado de um conjunto de simulações que permita variar determinados parâmetros e comparar o resultado do conjunto de experimentos, isso será um facilitador para estudar impacto de diferentes plasticidades neurais.
 
-### [preservar] Legenda editorial
-
-- `[preservar]`: conteúdo tecnicamente válido, sujeito apenas a revisão textual leve;
-- `[corrigir]`: conteúdo com erro factual, inconsistência ou afirmação que precisa ser qualificada;
-- `[atualizar]`: conteúdo válido na Fase 1, mas que precisa refletir o estado da Fase 2;
-- `[adicionar]`: seção nova reservada para conteúdo ainda não redigido.
-- `[esclarecer]`: sessão que necessita de mais clareza ou pesquisa, deve ser omitida ou comentada
-
 ![logotipo-ufabc-extenso](../assets/logotipo-ufabc-extenso.png)
 
-# [preservar] Modelo neurocomputacional de reorganização motora
+# Modelo neurocomputacional de reorganização motora
 
 Lenin Cristi
 
@@ -32,52 +24,67 @@ lenin.cristi@aluno.ufabc.edu.br
 
 Resumo. Este trabalho tem como objetivo a reprodução computacional e robótica do experimento Doman's Inclined Floor Method for Early Motor Organization Simulated with a Four Neurons Robot (2011) de Ropero Peláez e Lucas Santana, no qual um robô controlado por uma rede neural plástica de quatro neurônios aprende a organizar seu comportamento motor em um plano inclinado, inspirado no método de estimulação motora precoce de Glenn Doman.
 
-## [preservar] Sumário
+## Sumário
 
-- `[preservar]` Resumo
-- `[preservar]` Objetivo do Projeto
-- `[preservar]` Introdução
-  - `[preservar]` O experimento original
-  - `[preservar]` A rede neural "não convencional"
-  - `[preservar]` Resumo das diferenças
-  - `[preservar]` Arquitetura e mapeamento motor
-- `[preservar]` Metodologia
-  - `[preservar]` Estratégia incremental de construção e validação
-  - `[preservar]` Simulação de mundo
-  - `[preservar]` Desenvolvimento
-  - `[preservar]` Estado ao final da Fase 2
-- `[atualizar]` Arquitetura detalhada da rede
-  - `[atualizar]` Topologia e conectividade
-  - `[atualizar]` Mapeamento neural-motor
-  - `[atualizar]` Ordem temporal e fluxo causal
-- `[atualizar]` Funções e equações
-  - `[atualizar]` Normalização e soma sensorial
-  - `[atualizar]` Ativação, saída sigmoidal e competição
-  - `[atualizar]` Plasticidade sináptica
-  - `[atualizar]` Plasticidade intrínseca
-  - `[atualizar]` Distância, deslocamento e classificação do movimento
-  - `[atualizar]` Aceleração, maraca e critérios de aprendizagem
-- `[atualizar]` Parâmetros experimentais
-  - `[atualizar]` Parâmetros da rede neural
-  - `[atualizar]` Parâmetros do protocolo de aprendizagem
-  - `[atualizar]` Parâmetros do mundo Webots
-  - `[atualizar]` Parâmetros do robô e dos sensores
-- `[atualizar]` Implementação e reprodutibilidade
-  - `[atualizar]` Validação automatizada
-  - `[atualizar]` Ensaios exploratórios
-  - `[atualizar]` Telas da interface e da telemetria
-  - `[atualizar]` Vídeos das execuções
-- `[atualizar]` Limitações e hipóteses operacionais
-- `[atualizar]` Protocolo dos ensaios formais
-- `[atualizar]` Conclusão
-- `[preservar]` Apêndices
-  - `[preservar]` Apêndice A - Guia de reprodução
-  - `[preservar]` Apêndice B - Estrutura do repositório
-  - `[preservar]` Apêndice C - Evolução histórica da simulação
-  - `[adicionar]` Apêndice D - Localização e configuração dos parâmetros
-- `[corrigir]` Referências
+- Resumo
+- Objetivo do Projeto
+- Introdução
+  - O experimento original
+  - A rede neural utilizada
+  - Mapeamento motor
+  - Sensoriamento
+- Metodologia
+  - Estratégia incremental de construção e validação
+  - Simulação de mundo
+  - Desenvolvimento
+  - Estado do projeto ao final da Fase 2
+  - Execução de uma simulação
+  - Mapeamento detalhado dos modos de controle
+- Funções e equações
+  - Normalização e soma sensorial
+  - Ativação, saída sigmoidal e competição
+  - Plasticidade sináptica
+  - Plasticidade intrínseca
+  - Distância, deslocamento e classificação do movimento
+  - Aceleração, maraca e critérios de aprendizagem
+- Parâmetros experimentais
+  - Parâmetros da rede neural
+  - Parâmetros do protocolo de aprendizagem
+  - Parâmetros do mundo Webots
+  - Parâmetros do robô e dos sensores
+- Conclusão
+- Referências
+- Apêndices
+  - Apêndice A - Guia de reprodução
+    - Requisitos de software
+    - Requisitos de hardware
+    - Instalação de GCC, G++ e make
+    - Instalação do Git
+    - Clonagem do repositório
+    - Instalação do Webots
+    - Ambiente Python recomendado com uv
+    - Alternativa com pip
+    - Alternativa com conda
+    - Editor e extensões opcionais
+    - Validação do ambiente
+    - Lista mínima de verificação
+  - Apêndice B - Estrutura do repositório
+    - Arquivos de configuração na raiz
+    - Código-fonte do modelo
+    - Estrutura da simulação Webots
+    - Documentação, exemplos e validação
+    - Testes automatizados
+  - Apêndice C - Evolução histórica da simulação
+    - Simulação de física
+    - Simulação de colisão do robô
+    - Simulação de controle
+  - Apêndice D - Localização e configuração dos parâmetros
+    - Parâmetros da rede neural
+    - Parâmetros do protocolo de aprendizagem
+    - Parâmetros do mundo Webots
+    - Parâmetros do robô e dos sensores
 
-## [preservar] Resumo
+## Resumo
 
 Este trabalho tem como objetivo a reprodução computacional e robótica do experimento *Doman's Inclined Floor Method for Early Motor Organization Simulated with a Four Neurons Robot (2011)* de Ropero Peláez e Lucas Santana, no qual um robô controlado por uma rede neural plástica de quatro neurônios aprende a organizar seu comportamento motor em um plano inclinado, inspirado no método de estimulação motora precoce de Glenn Doman.
 
@@ -105,7 +112,7 @@ Esta simulação conta também com controle motor, aquisição de telemetria det
 
 Imagem: Tela de acompanhamento da telemetria do robo
 
-## [preservar] Objetivo do Projeto
+## Objetivo do Projeto
 
 Os objetivos centrais do experimento original são:
 
@@ -117,9 +124,9 @@ Os objetivos centrais do experimento original são:
 
 > **Nota:** Neste ponto entendemos que a simulação, o robô e mesmo o aprendizado são tratados como meios e não como objetivos fim.
 
-## [preservar] Introdução
+## Introdução
 
-### [preservar] O experimento original
+### O experimento original
 
 Antes da construção do projeto, foi imprescindível realizar uma leitura detalhada do artigo que descreve o experimento original *Doman's Inclined Floor Method for Early Motor Organization Simulated with a Four Neurons Robot (2011)*, também disponível no repositório em `docs\Testing the inclined plane technique with a four neurons robot.pdf`.
 
@@ -143,7 +150,7 @@ O modelo não pretende reproduzir integralmente o sistema nervoso infantil ou de
 
 Assim, o aprendizado do robô não constitui o objetivo final do experimento, mas um meio para investigar, em um sistema simplificado e controlável, como estímulos sensoriais e mecanismos de plasticidade podem participar da organização do comportamento motor.
 
-### [preservar] A rede neural utilizada
+### A rede neural utilizada
 
 > **Nota:** A implementação apresentada aqui é uma primeira tentativa de reproduzir a apresentada no artigo, assim como leituras subsequentes do artigo levaram a correção do mecanismo de locomoção de diferencial para por eixos, a rede pode ser revista.
 
@@ -183,7 +190,7 @@ O modelo não pretende reproduzir toda a complexidade de um sistema neural biol�
 
 > **Nota:** Numa primeira visita a aula *Modelagem de redes bioinspiradas. Prof. Javier Ropero Peláez (UFABC)* disponível em: https://www.youtube.com/watch?v=j9ElSxpLWzw acredito que este modelo pode ser considerado fenomenológico (porque não modelamos detalhadamente canais ionicos, potenciais, membranas etc) e frequencial pela característica de *taxa de disparo* usada
 
-### [preservar] Mapeamento motor
+### Mapeamento motor
 
 O fluxo geral do sistema é:
 
@@ -224,7 +231,7 @@ Imagem: *Closeup* no robo onde se vêem os dois eixos frontal / traseiro em pers
 
 > **Nota histórica:** Nas primeiras versões da simulação, o mapeamento `neuronios → movimento` foi interpretado incorretamente como uma configuração diferencial entre os lados esquerdo e direito. A releitura do artigo levou à correção do modo `LEARNING` para a organização `neuronios → movimento` para os eixos frontal/traseiro em sentido horário e anti-horário. Os modos manual de controle `MANUAL` e automático anti colisão `AUTOMATIC` continuam utilizando controle diferencial e não foram afetados por essa mudança.
 
-### [preservar] Sensoriamento
+### Sensoriamento
 
 O Robo usado como base é do tutorial do Webots preservado em `webots\tutorials\4_wheels_robot.wbt`, ele foi adaptado e ganhou 4 sensores de proximidade externos adicionais em cada direção, teve mantido os sensores de proximidade frontais diagonais originais e recebeu os seguintes sensores adicionais não visíveis:
 
@@ -237,7 +244,7 @@ O Robo usado como base é do tutorial do Webots preservado em `webots\tutorials\
 
 Imagem: *Closeup* no robo onde se vêem os sensores de proximidade originais e adicionais (somente estes são visíveis)
 
-## [preservar] Metodologia
+## Metodologia
 
 A reconstrução do experimento envolve componentes interdependentes:
 
@@ -251,7 +258,7 @@ A reconstrução do experimento envolve componentes interdependentes:
 
 Alterações nestes elementos podem modificar o comportamento observado e, consequentemente, dificultar a identificação da origem de falhas. No experimento original, a estrutura robótica foi construída com *LEGO Mindstorms NXT*, enquanto a rede neural e os comandos sensório-motores foram implementados em *MATLAB* por meio da *RWTH Mindstorms NXT Toolbox*. A reprodução direta dessa estrutura em uma nova plataforma física exigiria que problemas mecânicos, eletrônicos, sensoriais e computacionais fossem tratados simultaneamente.
 
-### [preservar] Estratégia incremental de construção e validação
+### Estratégia incremental de construção e validação
 
 Para reduzir a chance de falha não identificada ou não rastreável, foi adotada uma estratégia incremental em camadas. Cada componente é construído e validado de forma isolada e, posteriormente, integrado aos demais. Essa abordagem permite distinguir problemas relacionados ao ambiente, à física, ao robô, ao controle e ao modelo neural.
 
@@ -287,7 +294,7 @@ Tabela 3: Completude técnica do projeto
 
 A conclusão de uma etapa técnica indica que seus componentes essenciais estão implementados e funcionalmente integrados.
 
-### [preservar] Simulação de mundo
+### Simulação de mundo
 
 Para a simulação, foi realizada uma pesquisa na qual foram considerados dois ambientes principais: *Webots* e *PyBullet*. O Webots foi escolhido por oferecer maior capacidade de representar motores, atuadores e sensores de maneira próxima a uma implementação física, dentro de um ambiente integrado de simulação. A plataforma também oferece suporte a controladores em Python, C e C++, além de uma biblioteca de mundos e componentes reutilizáveis.
 
@@ -309,7 +316,7 @@ Imagem: Plano *half-size* não inclinado utilizado em testes
 
 A biblioteca de mundos, objetos e exemplos disponibilizada pelo Webots parcialmente preservada em `webots\tutorials` também foi um fator relevante para a escolha, pois forneceu referências para a construção inicial dos ambientes, das juntas, dos sensores e dos controladores utilizados no projeto.
 
-### [preservar] Desenvolvimento
+### Desenvolvimento
 
 **O projeto foi desenvolvido com ferramentas abertas e organizado para favorecer a reprodução dos experimentos.**
 
@@ -333,7 +340,7 @@ Uma listagem preliminar do *software* utilizado é a que segue:
 
 - Os testes automatizados usam *pytest*;
 
-### [preservar] Estado do projeto ao final da Fase 2
+### Estado do projeto ao final da Fase 2
 
 <mark>
 Ao final da Fase 2, o ambiente físico, o robô, a instrumentação e a primeira rede neural encontram-se integrados no modo `LEARNING`. <!--Cada ação neural é mantida durante uma janela temporal, após a qual o deslocamento e a aceleração são agregados. O movimento é então classificado, a maraca é produzida quando ocorre descida e os estímulos resultantes alimentam o passo neural seguinte.-->
@@ -363,7 +370,7 @@ Uma lista com *features* chave do projeto funcionais nesta fase é a que segue:
 
 > **Nota:** As variáveis e parâmetros do experimento estão mapeadas mas não centralizadas, elas serão centralizadas e completamente desacopladas (possivelmente em locais distintos) no futuro
 
-### [preservar] Execução de uma simulação
+### Execução de uma simulação
 
 <mark>
 A seguir é descrito como iniciar uma simulação e interagir com o ambiente.
@@ -442,7 +449,7 @@ Imagem: Sessão do relatório com o esboço da rede gerada
 
 > Nota: Assim como a rede o relatório neste ponto do desenvolvimento é fornecido como funcionalidade em beta
 
-### [preservar] Mapeamento detalhado dos modos de controle
+### Mapeamento detalhado dos modos de controle
 
 | Modo | Acionamento no joystick | Descrição |
 |---|---|---|
@@ -464,7 +471,7 @@ AUTOMATIC
 → AUTOMATIC
 ```
 
-## [preservar] Funções e equações
+## Funções e equações
 
 <mark>
 O conjunto das funções utilizadas foi extraído prioritariamente do artigo original e quando não explícitas lá de adaptações. Para distinguir cada caso foi montada uma tabela:
@@ -482,7 +489,7 @@ O conjunto das funções utilizadas foi extraído prioritariamente do artigo ori
 
 > **Nota:** Com uma implementação inicial das equações definidas, a complexidade de adaptá-las é consideravelmente menor
 
-### [preservar] Normalização e soma sensorial
+### Normalização e soma sensorial
 
 Os três canais sensoriais são representados por aceleração, visão e som. Antes de serem apresentados à rede, seus valores passam por uma transformação de normalização independente, composta pela correção de um valor de referência e pela aplicação de um fator de escala:
 
@@ -539,7 +546,7 @@ Na configuração atual:
 - O canal visual permanece desativado e recebe `0,0`.
 - O canal sonoro recebe `0,1` quando a iteração anterior é classificada como descendente e `0,0` nos demais casos.
 
-### [preservar] Ativação, saída sigmoidal e competição
+### Ativação, saída sigmoidal e competição
 
 Após a normalização e a soma dos estímulos sensoriais, a rede calcula a ativação de cada neurônio. Essa ativação combina a entrada sensorial da iteração atual com a atividade produzida pela rede na iteração anterior:
 
@@ -630,7 +637,7 @@ Na configuração atual:
 - o desvio do ruído de ativação é `0,0` e, portanto, $\eta_i(t)=0$;
 - a saída competitiva do vencedor é preservada com seu valor sigmoidal, e não substituída por `1,0`.
 
-### [preservar] Plasticidade sináptica
+### Plasticidade sináptica
 
 A plasticidade sináptica modifica os pesos das conexões entre neurônios
 diferentes. A variação de cada peso segue a regra pré-sináptica de Grossberg,
@@ -696,7 +703,7 @@ implementação também oferece a alternativa `all_postsynaptic`, na qual todos
 os neurônios pós-sinápticos são considerados para atualização, preservando
 ainda as conexões diagonais fixas.
 
-### [preservar] Plasticidade intrínseca
+### Plasticidade intrínseca
 
 A plasticidade intrínseca não modifica os pesos das conexões. Ela altera o
 deslocamento individual da função sigmoidal de cada neurônio e, com isso,
@@ -757,7 +764,7 @@ A implementação também oferece a alternativa `pre_competition`, na qual a
 saída sigmoidal dos quatro neurônios é utilizada antes que os não vencedores
 sejam zerados.
 
-### [preservar] Distância, deslocamento e classificação do movimento
+### Distância, deslocamento e classificação do movimento
 
 A direção do movimento é determinada pela variação da distância entre o robô
 e a meta durante uma janela motora. Como a meta ocupa uma área retangular, a
@@ -888,7 +895,7 @@ e não o comprimento total da trajetória percorrida pelo robô durante a janela
 Esse cálculo é uma decisão geométrica e operacional da reconstrução, pois o
 artigo não publica uma equação equivalente para a classificação do movimento.
 
-### [preservar] Aceleração, maraca e critérios de aprendizagem
+### Aceleração, maraca e critérios de aprendizagem
 
 Ao entrar no modo `LEARNING`, o controlador registra a componente longitudinal
 do acelerômetro como valor de referência. Durante cada janela motora, novas
@@ -1003,7 +1010,7 @@ encerram o experimento. Na implementação atual, a execução termina quando o
 robô entra na meta. A repetição de um mesmo neurônio vencedor, isoladamente,
 não é considerada evidência de aprendizagem.
 
-## [preservar] Parâmetros experimentais
+## Parâmetros experimentais
 
 As tabelas seguintes registram os valores efetivamente utilizados na configuração atual.
 
@@ -1013,7 +1020,7 @@ Parâmetros classificados como hipótese deverão ser avaliados nos ensaios form
 > está documentada no **Apêndice D - Localização e configuração dos
 > parâmetros**.
 
-### [preservar] Parâmetros da rede neural
+### Parâmetros da rede neural
 
 | Parâmetro | Valor | Origem |
 |---|---:|---|
@@ -1034,7 +1041,7 @@ Parâmetros classificados como hipótese deverão ser avaliados nos ensaios form
 Na execução integrada, somente a seed neural é exposta como argumento do
 controlador. Os demais valores utilizam a configuração padrão da rede.
 
-### [preservar] Parâmetros do protocolo de aprendizagem
+### Parâmetros do protocolo de aprendizagem
 
 | Parâmetro | Valor atual |
 |---|---:|
@@ -1049,7 +1056,7 @@ controlador. Os demais valores utilizam a configuração padrão da rede.
 
 > **Nota:** O canal visual permanece desativado. O sinal negativo usado para descida decorre do cálculo `distância final - distância inicial`, pois a aproximação da meta (não necessariamente ao centro dela) reduz a distância.
 
-### [preservar] Parâmetros do mundo Webots
+### Parâmetros do mundo Webots
 
 | Parâmetro | Valor atual |
 |---|---:|
@@ -1071,7 +1078,7 @@ controlador. Os demais valores utilizam a configuração padrão da rede.
 
 Gravidade, atrito e alguns parâmetros de contato permanecem herdados dos defaults do Webots.
 
-### [preservar] Parâmetros do robô e dos sensores
+### Parâmetros do robô e dos sensores
 
 | Parâmetro | Valor atual |
 |---|---:|
@@ -1088,7 +1095,7 @@ Gravidade, atrito e alguns parâmetros de contato permanecem herdados dos defaul
 | aceleração usada na rede | componente longitudinal do acelerômetro |
 | som usado na rede | estímulo lógico, sem microfone ou alto-falante |
 
-## [atualizar] Conclusão
+## Conclusão
 
 A Fase 2 inicia uma etapa importante no projeto: O mundo inclinado, o robô, os sensores, os modos de controle, a primeira versão da rede neural plástica de quatro neurônios e o protocolo de aprendizagem agora operam em conjunto no modo `LEARNING`.
 
@@ -1104,7 +1111,7 @@ Assim, o principal resultado da Fase 2 não é demonstrar definitivamente que o 
 
 Na Fase 3, o próximo passo será executar conjuntos de simulações com parâmetros e condições de referência registrados, comparando os efeitos produzidos por diferentes configurações e mecanismos de plasticidade.
 
-## [preservar] Referências
+## Referências
 
 Francisco Javier Ropero Peláez, Lucas Galdiano Ribeiro Santana
 Doman's Inclined Floor Method for Early Motor Organization Simulated with a Four Neurons Robot (2011)
@@ -1126,15 +1133,15 @@ Niraj S Desai
 Homeostatic plasticity in the CNS: synaptic and intrinsic forms (2003)
 https://pubmed.ncbi.nlm.nih.gov/15242651/
 
-## [preservar] Apendices
+## Apêndices
 
-### [preservar] Apêndice A - Guia de reprodução
+### Apêndice A - Guia de reprodução
 
 Este apêndice descreve a preparação do ambiente necessário para inspecionar o código, executar os testes automatizados e reproduzir a simulação integrada da Fase 2. Os comandos devem ser executados a partir da raiz do repositório, salvo quando indicado de outra forma.
 
 O procedimento principal utiliza *uv*, pois `pyproject.toml` e `uv.lock` constituem as fontes de configuração e travamento das dependências Python. Os procedimentos com *pip* e *conda* são mantidos como alternativas.
 
-#### [preservar] Requisitos de software
+#### Requisitos de software
 
 A tabela esta em ordem sugerida de instalação
 
@@ -1150,13 +1157,13 @@ A tabela esta em ordem sugerida de instalação
 
 O experimento integrado utiliza um controlador Python e, por isso, GCC não é necessário para interpretar a rede neural. A toolchain permanece documentada porque o repositório contém controladores e exemplos nativos e porque ela será necessária caso esses componentes sejam recompilados ou modificados.
 
-#### [preservar] Requisitos de hardware
+#### Requisitos de hardware
 
 | Hardware | Versão ou condição | Finalidade |
 |---|---|---|
 | controle compatível com *joystick* (modelo Xbox One S mapeado) | opcional para testes gerais; necessário na interface atual para selecionar os modos interativos | acionamento de `MANUAL`, `LEARNING` e demais modos |
 
-#### [preservar] Instalação de GCC, G++ e make
+#### Instalação de GCC, G++ e make
 
 No Ubuntu Linux:
 
@@ -1206,7 +1213,7 @@ make --version
 
 No pacote UCRT64, o executável específico do *make* também pode aparecer como `mingw32-make`; o pacote `make` fornece o comando genérico usado pelos procedimentos do projeto.
 
-#### [preservar] Instalação do Git
+#### Instalação do Git
 
 No Ubuntu Linux:
 
@@ -1227,7 +1234,7 @@ git --version
 
 Depois da instalação, deve-se abrir um novo terminal para que eventuais alterações no `PATH` sejam reconhecidas.
 
-#### [preservar] Clonagem do repositório
+#### Clonagem do repositório
 
 Usando HTTPS:
 
@@ -1245,7 +1252,7 @@ cd DomanNeurocomputationalModel
 
 Após a clonagem, os arquivos `pyproject.toml`, `uv.lock`, `requirements.txt` e `environment.yml` devem estar disponíveis na raiz do projeto.
 
-#### [preservar] Instalação do Webots
+#### Instalação do Webots
 
 Os mundos do repositório declaram `R2025a` no cabeçalho e utilizam recursos dessa versão. Para reproduzir a configuração documentada, deve-se instalar **Webots R2025a**, em vez de substituir automaticamente pela versão mais recente. Os instaladores e as instruções oficiais estão disponíveis em <https://cyberbotics.com/doc/guide/installing-webots> e nas versões publicadas em <https://github.com/cyberbotics/webots/releases>.
 
@@ -1272,7 +1279,7 @@ Em algumas configurações, o Webots aberto diretamente pelo menu não herda o a
 
 O caminho deve ser ajustado caso o Webots tenha sido instalado em outro diretório. As opções `--stdout` e `--stderr` mantêm visíveis as mensagens do controlador; `--clear-cache` é útil quando alterações em mundos ou arquivos PROTO não aparecem após uma atualização.
 
-#### [preservar] Ambiente Python recomendado com uv
+#### Ambiente Python recomendado com uv
 
 O *uv* pode ser instalado pelos procedimentos oficiais disponíveis em <https://docs.astral.sh/uv/getting-started/installation/>.
 
@@ -1297,7 +1304,7 @@ uv sync --all-groups --all-extras
 
 O comando cria ou atualiza `.venv`, instala a versão compatível do Python quando necessário, instala o projeto e inclui os grupos de análise e desenvolvimento empregados nos *notebooks* e testes.
 
-#### [preservar] Alternativa com pip
+#### Alternativa com pip
 
 Esta alternativa exige que Python `3.13.x` já esteja instalado. Recomenda-se criar um ambiente virtual isolado.
 
@@ -1321,7 +1328,7 @@ python -m pip install -r requirements.txt
 
 O arquivo `requirements.txt` instala o projeto com o conjunto de dependências de análise e inclui o *pytest*. A definição principal das dependências permanece em `pyproject.toml`.
 
-#### [preservar] Alternativa com conda
+#### Alternativa com conda
 
 Pode-se utilizar Miniforge ou Miniconda seguindo a documentação em <https://docs.conda.io/projects/conda/en/stable/user-guide/install/>. Depois de instalar o gerenciador e abrir um terminal com `conda` disponível, o arquivo `environment.yml` cria o ambiente `webots` com Python 3.13 e as dependências do projeto:
 
@@ -1337,11 +1344,11 @@ conda env update -f environment.yml --prune
 conda activate webots
 ```
 
-#### [preservar] Editor e extensões opcionais
+#### Editor e extensões opcionais
 
 O projeto não depende de um editor específico. Para desenvolvimento com *Visual Studio Code*, são úteis as extensões oficiais **Python** e **Pylance**, além de suporte a Jupyter para os *notebooks*. O editor deve ser iniciado somente depois da criação ou ativação do ambiente, ou configurado para usar o interpretador localizado em `.venv` ou no ambiente `webots` do *conda*.
 
-#### [preservar] Validação do ambiente
+#### Validação do ambiente
 
 Com *uv*, todos os testes podem ser executados por:
 
@@ -1357,7 +1364,7 @@ python -m pytest
 
 Os testes cobrem as equações e a plasticidade da rede, a causalidade do protocolo, o mapeamento motor, a telemetria e a geração dos artefatos. Sua aprovação verifica a instalação do núcleo Python, mas não substitui a validação da física e dos sentidos de rotação dentro do Webots.
 
-#### [preservar] Lista mínima de verificação
+#### Lista mínima de verificação
 
 - `git --version` responde corretamente;
 - o Webots instalado corresponde à versão `R2025a`;
@@ -1367,7 +1374,7 @@ Os testes cobrem as equações e a plasticidade da rede, a causalidade do protoc
 - o modo `LEARNING` pode ser selecionado;
 - uma execução produz os arquivos esperados em `experiments/runs`.
 
-### [preservar] Apêndice B - Estrutura do repositório
+### Apêndice B - Estrutura do repositório
 
 O repositório separa o modelo neural, o protocolo experimental e a adaptação dos comandos motores dos artefatos específicos do Webots. A árvore a seguir apresenta alguns dos componentes do repositório que serão detalhados a seguir.
 
@@ -1451,7 +1458,7 @@ DomanNeurocomputationalModel/
 
 > **Nota:** Arquivos de cache, ambientes virtuais, resultados temporários e configurações internas de ferramentas foram omitidos.
 
-#### [preservar] Arquivos de configuração na raiz
+#### Arquivos de configuração na raiz
 
 | Arquivo | Função |
 |---|---|
@@ -1463,7 +1470,7 @@ DomanNeurocomputationalModel/
 | `.python-version` | versão de Python selecionada para o diretório de trabalho |
 | `.gitignore` | exclusão de ambientes, caches e resultados gerados |
 
-#### [preservar] Código-fonte do modelo
+#### Código-fonte do modelo
 
 O diretório `src` contém o núcleo independente do Webots e está dividido em três responsabilidades:
 
@@ -1479,7 +1486,7 @@ O arquivo `src/control/robot_adapter.py` contém a fronteira entre as ações ne
 
 Em `src/experiments`, `experiment_runner.py`, `experiment_logger.py` e `experiment_report.py` separam, respectivamente, execução, persistência e apresentação dos resultados.
 
-#### [preservar] Estrutura da simulação Webots
+#### Estrutura da simulação Webots
 
 O diretório `webots` reúne todos os componentes dependentes do simulador:
 
@@ -1495,7 +1502,7 @@ O diretório `webots` reúne todos os componentes dependentes do simulador:
 
 No controlador principal, `four_wheels_manual.py` realiza a leitura dos sensores, a seleção do modo de controle e o envio dos comandos às rodas. `learning_runtime.py` conecta esse ciclo do Webots ao núcleo localizado em `src` e mantém a janela temporal de cada ação neural.
 
-#### [preservar] Documentação, exemplos e validação
+#### Documentação, exemplos e validação
 
 - `docs` contém os relatórios, os documentos de planejamento e o artigo usado como referência.
 
@@ -1505,7 +1512,7 @@ No controlador principal, `four_wheels_manual.py` realiza a leitura dos sensores
 
 - `examples/four_neuron_minimal.py` apresenta uma execução mínima da rede de quatro neurônios;
 
-#### [preservar] Testes automatizados
+#### Testes automatizados
 
 O diretório `tests` reproduz a mesma divisão funcional do código:
 
@@ -1518,11 +1525,11 @@ O diretório `tests` reproduz a mesma divisão funcional do código:
 
 > **Nota:** Esses testes validam o comportamento computacional somente.
 
-### [preservar] Apêndice C - Evolução histórica da simulação
+### Apêndice C - Evolução histórica da simulação
 
 Foram necessárias diversas simulações para construir o experimento da Fase 2, os principais saltos qualitativos do projeto estão listados abaixo.
 
-#### [preservar] Simulação de física
+#### Simulação de física
 
 O primeiro desafio foi reproduzir física com parâmetros de mundo terrestre com exatidão aproximada(gravidade, atrito, elasticidade, etc), o filme inclined_plane é o plano inclinado com bolas para a simulação de física.
 
@@ -1535,7 +1542,7 @@ Imagem: inclined_plane
 > **Nota:** Os planos foram criados especificamente para o projeto.
 
 
-#### [preservar] Simulação de colisão do robô
+#### Simulação de colisão do robô
 
 O segundo desafio foi montar um robo e posicioná-lo neste mundo simulado, o filme inclined_plane_with_robot e inclined_plane_with_robot_1 é o plano inclinado com o robo e controle de batida (nao rede neural) para testar se o robo funcionava na simulação, o último tem um guardrail mais baixo (o que impede a queda do robo).
 
@@ -1549,7 +1556,7 @@ Imagem: inclined_plane_with_robot
 
 > **Nota:** Nos robôs de teste de batida foram usados modelos de exemplo da biblioteca aberta do Webots adaptados.
 
-#### [preservar] Simulação de controle
+#### Simulação de controle
 
 Por fim era necessário conseguir que uma interface de controle baseada em código conseguisse interagir com a simulação, o filme normal_plane_with_rotation é um primeiro teste com juntas, motores e ativação via interface de controle, esse passo foi decisivo no projeto, pois abriu portas para que fosse possível controlar aspectos da simulação via interface programável primeiro em C e depois em Python.
 
@@ -1561,7 +1568,7 @@ Imagem: normal_plane_with_rotation
 
 > **Nota:** As peças rotacionando com controle foram criadas do zero porque era necessário entender a fundo como funcionava exatamente a "junção" entre duas peças nesta simulação.
 
-### [preservar] Apêndice D - Localização e configuração dos parâmetros
+### Apêndice D - Localização e configuração dos parâmetros
 
 Este apêndice relaciona os parâmetros apresentados no corpo do relatório aos
 campos, constantes e argumentos que determinam seus valores na implementação.
@@ -1569,7 +1576,7 @@ A indicação **default interno** significa que o campo é configurável em cód
 mas ainda não é exposto pelo mundo principal. A indicação **argumento do
 controlador** significa que o valor pode ser informado por `controllerArgs`.
 
-#### [preservar] Parâmetros da rede neural
+#### Parâmetros da rede neural
 
 | Parâmetro | Campo ou constante | Arquivo | Configuração integrada |
 |---|---|---|---|
@@ -1591,7 +1598,7 @@ O `LearningRuntime` constrói `NeuralConfig` informando explicitamente a seed e
 a normalização da aceleração. Os demais parâmetros neurais utilizam os defaults
 centralizados em `src/neural/four_neuron_network.py`.
 
-#### [preservar] Parâmetros do protocolo de aprendizagem
+#### Parâmetros do protocolo de aprendizagem
 
 | Parâmetro | Campo ou constante | Arquivo | Configuração integrada |
 |---|---|---|---|
@@ -1607,7 +1614,7 @@ centralizados em `src/neural/four_neuron_network.py`.
 Os argumentos configurados pelo mundo principal encontram-se em
 `webots/worlds/experiment_inclined_plane.wbt`.
 
-#### [preservar] Parâmetros do mundo Webots
+#### Parâmetros do mundo Webots
 
 | Parâmetro | Campo ou constante | Arquivo | Configuração integrada |
 |---|---|---|---|
@@ -1621,7 +1628,7 @@ Os argumentos configurados pelo mundo principal encontram-se em
 Gravidade, atrito e parâmetros de contato não estão explicitados no mundo
 principal e permanecem herdados dos defaults do Webots.
 
-#### [preservar] Parâmetros do robô e dos sensores
+#### Parâmetros do robô e dos sensores
 
 | Parâmetro | Campo ou constante | Arquivo | Configuração integrada |
 |---|---|---|---|
