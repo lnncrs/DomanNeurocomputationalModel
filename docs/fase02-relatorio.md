@@ -414,11 +414,11 @@ A implementação mantém separadas a arquitetura descrita no artigo e as hipót
 incluir referencia ao arquivo principal e classe da implementacao neuronal
 -->
 
-### [atualizar] Topologia e conectividade
-
 <!-- ! todo
 esse trecho seguinte em parte esta redundante com a explicacao em tabela anterior, talvez remontar os paragrafos seguintes
 -->
+
+### [atualizar] Topologia e conectividade
 
 A rede possui quatro neurônios excitatórios do tipo *rate-code*, totalmente
 interconectados. A matriz `W[i][j]` representa a conexão do neurônio `j` para o
@@ -600,8 +600,9 @@ como no artigo, e cinco movimentos consecutivos para baixo, como medida adiciona
 
 As tabelas seguintes registram os valores efetivamente utilizados na configuração atual.
 
-Parâmetros classificados como hipótese deverão ser
-mantidos nos metadados e avaliados nos ensaios formais.
+Parâmetros classificados como hipótese deverão ser avaliados nos ensaios formais.
+
+> Nota: O Apendice tem uma sessão que mapeia os parametros abaixo para sua localização exata no código, para alterá-los consulte o apendice.
 
 ### [atualizar] Parâmetros da rede neural
 
@@ -621,9 +622,73 @@ mantidos nos metadados e avaliados nos ensaios formais.
 | limites adicionais dos pesos | nenhum | não publicado |
 | seed da configuração integrada | 42 | reprodutibilidade |
 
-<!-- ! todo
-estes parametros estao centralizados? onde sao configurados?
--->
+Onde:
+
+- número de neurônios
+  - constante `NEURON_COUNT` e campo `neuron_count` de `NeuralConfig`
+  - definidos em `/src/neural/four_neuron_network.py`
+  - a implementação valida e aceita exclusivamente quatro neurônios
+
+- peso recorrente
+  - campo `recurrent_weight` de `NeuralConfig`
+  - valor padrão definido em `/src/neural/four_neuron_network.py`
+
+- ganho sigmoidal
+  - campo `sigmoid_gain` de `NeuralConfig`
+  - valor padrão definido em `/src/neural/four_neuron_network.py`
+
+- pesos não diagonais iniciais
+  - campos `initial_weight_min` e `initial_weight_max` de `NeuralConfig`
+  - valores padrão definidos em `/src/neural/four_neuron_network.py`
+  - os pesos são sorteados uniformemente nesse intervalo usando a seed da rede
+
+- taxa sináptica `epsilon`
+  - campo `synaptic_learning_rate` de `NeuralConfig`
+  - valor padrão definido em `/src/neural/four_neuron_network.py`
+
+- taxa intrínseca `xi`
+  - campo `intrinsic_learning_rate` de `NeuralConfig`
+  - valor padrão definido em `/src/neural/four_neuron_network.py`
+
+- deslocamento inicial
+  - campo `initial_shift` de `NeuralConfig`
+  - valor padrão definido em `/src/neural/four_neuron_network.py`
+
+- competição
+  - campo `competition_mode` de `NeuralConfig`
+  - valor padrão `CompetitionMode.DETERMINISTIC`
+  - definido em `/src/neural/four_neuron_network.py`
+
+- escopo da plasticidade
+  - campo `plasticity_scope` de `NeuralConfig`
+  - valor padrão `PlasticityScope.WINNER_ONLY`
+  - definido em `/src/neural/four_neuron_network.py`
+
+- fonte da plasticidade intrínseca
+  - campo `intrinsic_output_source` de `NeuralConfig`
+  - valor padrão `IntrinsicOutputSource.POST_COMPETITION`
+  - definido em `/src/neural/four_neuron_network.py`
+
+- desvio do ruído de ativação
+  - campo `activation_noise_std` de `NeuralConfig`
+  - valor padrão `0.0`, mantendo o ruído desativado
+  - definido em `/src/neural/four_neuron_network.py`
+
+- limites adicionais dos pesos
+  - campo `optional_weight_bounds` de `NeuralConfig`
+  - valor padrão `None`, sem limites adicionais
+  - definido em `/src/neural/four_neuron_network.py`
+
+- seed da configuração integrada
+  - campo `random_seed` de `LearningRuntimeConfig`, encaminhado para `NeuralConfig`
+  - configurada pelo argumento `--learning-seed`
+  - valor definido em `/webots/worlds/experiment_inclined_plane.wbt`
+
+Na execução integrada, `LearningRuntime` constrói `NeuralConfig` informando
+explicitamente apenas a seed e a normalização da aceleração. Os demais
+parâmetros da tabela utilizam os valores padrão centralizados em
+`/src/neural/four_neuron_network.py` e ainda não são expostos como argumentos
+do controlador.
 
 ### [atualizar] Parâmetros do protocolo de aprendizagem
 
@@ -638,9 +703,47 @@ estes parametros estao centralizados? onde sao configurados?
 | movimentos consecutivos para o critério | 5 |
 | sinal usado para representar descida | -1 |
 
-<!-- ! todo
-estes parametros estao centralizados? onde sao configurados?
--->
+Onde:
+
+- duração nominal da ação
+  - campo `action_duration_seconds` de `LearningRuntimeConfig`
+  - configurada pelo argumento `--learning-action-duration`
+  - valor definido em `/webots/worlds/experiment_inclined_plane.wbt`
+
+- velocidade das rodas no modo `LEARNING`
+  - campo `wheel_speed` de `LearningRuntimeConfig`
+  - configurada pelo argumento `--learning-speed`
+  - valor definido em `/webots/worlds/experiment_inclined_plane.wbt`
+
+- limiar de movimento estacionário
+  - campo `stationary_threshold` de `LearningRuntimeConfig`
+  - valor padrão definido em `/webots/controllers/four_wheels_manual/learning_runtime.py`
+  - atualmente não é exposto como argumento do controlador
+
+- intensidade sonora da maraca
+  - campo `sound_intensity` de `LearningRuntimeConfig`
+  - pode ser configurada pelo argumento `--learning-sound-intensity`
+  - o mundo principal não informa esse argumento e utiliza o valor padrão do controlador
+
+- escala da aceleração
+  - campo `acceleration_scale` de `LearningRuntimeConfig`
+  - configurada pelo argumento `--learning-acceleration-scale`
+  - valor definido em `/webots/worlds/experiment_inclined_plane.wbt`
+
+- entrada visual
+  - valor `visual=0.0`
+  - definido diretamente em `/webots/controllers/four_wheels_manual/learning_runtime.py`
+  - atualmente não é exposto como parâmetro e representa o canal visual desativado
+
+- movimentos consecutivos para o critério
+  - campo `learning_streak` de `ExperimentConfig`
+  - valor fixado em `5` durante a criação do protocolo em `/webots/controllers/four_wheels_manual/learning_runtime.py`
+  - atualmente não é exposto como argumento do controlador
+
+- sinal usado para representar descida
+  - campo `downhill_sign` de `ExperimentConfig`
+  - valor fixado em `-1` durante a criação do protocolo em `/webots/controllers/four_wheels_manual/learning_runtime.py`
+  - o sinal negativo decorre do cálculo `distância final - distância inicial`, pois a aproximação da meta reduz a distância
 
 ### [atualizar] Parâmetros do mundo Webots
 
@@ -660,15 +763,39 @@ estes parametros estao centralizados? onde sao configurados?
 | área lógica da meta | 0,96 x 0,96 x 0,30 m |
 | permanência configurada na meta | 0,5 s; o modo `LEARNING` atual conclui na entrada |
 
-<!-- ! todo
-estes parametros estao centralizados? onde sao configurados?
--->
+Onde:
 
-Gravidade, atrito e alguns parâmetros de contato permanecem herdados dos defaults do Webots e deverão ser explicitados antes da campanha formal.
+- passo básico do mundo
+  - campo `basicTimeStep` de `WorldInfo`
+  - configurado em `/webots/worlds/experiment_inclined_plane.wbt`
 
-<!-- ! todo
-onde estao definidos estes ou qual o padrão deles? podemos criar uma tabela para eles?
--->
+- passo do controlador
+  - constante `TIME_STEP`
+  - configurado em `/webots/controllers/four_wheels_manual/four_wheels_manual.py`
+  - deve ser compatível com o passo básico do mundo; atualmente corresponde a quatro passos de 16 ms
+
+- seed do mundo
+  - campo `randomSeed` de `WorldInfo`
+  - configurado em `/webots/worlds/experiment_inclined_plane.wbt`
+  - é independente da seed de aprendizagem definida por `--learning-seed`
+
+- inclinação da rampa
+  - campo `angle`
+  - configurado em `/webots/worlds/experiment_inclined_plane.wbt`
+  - deve possuir o mesmo valor nos componentes `CompactInclinedPlane` e `InclinedFourWheelRobot`
+
+- área lógica da meta
+  - campos `size` e `detectionHeight` do componente `GoalArea`
+  - configurada visualmente em `/webots/worlds/experiment_inclined_plane.wbt`
+  - repetida no argumento `--goal=x,y,z,largura,comprimento,altura,permanência` do controlador
+  - os dois conjuntos de valores devem permanecer sincronizados
+
+- permanência configurada na meta
+  - campo `dwellTime` do componente `GoalArea`
+  - repetida como o último valor do argumento `--goal`
+  - o monitor geral utiliza essa permanência, mas o runtime do modo `LEARNING` atualmente encerra a execução na entrada da área
+
+Gravidade, atrito e alguns parâmetros de contato permanecem herdados dos defaults do Webots.
 
 ### [atualizar] Parâmetros do robô e dos sensores
 
@@ -687,10 +814,17 @@ onde estao definidos estes ou qual o padrão deles? podemos criar uma tabela par
 | aceleração usada na rede | componente longitudinal do acelerômetro |
 | som usado na rede | estímulo lógico, sem microfone ou alto-falante |
 
+Onde:
+
+- torque do modo passivo realista
+  - variável `PASSIVE_REALISTIC_TORQUE`
+  - em `/webots/controllers/four_wheels_manual/four_wheels_manual.py`
+
 <!-- ! todo
-estes parametros sao mais fixos certo?
+esta sessao abaixo esta potencialmente repetida
 -->
 
+<!--
 ## [atualizar] Implementação e reprodutibilidade
 
 O código separa quatro responsabilidades principais:
@@ -701,28 +835,22 @@ O código separa quatro responsabilidades principais:
 
 - `src/control`: tradução das ações abstratas para comandos de rodas;
 
-<!-- ! todo
-esse item abaixo esta certo?
--->
-
 - `webots\controllers\four_wheels_manual`: controlador Webots com aquisição dos sensores, controle motor, execução da janela de acompanhamento.
 
 Cada execução produz `metadata.json`, `iterations.jsonl`, `summary.json` e um relatório HTML `report.html`derivado na pasta `\experiments\runs\learning_{ISO UTC Timestamp}_{seed}\`.
 
 Os metadados registram as configurações neural,
 experimental, do runtime e da meta. A seed torna a inicialização reproduzível;
+-->
 
 <!-- ! todo
 a sessao abaixo sobre testes e como rodar potencialmente vai para os anexos
 -->
 
-### [atualizar] Testes automatizados
+<!--
+### [remover?] Testes automatizados
 
 A implementação possui testes automatizados distribuídos entre quatro conjuntos:
-
-<!-- ! todo
-apontar o caminho relativo em cada teste
--->
 
 - equações, inicialização, competição e plasticidade da rede;
 
@@ -742,12 +870,10 @@ comando recomendado para instalar dependências e executar os testes é:
 uv sync --all-groups --all-extras
 uv run pytest
 ```
-
-### [atualizar] Ensaios exploratórios
-
-<!-- ! todo
-essa sessao deve virar uma explicacao dos dados e arquivos gerados na rodada de um experimento
 -->
+
+<!--
+### [remover?] Ensaios exploratórios
 
 Há seis execuções exploratórias registradas, todas encerradas por chegada à
 meta. O número de iterações variou entre 43 e 129, e três execuções geraram o
@@ -758,44 +884,43 @@ Essas execuções foram realizadas enquanto a implementação ainda evoluía e n
 devem ser agregadas como repetições de um mesmo experimento. Elas demonstram o
 funcionamento do fluxo completo, mas não permitem atribuir a chegada à meta à
 plasticidade da rede.
-
-### [atualizar] Telas da interface e da telemetria
+-->
 
 <!-- ! todo
 isso aqui vira uma explicacao de operacao do experimento
--->
-
-Esta subseção deverá destacar a execução do modo `LEARNING`, incluindo o
-neurônio vencedor, a ação selecionada, a direção observada, o estado da maraca,
-os contadores dos critérios e a chegada à meta. Também deverá apresentar uma
-tela do relatório HTML produzido ao final da execução.
-
-<!-- ! todo
 incluir imagem do mapa
 incluir imagem da tela explicando cada grupo de controles
 incluir mapoeamento do joystic com cada botao e funcao
 incluir nota que a versao fase 3 tera mapeamento no teclado tambem
 -->
 
-### [atualizar] Execuções de exemplo
+<!--
+### [atualizar] Telas da interface e da telemetria
 
-<!-- ! todo
-isso aqui vira uma sessao de limitacoes e proximos passos
+Esta subseção deverá destacar a execução do modo `LEARNING`, incluindo o
+neurônio vencedor, a ação selecionada, a direção observada, o estado da maraca,
+os contadores dos critérios e a chegada à meta. Também deverá apresentar uma
+tela do relatório HTML produzido ao final da execução.
 -->
-
-Serão selecionados vídeos curtos que mostrem as quatro primitivas motoras, uma execução completa no plano inclinado e a correspondência entre movimento, telemetria e estímulo sonoro. Os vídeos deverão informar a versão do código e a
-configuração utilizada.
 
 <!-- ! todo
 incluir imagem de uma execucao
 incluir video no youtube (url) de uma execucao
 -->
 
-## [atualizar] Limitações e hipóteses operacionais
+<!--
+### [remover?] Execuções de exemplo
+
+Serão selecionados vídeos curtos que mostrem as quatro primitivas motoras, uma execução completa no plano inclinado e a correspondência entre movimento, telemetria e estímulo sonoro. Os vídeos deverão informar a versão do código e a
+configuração utilizada.
+-->
 
 <!-- ! todo
 isso aqui vira uma sessao de limitacoes e proximos passos
 -->
+
+<!--
+## [remover?] Limitações e hipóteses operacionais
 
 Na configuração atual, a rede utiliza a aceleração longitudinal e o estímulo
 sonoro produzido logicamente após movimentos descendentes. O canal visual
@@ -810,23 +935,22 @@ permanência antes da campanha experimental.
 A implementação foi validada no ambiente simulado. Uma futura plataforma
 física exigirá um adaptador próprio para sensores, motores, unidades de medida
 e restrições temporais.
-
-## [atualizar] Protocolo dos ensaios formais
+-->
 
 <!-- ! todo
 ressaltar que a fase 3 permitira executar um batch de experimentos com variacoes de parametros para permitir comparar alteracoes de variaveis a plasticidade gerada
 -->
 
+<!--
+## [remover?] Protocolo dos ensaios formais
+
 Antes da campanha experimental, deverão ser congelados os parâmetros, a versão
 do código e as condições de execução. Os ensaios deverão incluir repetições com
 seeds registradas e condições de referência capazes de separar o efeito da
 plasticidade do deslocamento produzido pela física da rampa.
+-->
 
 ## [atualizar] Conclusão
-
-<!-- ! todo
-atualizar por ultimo
--->
 
 Apesar de desafios iniciais, principalmente no aprendizado e adaptação ao ambiente Webots, o projeto evoluiu para um estado funcional sólido de simulação com controle, mas ainda sem a rede neural integrada. A construção em camadas permitiu validar cada componente isoladamente, garantindo que o sistema como um todo esteja pronto para a integração da rede neural e a observação do comportamento emergente.
 
@@ -840,7 +964,7 @@ A abordagem em camadas permitiu:
 
 O projeto encontra-se próximo da etapa de aprendizado efetivo.
 
-## [corrigir] Referências
+## [preservar] Referências
 
 Francisco Javier Ropero Peláez, Lucas Galdiano Ribeiro Santana
 Doman's Inclined Floor Method for Early Motor Organization Simulated with a Four Neurons Robot (2011)
@@ -862,15 +986,15 @@ Niraj S Desai
 Homeostatic plasticity in the CNS: synaptic and intrinsic forms (2003)
 https://pubmed.ncbi.nlm.nih.gov/15242651/
 
-## [atualizar] Apendices
+## [preservar] Apendices
 
-### Apêndice A - Guia de reprodução
+### [preservar] Apêndice A - Guia de reprodução
 
 Este apêndice descreve a preparação do ambiente necessário para inspecionar o código, executar os testes automatizados e reproduzir a simulação integrada da Fase 2. Os comandos devem ser executados a partir da raiz do repositório, salvo quando indicado de outra forma.
 
 O procedimento principal utiliza *uv*, pois `pyproject.toml` e `uv.lock` constituem as fontes de configuração e travamento das dependências Python. Os procedimentos com *pip* e *conda* são mantidos como alternativas.
 
-#### [adicionar] Requisitos de software
+#### [preservar] Requisitos de software
 
 A tabela esta em ordem sugerida de instalação
 
@@ -886,15 +1010,15 @@ A tabela esta em ordem sugerida de instalação
 
 O experimento integrado utiliza um controlador Python e, por isso, GCC não é necessário para interpretar a rede neural. A toolchain permanece documentada porque o repositório contém controladores e exemplos nativos e porque ela será necessária caso esses componentes sejam recompilados ou modificados.
 
-#### [adicionar] Requisitos de hardware
+#### [preservar] Requisitos de hardware
 
 | Hardware | Versão ou condição | Finalidade |
 |---|---|---|
 | controle compatível com *joystick* (modelo Xbox One S mapeado) | opcional para testes gerais; necessário na interface atual para selecionar os modos interativos | acionamento de `MANUAL`, `LEARNING` e demais modos |
 
-#### [adicionar] Instalação de GCC, G++ e make
+#### [preservar] Instalação de GCC, G++ e make
 
-##### [adicionar] Ubuntu Linux
+##### [preservar] Ubuntu Linux
 
 O pacote `build-essential` reúne GCC, G++, *make* e os componentes básicos de compilação:
 
@@ -906,7 +1030,7 @@ g++ --version
 make --version
 ```
 
-##### [adicionar] Windows
+##### [preservar] Windows
 
 O *Webots R2025a* distribui uma cópia própria do MinGW para seus controladores C e C++. Para desenvolvimento também fora do ambiente interno do simulador, pode-se instalar a toolchain UCRT64 do [MSYS2](https://www.msys2.org/).
 
@@ -942,9 +1066,9 @@ make --version
 
 No pacote UCRT64, o executável específico do *make* também pode aparecer como `mingw32-make`; o pacote `make` fornece o comando genérico usado pelos procedimentos do projeto.
 
-#### [adicionar] Instalação do Git
+#### [preservar] Instalação do Git
 
-##### [adicionar] Ubuntu Linux
+##### [preservar] Ubuntu Linux
 
 ```bash
 sudo apt update
@@ -952,7 +1076,7 @@ sudo apt install git
 git --version
 ```
 
-##### [adicionar] Windows
+##### [preservar] Windows
 
 O *Git for Windows* pode ser obtido em <https://git-scm.com/>. Em sistemas com *winget*, a instalação também pode ser realizada em PowerShell:
 
@@ -963,7 +1087,7 @@ git --version
 
 Depois da instalação, deve-se abrir um novo terminal para que eventuais alterações no `PATH` sejam reconhecidas.
 
-#### [adicionar] Clonagem do repositório
+#### [preservar] Clonagem do repositório
 
 Usando HTTPS:
 
@@ -981,11 +1105,11 @@ cd DomanNeurocomputationalModel
 
 Após a clonagem, os arquivos `pyproject.toml`, `uv.lock`, `requirements.txt` e `environment.yml` devem estar disponíveis na raiz do projeto.
 
-#### [adicionar] Instalação do Webots
+#### [preservar] Instalação do Webots
 
 Os mundos do repositório declaram `R2025a` no cabeçalho e utilizam recursos dessa versão. Para reproduzir a configuração documentada, deve-se instalar **Webots R2025a**, em vez de substituir automaticamente pela versão mais recente. Os instaladores e as instruções oficiais estão disponíveis em <https://cyberbotics.com/doc/guide/installing-webots> e nas versões publicadas em <https://github.com/cyberbotics/webots/releases>.
 
-##### [adicionar] Ubuntu Linux
+##### [preservar] Ubuntu Linux
 
 Deve-se baixar o pacote `.deb` correspondente ao Webots R2025a e instalá-lo a partir do diretório em que foi salvo:
 
@@ -996,7 +1120,7 @@ webots --version
 
 O nome exato do arquivo pode variar conforme o pacote publicado. Se o executável não for encontrado no `PATH`, o Webots também pode ser iniciado pelo menu de aplicações ou por seu diretório de instalação.
 
-##### [adicionar] Windows
+##### [preservar] Windows
 
 Deve-se baixar e executar o instalador `webots-R2025a_setup.exe`. Na instalação padrão, o executável fica sob `C:\Program Files\Webots`.
 
@@ -1008,7 +1132,7 @@ Em algumas configurações, o Webots aberto diretamente pelo menu não herda o a
 
 O caminho deve ser ajustado caso o Webots tenha sido instalado em outro diretório. As opções `--stdout` e `--stderr` mantêm visíveis as mensagens do controlador; `--clear-cache` é útil quando alterações em mundos ou arquivos PROTO não aparecem após uma atualização.
 
-#### [adicionar] Ambiente Python recomendado com uv
+#### [preservar] Ambiente Python recomendado com uv
 
 O *uv* pode ser instalado pelos procedimentos oficiais disponíveis em <https://docs.astral.sh/uv/getting-started/installation/>.
 
@@ -1033,7 +1157,7 @@ uv sync --all-groups --all-extras
 
 O comando cria ou atualiza `.venv`, instala a versão compatível do Python quando necessário, instala o projeto e inclui os grupos de análise e desenvolvimento empregados nos *notebooks* e testes.
 
-#### [adicionar] Alternativa com pip
+#### [preservar] Alternativa com pip
 
 Esta alternativa exige que Python `3.13.x` já esteja instalado. Recomenda-se criar um ambiente virtual isolado.
 
@@ -1057,7 +1181,7 @@ python -m pip install -r requirements.txt
 
 O arquivo `requirements.txt` instala o projeto com o conjunto de dependências de análise e inclui o *pytest*. A definição principal das dependências permanece em `pyproject.toml`.
 
-#### [adicionar] Alternativa com conda
+#### [preservar] Alternativa com conda
 
 Pode-se utilizar Miniforge ou Miniconda seguindo a documentação em <https://docs.conda.io/projects/conda/en/stable/user-guide/install/>. Depois de instalar o gerenciador e abrir um terminal com `conda` disponível, o arquivo `environment.yml` cria o ambiente `webots` com Python 3.13 e as dependências do projeto:
 
@@ -1073,11 +1197,11 @@ conda env update -f environment.yml --prune
 conda activate webots
 ```
 
-#### [adicionar] Editor e extensões opcionais
+#### [preservar] Editor e extensões opcionais
 
 O projeto não depende de um editor específico. Para desenvolvimento com *Visual Studio Code*, são úteis as extensões oficiais **Python** e **Pylance**, além de suporte a Jupyter para os *notebooks*. O editor deve ser iniciado somente depois da criação ou ativação do ambiente, ou configurado para usar o interpretador localizado em `.venv` ou no ambiente `webots` do *conda*.
 
-#### [adicionar] Validação do ambiente
+#### [preservar] Validação do ambiente
 
 Com *uv*, todos os testes podem ser executados por:
 
@@ -1093,7 +1217,17 @@ python -m pytest
 
 Os testes cobrem as equações e a plasticidade da rede, a causalidade do protocolo, o mapeamento motor, a telemetria e a geração dos artefatos. Sua aprovação verifica a instalação do núcleo Python, mas não substitui a validação da física e dos sentidos de rotação dentro do Webots.
 
-#### [adicionar] Execução da simulação integrada
+#### [preservar] Lista mínima de verificação
+
+- `git --version` responde corretamente;
+- o Webots instalado corresponde à versão `R2025a`;
+- `uv sync --all-groups --all-extras` ou uma alternativa equivalente termina sem erros;
+- `webots/worlds/experiment_inclined_plane.wbt` abre sem erros de PROTO ou de controlador;
+- as mensagens do controlador aparecem no terminal;
+- o modo `LEARNING` pode ser selecionado;
+- uma execução produz os arquivos esperados em `experiments/runs`.
+
+#### [preservar] Execução da simulação integrada
 
 Após validar o ambiente:
 
@@ -1106,31 +1240,27 @@ Após validar o ambiente:
 
 O mundo integrado inicia em `PASSIVE_REALISTIC`, conforme seus `controllerArgs`; portanto, apenas iniciar a simulação não ativa automaticamente o aprendizado. Na implementação atual, a seleção de `LEARNING` é feita pelo controle.
 
-Cada execução de aprendizagem gera um diretório sob:
+Cada simulação de aprendizagem gera um diretório dentro de `experiments/runs`:
 
 ```text
 experiments/runs/learning_{timestamp_UTC}_{seed}/
 ```
 
-Esse diretório contém `metadata.json`, `iterations.jsonl`, `summary.json` e, quando a execução é finalizada normalmente, `report.html`. Para comparar execuções, devem ser preservados o código utilizado, o mundo, os argumentos do controlador, a seed e todos esses artefatos.
+Esse diretório contém:
 
-#### [adicionar] Lista mínima de verificação
+- `metadata.json`, com a configuração neural, experimental e de runtime;
 
-- `git --version` responde corretamente;
-- o Webots instalado corresponde à versão `R2025a`;
-- `uv sync --all-groups --all-extras` ou uma alternativa equivalente termina sem erros;
-- `webots/worlds/experiment_inclined_plane.wbt` abre sem erros de PROTO ou de controlador;
-- as mensagens do controlador aparecem no terminal;
-- o modo `LEARNING` pode ser selecionado;
-- uma execução produz os arquivos esperados em `experiments/runs`.
+- `iterations.jsonl`, com um registro estruturado para cada iteração;
 
-### Apêndice B - Estrutura do repositório
+- `summary.json`, com o resultado consolidado da execução;
 
-O repositório separa o modelo neural, o protocolo experimental e a adaptação dos comandos motores em `src` dos artefatos específicos do Webots nos diretórios `webots/controllers`, `webots/protos` e `webots/worlds`.
+- `report.html`, com a visualização derivada dos registros.
 
-A árvore a seguir apresenta os componentes relevantes para compreender e reproduzir a Fase 2.
+Os arquivos de uma rodada devem permanecer juntos, pois o relatório HTML e o resumo são derivados dos mesmos metadados e registros por iteração.
 
-Arquivos de cache, ambientes virtuais, resultados temporários e configurações internas de ferramentas foram omitidos.
+### [preservar] Apêndice B - Estrutura do repositório
+
+O repositório separa o modelo neural, o protocolo experimental e a adaptação dos comandos motores dos artefatos específicos do Webots. A árvore a seguir apresenta alguns dos componentes do repositório que serão detalhados a seguir.
 
 ```text
 DomanNeurocomputationalModel/
@@ -1143,8 +1273,7 @@ DomanNeurocomputationalModel/
 |
 |-- src/
 |   |-- neural/
-|   |   |-- four_neuron_network.py
-|   |   `-- README.md
+|   |   `-- four_neuron_network.py
 |   |-- control/
 |   |   `-- robot_adapter.py
 |   `-- experiments/
@@ -1193,8 +1322,8 @@ DomanNeurocomputationalModel/
 |   |       `-- custom_robot_window/
 |   `-- tutorials/
 |
-|-- experiments/
-|   `-- runs/          [gerado durante o experimento]
+|-- experiments/ [gerado durante o experimento]
+|   `-- runs/
 |       `-- learning_{timestamp}_{seed}/
 |           |-- metadata.json
 |           |-- iterations.jsonl
@@ -1208,11 +1337,24 @@ DomanNeurocomputationalModel/
 |-- docs/
 |   |-- fase01-relatorio.md
 |   |-- fase02-relatorio.md
-|-- assets/
-`-- data/
+`-- assets/
 ```
 
-#### [adicionar] Código-fonte do modelo
+> **Nota:** Arquivos de cache, ambientes virtuais, resultados temporários e configurações internas de ferramentas foram omitidos.
+
+#### [preservar] Arquivos de configuração na raiz
+
+| Arquivo | Função |
+|---|---|
+| `README.md` | apresentação geral e instruções principais do projeto |
+| `pyproject.toml` | metadados, versão do Python e dependências do projeto |
+| `uv.lock` | versões resolvidas para reprodução com uv |
+| `requirements.txt` | alternativa de instalação com pip |
+| `environment.yml` | alternativa de instalação com conda |
+| `.python-version` | versão de Python selecionada para o diretório de trabalho |
+| `.gitignore` | exclusão de ambientes, caches e resultados gerados |
+
+#### [preservar] Código-fonte do modelo
 
 O diretório `src` contém o núcleo independente do Webots e está dividido em três responsabilidades:
 
@@ -1228,20 +1370,7 @@ O arquivo `src/control/robot_adapter.py` contém a fronteira entre as ações ne
 
 Em `src/experiments`, `experiment_runner.py`, `experiment_logger.py` e `experiment_report.py` separam, respectivamente, execução, persistência e apresentação dos resultados.
 
-#### [adicionar] Testes automatizados
-
-O diretório `tests` reproduz a mesma divisão funcional do código:
-
-| Arquivo | Responsabilidade principal |
-|---|---|
-| `test_four_neuron_network.py` | equações, inicialização, competição e plasticidade neural |
-| `test_robot_adapter.py` | tradução das ações abstratas para comandos motores |
-| `test_experiment_runner.py` | causalidade, classificação do movimento, critérios e artefatos experimentais |
-| `test_learning_runtime.py` | integração temporal, telemetria, meta e funcionamento do runtime usado pelo Webots |
-
-> **Nota:** Esses testes validam o comportamento computacional somente.
-
-#### [adicionar] Estrutura da simulação Webots
+#### [preservar] Estrutura da simulação Webots
 
 O diretório `webots` reúne todos os componentes dependentes do simulador:
 
@@ -1257,45 +1386,31 @@ O diretório `webots` reúne todos os componentes dependentes do simulador:
 
 No controlador principal, `four_wheels_manual.py` realiza a leitura dos sensores, a seleção do modo de controle e o envio dos comandos às rodas. `learning_runtime.py` conecta esse ciclo do Webots ao núcleo localizado em `src` e mantém a janela temporal de cada ação neural.
 
-#### [adicionar] Dados produzidos por uma execução
-
-O diretório `experiments/runs` é criado durante as execuções e não é tratado como código-fonte. Cada rodada recebe um diretório próprio no formato `learning_{timestamp}_{seed}` e pode produzir:
-
-- `metadata.json`, com a configuração neural, experimental e de runtime;
-
-- `iterations.jsonl`, com um registro estruturado para cada iteração;
-
-- `summary.json`, com o resultado consolidado da execução;
-
-- `report.html`, com a visualização derivada dos registros.
-
-Os arquivos de uma rodada devem permanecer juntos, pois o relatório HTML e o resumo são derivados dos mesmos metadados e registros por iteração.
-
-#### [adicionar] Documentação, exemplos e validação exploratória
+#### [preservar] Documentação, exemplos e validação
 
 - `docs` contém os relatórios, os documentos de planejamento e o artigo usado como referência.
+
+- `assets` armazena as imagens utilizadas na documentação;
 
 - `notebooks/four_neuron_network_validation.ipynb` permite examinar o modelo neural com dados sintéticos fora do Webots;
 
 - `examples/four_neuron_minimal.py` apresenta uma execução mínima da rede de quatro neurônios;
 
-- `assets` armazena as imagens utilizadas na documentação;
+#### [preservar] Testes automatizados
 
-- `data` está reservado para conjuntos de dados que precisem ser preservados independentemente dos diretórios completos de execução.
+O diretório `tests` reproduz a mesma divisão funcional do código:
 
-#### [adicionar] Arquivos de configuração na raiz
-
-| Arquivo | Função |
+| Arquivo | Responsabilidade principal |
 |---|---|
-| `README.md` | apresentação geral e instruções principais do projeto |
-| `pyproject.toml` | metadados, versão do Python e dependências do projeto |
-| `uv.lock` | versões resolvidas para reprodução com uv |
-| `requirements.txt` | alternativa de instalação com pip |
-| `environment.yml` | alternativa de instalação com conda |
-| `.python-version` | versão de Python selecionada para o diretório de trabalho |
-| `.gitignore` | exclusão de ambientes, caches e resultados gerados |
+| `test_four_neuron_network.py` | equações, inicialização, competição e plasticidade neural |
+| `test_robot_adapter.py` | tradução das ações abstratas para comandos motores |
+| `test_experiment_runner.py` | causalidade, classificação do movimento, critérios e artefatos experimentais |
+| `test_learning_runtime.py` | integração temporal, telemetria, meta e funcionamento do runtime usado pelo Webots |
 
-#### [adicionar] Relação entre os componentes
+> **Nota:** Esses testes validam o comportamento computacional somente.
+
+<!--
+#### [avaliar] Relação entre os componentes
 
 O caminho principal de uma execução integrada pode ser resumido da seguinte forma:
 
@@ -1311,19 +1426,20 @@ webots/controllers/four_wheels_manual/four_wheels_manual.py
         v
 webots/controllers/four_wheels_manual/learning_runtime.py
         |
-        +--> src/neural/four_neuron_network.py
-        +--> src/control/robot_adapter.py
-        `--> src/experiments/
+        +-> src/neural/four_neuron_network.py
+        +-> src/control/robot_adapter.py
+        `-> src/experiments/
                     |
                     v
         experiments/runs/learning_{timestamp}_{seed}/
 ```
+-->
 
-### Apêndice C - Evolução histórica da simulação
+### [preservar] Apêndice C - Evolução histórica da simulação
 
 Foram necessárias diversas simulações para construir o experimento da Fase 2, os principais saltos qualitativos do projeto estão listados abaixo.
 
-#### [atualizar] Simulação de física
+#### [preservar] Simulação de física
 
 O primeiro desafio foi reproduzir física com parâmetros de mundo terrestre com exatidão aproximada(gravidade, atrito, elasticidade, etc), o filme inclined_plane é o plano inclinado com bolas para a simulação de física.
 
@@ -1336,7 +1452,7 @@ Imagem: inclined_plane
 > **Nota:** Os planos foram criados especificamente para o projeto.
 
 
-#### [atualizar] Simulação de colisão do robô
+#### [preservar] Simulação de colisão do robô
 
 O segundo desafio foi montar um robo e posicioná-lo neste mundo simulado, o filme inclined_plane_with_robot e inclined_plane_with_robot_1 é o plano inclinado com o robo e controle de batida (nao rede neural) para testar se o robo funcionava na simulação, o último tem um guardrail mais baixo (o que impede a queda do robo).
 
@@ -1350,7 +1466,7 @@ Imagem: inclined_plane_with_robot
 
 > **Nota:** Nos robôs de teste de batida foram usados modelos de exemplo da biblioteca aberta do Webots adaptados.
 
-#### [atualizar] Simulação de controle
+#### [preservar] Simulação de controle
 
 Por fim era necessário conseguir que uma interface de controle baseada em código conseguisse interagir com a simulação, o filme normal_plane_with_rotation é um primeiro teste com juntas, motores e ativação via interface de controle, esse passo foi decisivo no projeto, pois abriu portas para que fosse possível controlar aspectos da simulação via interface programável primeiro em C e depois em Python.
 
