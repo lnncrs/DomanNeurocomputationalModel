@@ -77,20 +77,11 @@ Resumo. Este trabalho tem como objetivo a reprodução computacional e robótica
 - `[atualizar]` Limitações e hipóteses operacionais
 - `[atualizar]` Protocolo dos ensaios formais
 - `[atualizar]` Conclusão
-- `[atualizar]` Anexos
-  - `[atualizar]` Visão geral do repositório
-  - `[atualizar]` Simulação de física
-  - `[atualizar]` Simulação de colisão do robô
-  - `[atualizar]` Simulação de controle
-  - `[preservar]` Como clonar o repositório do projeto
-  - `[atualizar]` Organização detalhada do repositório
-  - `[atualizar]` Montagem do ambiente de desenvolvimento e simulação
-   - `[atualizar]` Lista de software requerido
-  - `[atualizar]` Webots
-    - `[atualizar]` Nota sobre uso do Webots no Windows
-  - `[atualizar]` Ambiente virtual e instalação de dependências
-    - `[atualizar]` Usando pip
-    - `[atualizar]` Usando conda
+- `[preservar]` Apêndices
+  - `[preservar]` Apêndice A - Guia de reprodução
+  - `[preservar]` Apêndice B - Estrutura do repositório
+  - `[preservar]` Apêndice C - Evolução histórica da simulação
+  - `[adicionar]` Apêndice D - Localização e configuração dos parâmetros
 - `[corrigir]` Referências
 
 ## [preservar] Resumo
@@ -483,31 +474,93 @@ incluir como esse "impede" é implementado no codigo
 
 ## [atualizar] Funções e equações
 
-As equações publicadas foram implementadas diretamente quando possível. As expressões de ativação, normalização, competição e integração com o ambiente completam pontos que não são especificados integralmente no artigo.
+As funções utilizadas na reconstrução possuem origens diferentes. Algumas são
+apresentadas explicitamente no artigo original; outras foram necessárias para
+transformar sua descrição em um protocolo executável no ambiente simulado. Para
+distinguir esses casos, cada subseção apresenta a notação matemática, define
+seus símbolos, registra a origem da expressão e indica resumidamente sua
+implementação.
 
-<!-- ! todo
-incluir uma tabela que indique a equacao, descritivo curto, se foi trazida do artigo e sem sim qual, se não porque foi escolhida
--->
-
-<!-- ! todo
-para as equacoes abaixo, incluir a notacao matematica e sempre incluir abaixo uma sessao "Onde:" descrevendo cada item da equacao e na sequencia, a referencia da implementacao em codigo
--->
+| Função ou equação | Finalidade | Origem | Classificação |
+|---|---|---|---|
+| normalização e soma sensorial | transformar e combinar aceleração, visão e som | soma sensorial descrita no artigo; normalização explicitada na reconstrução | adaptação operacional |
+| ativação, saída sigmoidal e competição | calcular a atividade e selecionar o neurônio vencedor | sigmoide correspondente à equação 3 do artigo; ativação e competição completadas pela reconstrução | publicada e adaptada |
+| plasticidade sináptica | atualizar os pesos entre neurônios diferentes | equação 2 do artigo | publicada, com hipótese sobre o escopo da atualização |
+| plasticidade intrínseca | atualizar o deslocamento da função sigmoidal | equação 4 do artigo | publicada, com hipótese sobre a saída utilizada |
+| distância, deslocamento e classificação | medir a aproximação à meta e classificar o movimento | não apresentada como equação no artigo | decisão geométrica e operacional |
+| aceleração, maraca e critérios | agregar o estímulo vestibular, produzir o estímulo sonoro e registrar aprendizagem | critério principal descrito no artigo; agregação e critério adicional definidos na reconstrução | publicada e adaptada |
 
 ### [atualizar] Normalização e soma sensorial
 
-Cada canal sensorial `k` é normalizado por uma transformação linear:
+Os três canais sensoriais são representados por aceleração, visão e som. Antes de serem apresentados à rede, seus valores passam por uma transformação linear
+independente:
 
-```text
-x'_k(t) = (x_k(t) - offset_k) * scale_k
-```
+$$
+\widetilde{x}_k(t) =
+\left(x_k(t)-o_k\right)s_k,
+\qquad k \in \{a,v,s\}
+$$
 
-A entrada comum aos quatro neurônios é:
+Onde:
 
-```text
-S(t) = acceleration'(t) + visual'(t) + sound'(t)
-```
+- $t$: iteração do protocolo experimental;
+- $k$: canal sensorial considerado;
+- $a$, $v$ e $s$: aceleração, visão e som, respectivamente;
+- $x_k(t)$: valor bruto do canal $k$ na iteração $t$;
+- $o_k$: deslocamento ou *offset* aplicado ao canal $k$;
+- $s_k$: fator de escala do canal $k$;
+- $\widetilde{x}_k(t)$: valor do canal após a normalização.
 
-Na configuração atual, todos os offsets são zero, todas as escalas são `1,0` e o canal visual recebe zero.
+Cada entrada sensorial pode ter seu ponto de referência corrigido e sua intensidade ajustada antes de ser apresentada à rede. Na configuração atual, nenhuma dessas correções altera os valores, pois os deslocamentos são zero e as escalas são unitárias, ou seja:
+
+> **Esta equação quer dizer:** Pegue o valor recebido de um sensor, subtraia um valor de referência e multiplique o resultado por um fator de escala.
+
+Os valores normalizados são somados e formam uma entrada sensorial comum aos
+quatro neurônios:
+
+$$
+S(t)
+=
+\sum_{k \in \{a,v,s\}}\widetilde{x}_k(t)
+=
+\widetilde{x}_a(t)
++
+\widetilde{x}_v(t)
++
+\widetilde{x}_s(t)
+$$
+
+Onde:
+
+- $S(t)$: entrada sensorial total apresentada a cada neurônio na iteração $t$;
+- $\widetilde{x}_a(t)$: aceleração longitudinal agregada e normalizada;
+- $\widetilde{x}_v(t)$: entrada visual normalizada;
+- $\widetilde{x}_s(t)$: intensidade normalizada do estímulo da maraca.
+
+> **Esta equação quer dizer:** entrada total = aceleração transformada + visão transformada + som transformado
+
+Na configuração atual, todos os *offsets* são zero e todas as escalas são
+`1,0`. O canal visual permanece desativado e recebe `0,0`. O canal sonoro recebe
+`0,1` quando a iteração anterior é classificada como descendente e `0,0` nos
+demais casos.
+
+<!--
+**Origem e adaptação:** O artigo descreve aceleração, visão e som como entradas
+sensoriais comuns à rede, mas não especifica integralmente uma transformação de
+normalização para a reconstrução. A transformação linear torna explícitos o
+deslocamento e a escala de cada canal. A soma preserva a organização comum das
+entradas sensoriais descrita no modelo original.
+
+> **Hipótese operacional:** Com escalas unitárias, os canais são somados sem
+> uma calibração adicional de suas magnitudes. A adequação relativa dessas
+> escalas deverá ser avaliada nos ensaios formais.
+
+**Implementação:** `src/neural/four_neuron_network.py`, método
+`SensoryNormalization.normalize`. O valor total é armazenado em
+`NormalizedSensoryInput.total` e utilizado por `FourNeuronNetwork.step`. A
+escala da aceleração é encaminhada pelo runtime em
+`webots/controllers/four_wheels_manual/learning_runtime.py`.
+-->
 
 ### [atualizar] Ativação, saída sigmoidal e competição
 
@@ -596,15 +649,17 @@ acceleration = mean_k(abs(a_x(k) - a_x(initial)))
 Quando o movimento é classificado como `DOWN`, a entrada sonora da iteração seguinte recebe a intensidade da maraca; nos demais casos, recebe zero. São registrados dois critérios: cinco movimentos consecutivos na mesma direção,
 como no artigo, e cinco movimentos consecutivos para baixo, como medida adicional desta reconstrução. A repetição de um neurônio vencedor, por si só, não é considerada aprendizagem.
 
-## [atualizar] Parâmetros experimentais
+## [preservar] Parâmetros experimentais
 
 As tabelas seguintes registram os valores efetivamente utilizados na configuração atual.
 
 Parâmetros classificados como hipótese deverão ser avaliados nos ensaios formais.
 
-> Nota: O Apendice tem uma sessão que mapeia os parametros abaixo para sua localização exata no código, para alterá-los consulte o apendice.
+> **Nota:** A localização dos campos, constantes e argumentos correspondentes
+> está documentada no **Apêndice D - Localização e configuração dos
+> parâmetros**.
 
-### [atualizar] Parâmetros da rede neural
+### [preservar] Parâmetros da rede neural
 
 | Parâmetro | Valor | Origem |
 |---|---:|---|
@@ -622,75 +677,10 @@ Parâmetros classificados como hipótese deverão ser avaliados nos ensaios form
 | limites adicionais dos pesos | nenhum | não publicado |
 | seed da configuração integrada | 42 | reprodutibilidade |
 
-Onde:
+Na execução integrada, somente a seed neural é exposta como argumento do
+controlador. Os demais valores utilizam a configuração padrão da rede.
 
-- número de neurônios
-  - constante `NEURON_COUNT` e campo `neuron_count` de `NeuralConfig`
-  - definidos em `/src/neural/four_neuron_network.py`
-  - a implementação valida e aceita exclusivamente quatro neurônios
-
-- peso recorrente
-  - campo `recurrent_weight` de `NeuralConfig`
-  - valor padrão definido em `/src/neural/four_neuron_network.py`
-
-- ganho sigmoidal
-  - campo `sigmoid_gain` de `NeuralConfig`
-  - valor padrão definido em `/src/neural/four_neuron_network.py`
-
-- pesos não diagonais iniciais
-  - campos `initial_weight_min` e `initial_weight_max` de `NeuralConfig`
-  - valores padrão definidos em `/src/neural/four_neuron_network.py`
-  - os pesos são sorteados uniformemente nesse intervalo usando a seed da rede
-
-- taxa sináptica `epsilon`
-  - campo `synaptic_learning_rate` de `NeuralConfig`
-  - valor padrão definido em `/src/neural/four_neuron_network.py`
-
-- taxa intrínseca `xi`
-  - campo `intrinsic_learning_rate` de `NeuralConfig`
-  - valor padrão definido em `/src/neural/four_neuron_network.py`
-
-- deslocamento inicial
-  - campo `initial_shift` de `NeuralConfig`
-  - valor padrão definido em `/src/neural/four_neuron_network.py`
-
-- competição
-  - campo `competition_mode` de `NeuralConfig`
-  - valor padrão `CompetitionMode.DETERMINISTIC`
-  - definido em `/src/neural/four_neuron_network.py`
-
-- escopo da plasticidade
-  - campo `plasticity_scope` de `NeuralConfig`
-  - valor padrão `PlasticityScope.WINNER_ONLY`
-  - definido em `/src/neural/four_neuron_network.py`
-
-- fonte da plasticidade intrínseca
-  - campo `intrinsic_output_source` de `NeuralConfig`
-  - valor padrão `IntrinsicOutputSource.POST_COMPETITION`
-  - definido em `/src/neural/four_neuron_network.py`
-
-- desvio do ruído de ativação
-  - campo `activation_noise_std` de `NeuralConfig`
-  - valor padrão `0.0`, mantendo o ruído desativado
-  - definido em `/src/neural/four_neuron_network.py`
-
-- limites adicionais dos pesos
-  - campo `optional_weight_bounds` de `NeuralConfig`
-  - valor padrão `None`, sem limites adicionais
-  - definido em `/src/neural/four_neuron_network.py`
-
-- seed da configuração integrada
-  - campo `random_seed` de `LearningRuntimeConfig`, encaminhado para `NeuralConfig`
-  - configurada pelo argumento `--learning-seed`
-  - valor definido em `/webots/worlds/experiment_inclined_plane.wbt`
-
-Na execução integrada, `LearningRuntime` constrói `NeuralConfig` informando
-explicitamente apenas a seed e a normalização da aceleração. Os demais
-parâmetros da tabela utilizam os valores padrão centralizados em
-`/src/neural/four_neuron_network.py` e ainda não são expostos como argumentos
-do controlador.
-
-### [atualizar] Parâmetros do protocolo de aprendizagem
+### [preservar] Parâmetros do protocolo de aprendizagem
 
 | Parâmetro | Valor atual |
 |---|---:|
@@ -703,49 +693,9 @@ do controlador.
 | movimentos consecutivos para o critério | 5 |
 | sinal usado para representar descida | -1 |
 
-Onde:
+> **Nota:** O canal visual permanece desativado. O sinal negativo usado para descida decorre do cálculo `distância final - distância inicial`, pois a aproximação da meta (não necessariamente ao centro dela) reduz a distância.
 
-- duração nominal da ação
-  - campo `action_duration_seconds` de `LearningRuntimeConfig`
-  - configurada pelo argumento `--learning-action-duration`
-  - valor definido em `/webots/worlds/experiment_inclined_plane.wbt`
-
-- velocidade das rodas no modo `LEARNING`
-  - campo `wheel_speed` de `LearningRuntimeConfig`
-  - configurada pelo argumento `--learning-speed`
-  - valor definido em `/webots/worlds/experiment_inclined_plane.wbt`
-
-- limiar de movimento estacionário
-  - campo `stationary_threshold` de `LearningRuntimeConfig`
-  - valor padrão definido em `/webots/controllers/four_wheels_manual/learning_runtime.py`
-  - atualmente não é exposto como argumento do controlador
-
-- intensidade sonora da maraca
-  - campo `sound_intensity` de `LearningRuntimeConfig`
-  - pode ser configurada pelo argumento `--learning-sound-intensity`
-  - o mundo principal não informa esse argumento e utiliza o valor padrão do controlador
-
-- escala da aceleração
-  - campo `acceleration_scale` de `LearningRuntimeConfig`
-  - configurada pelo argumento `--learning-acceleration-scale`
-  - valor definido em `/webots/worlds/experiment_inclined_plane.wbt`
-
-- entrada visual
-  - valor `visual=0.0`
-  - definido diretamente em `/webots/controllers/four_wheels_manual/learning_runtime.py`
-  - atualmente não é exposto como parâmetro e representa o canal visual desativado
-
-- movimentos consecutivos para o critério
-  - campo `learning_streak` de `ExperimentConfig`
-  - valor fixado em `5` durante a criação do protocolo em `/webots/controllers/four_wheels_manual/learning_runtime.py`
-  - atualmente não é exposto como argumento do controlador
-
-- sinal usado para representar descida
-  - campo `downhill_sign` de `ExperimentConfig`
-  - valor fixado em `-1` durante a criação do protocolo em `/webots/controllers/four_wheels_manual/learning_runtime.py`
-  - o sinal negativo decorre do cálculo `distância final - distância inicial`, pois a aproximação da meta reduz a distância
-
-### [atualizar] Parâmetros do mundo Webots
+### [preservar] Parâmetros do mundo Webots
 
 | Parâmetro | Valor atual |
 |---|---:|
@@ -763,41 +713,11 @@ Onde:
 | área lógica da meta | 0,96 x 0,96 x 0,30 m |
 | permanência configurada na meta | 0,5 s; o modo `LEARNING` atual conclui na entrada |
 
-Onde:
-
-- passo básico do mundo
-  - campo `basicTimeStep` de `WorldInfo`
-  - configurado em `/webots/worlds/experiment_inclined_plane.wbt`
-
-- passo do controlador
-  - constante `TIME_STEP`
-  - configurado em `/webots/controllers/four_wheels_manual/four_wheels_manual.py`
-  - deve ser compatível com o passo básico do mundo; atualmente corresponde a quatro passos de 16 ms
-
-- seed do mundo
-  - campo `randomSeed` de `WorldInfo`
-  - configurado em `/webots/worlds/experiment_inclined_plane.wbt`
-  - é independente da seed de aprendizagem definida por `--learning-seed`
-
-- inclinação da rampa
-  - campo `angle`
-  - configurado em `/webots/worlds/experiment_inclined_plane.wbt`
-  - deve possuir o mesmo valor nos componentes `CompactInclinedPlane` e `InclinedFourWheelRobot`
-
-- área lógica da meta
-  - campos `size` e `detectionHeight` do componente `GoalArea`
-  - configurada visualmente em `/webots/worlds/experiment_inclined_plane.wbt`
-  - repetida no argumento `--goal=x,y,z,largura,comprimento,altura,permanência` do controlador
-  - os dois conjuntos de valores devem permanecer sincronizados
-
-- permanência configurada na meta
-  - campo `dwellTime` do componente `GoalArea`
-  - repetida como o último valor do argumento `--goal`
-  - o monitor geral utiliza essa permanência, mas o runtime do modo `LEARNING` atualmente encerra a execução na entrada da área
+> **Nota:** A seed do mundo é independente da seed neural. O ângulo deve permanecer igual no plano e no robô. A área da meta está representada tanto no mundo quanto nos argumentos do controlador e os valores devem permanecer sincronizados. Embora a permanência esteja configurada em `0,5 s`, o runtime do modo `LEARNING` atualmente encerra a execução na entrada da área.
 
 Gravidade, atrito e alguns parâmetros de contato permanecem herdados dos defaults do Webots.
 
-### [atualizar] Parâmetros do robô e dos sensores
+### [preservar] Parâmetros do robô e dos sensores
 
 | Parâmetro | Valor atual |
 |---|---:|
@@ -813,12 +733,6 @@ Gravidade, atrito e alguns parâmetros de contato permanecem herdados dos defaul
 | posição usada no protocolo | GPS |
 | aceleração usada na rede | componente longitudinal do acelerômetro |
 | som usado na rede | estímulo lógico, sem microfone ou alto-falante |
-
-Onde:
-
-- torque do modo passivo realista
-  - variável `PASSIVE_REALISTIC_TORQUE`
-  - em `/webots/controllers/four_wheels_manual/four_wheels_manual.py`
 
 <!-- ! todo
 esta sessao abaixo esta potencialmente repetida
@@ -1018,7 +932,7 @@ O experimento integrado utiliza um controlador Python e, por isso, GCC não é n
 
 #### [preservar] Instalação de GCC, G++ e make
 
-##### [preservar] Ubuntu Linux
+No Ubuntu Linux:
 
 O pacote `build-essential` reúne GCC, G++, *make* e os componentes básicos de compilação:
 
@@ -1030,7 +944,7 @@ g++ --version
 make --version
 ```
 
-##### [preservar] Windows
+No Windows:
 
 O *Webots R2025a* distribui uma cópia própria do MinGW para seus controladores C e C++. Para desenvolvimento também fora do ambiente interno do simulador, pode-se instalar a toolchain UCRT64 do [MSYS2](https://www.msys2.org/).
 
@@ -1068,7 +982,7 @@ No pacote UCRT64, o executável específico do *make* também pode aparecer como
 
 #### [preservar] Instalação do Git
 
-##### [preservar] Ubuntu Linux
+No Ubuntu Linux:
 
 ```bash
 sudo apt update
@@ -1076,7 +990,7 @@ sudo apt install git
 git --version
 ```
 
-##### [preservar] Windows
+No Windows:
 
 O *Git for Windows* pode ser obtido em <https://git-scm.com/>. Em sistemas com *winget*, a instalação também pode ser realizada em PowerShell:
 
@@ -1109,7 +1023,7 @@ Após a clonagem, os arquivos `pyproject.toml`, `uv.lock`, `requirements.txt` e 
 
 Os mundos do repositório declaram `R2025a` no cabeçalho e utilizam recursos dessa versão. Para reproduzir a configuração documentada, deve-se instalar **Webots R2025a**, em vez de substituir automaticamente pela versão mais recente. Os instaladores e as instruções oficiais estão disponíveis em <https://cyberbotics.com/doc/guide/installing-webots> e nas versões publicadas em <https://github.com/cyberbotics/webots/releases>.
 
-##### [preservar] Ubuntu Linux
+No Ubuntu Linux:
 
 Deve-se baixar o pacote `.deb` correspondente ao Webots R2025a e instalá-lo a partir do diretório em que foi salvo:
 
@@ -1120,7 +1034,7 @@ webots --version
 
 O nome exato do arquivo pode variar conforme o pacote publicado. Se o executável não for encontrado no `PATH`, o Webots também pode ser iniciado pelo menu de aplicações ou por seu diretório de instalação.
 
-##### [preservar] Windows
+No Windows:
 
 Deve-se baixar e executar o instalador `webots-R2025a_setup.exe`. Na instalação padrão, o executável fica sob `C:\Program Files\Webots`.
 
@@ -1477,5 +1391,71 @@ normal_plane_with_rotation: https://youtu.be/ZKbbiObtkQ8
 Imagem: normal_plane_with_rotation
 
 > **Nota:** As peças rotacionando com controle foram criadas do zero porque era necessário entender a fundo como funcionava exatamente a "junção" entre duas peças nesta simulação.
+
+### [preservar] Apêndice D - Localização e configuração dos parâmetros
+
+Este apêndice relaciona os parâmetros apresentados no corpo do relatório aos
+campos, constantes e argumentos que determinam seus valores na implementação.
+A indicação **default interno** significa que o campo é configurável em código,
+mas ainda não é exposto pelo mundo principal. A indicação **argumento do
+controlador** significa que o valor pode ser informado por `controllerArgs`.
+
+#### [preservar] Parâmetros da rede neural
+
+| Parâmetro | Campo ou constante | Arquivo | Configuração integrada |
+|---|---|---|---|
+| número de neurônios | `NEURON_COUNT`; `NeuralConfig.neuron_count` | `src/neural/four_neuron_network.py` | fixado e validado em 4 |
+| peso recorrente | `NeuralConfig.recurrent_weight` | `src/neural/four_neuron_network.py` | default interno |
+| ganho sigmoidal | `NeuralConfig.sigmoid_gain` | `src/neural/four_neuron_network.py` | default interno |
+| pesos não diagonais iniciais | `initial_weight_min`; `initial_weight_max` | `src/neural/four_neuron_network.py` | defaults internos; sorteio uniforme condicionado pela seed |
+| taxa sináptica `epsilon` | `NeuralConfig.synaptic_learning_rate` | `src/neural/four_neuron_network.py` | default interno |
+| taxa intrínseca `xi` | `NeuralConfig.intrinsic_learning_rate` | `src/neural/four_neuron_network.py` | default interno |
+| deslocamento inicial | `NeuralConfig.initial_shift` | `src/neural/four_neuron_network.py` | default interno |
+| competição | `NeuralConfig.competition_mode` | `src/neural/four_neuron_network.py` | default `CompetitionMode.DETERMINISTIC` |
+| escopo da plasticidade | `NeuralConfig.plasticity_scope` | `src/neural/four_neuron_network.py` | default `PlasticityScope.WINNER_ONLY` |
+| fonte da plasticidade intrínseca | `NeuralConfig.intrinsic_output_source` | `src/neural/four_neuron_network.py` | default `IntrinsicOutputSource.POST_COMPETITION` |
+| desvio do ruído de ativação | `NeuralConfig.activation_noise_std` | `src/neural/four_neuron_network.py` | default `0.0`; desativado |
+| limites adicionais dos pesos | `NeuralConfig.optional_weight_bounds` | `src/neural/four_neuron_network.py` | default `None`; sem limites adicionais |
+| seed neural | `LearningRuntimeConfig.random_seed`; `NeuralConfig.random_seed` | `webots/controllers/four_wheels_manual/learning_runtime.py` | argumento `--learning-seed`, definido no mundo principal |
+
+O `LearningRuntime` constrói `NeuralConfig` informando explicitamente a seed e
+a normalização da aceleração. Os demais parâmetros neurais utilizam os defaults
+centralizados em `src/neural/four_neuron_network.py`.
+
+#### [preservar] Parâmetros do protocolo de aprendizagem
+
+| Parâmetro | Campo ou constante | Arquivo | Configuração integrada |
+|---|---|---|---|
+| duração nominal da ação | `LearningRuntimeConfig.action_duration_seconds` | `webots/controllers/four_wheels_manual/learning_runtime.py` | argumento `--learning-action-duration`, definido no mundo principal |
+| velocidade no modo `LEARNING` | `LearningRuntimeConfig.wheel_speed` | `webots/controllers/four_wheels_manual/learning_runtime.py` | argumento `--learning-speed`, definido no mundo principal |
+| limiar de movimento estacionário | `LearningRuntimeConfig.stationary_threshold` | `webots/controllers/four_wheels_manual/learning_runtime.py` | default interno |
+| intensidade da maraca | `LearningRuntimeConfig.sound_intensity` | `webots/controllers/four_wheels_manual/learning_runtime.py` | aceita `--learning-sound-intensity`; o mundo usa o default |
+| escala da aceleração | `LearningRuntimeConfig.acceleration_scale` | `webots/controllers/four_wheels_manual/learning_runtime.py` | argumento `--learning-acceleration-scale`, definido no mundo principal |
+| entrada visual | `visual=0.0` | `webots/controllers/four_wheels_manual/learning_runtime.py` | fixada; canal visual desativado |
+| movimentos consecutivos | `ExperimentConfig.learning_streak` | `webots/controllers/four_wheels_manual/learning_runtime.py` | fixado em `5` na criação do protocolo |
+| sinal de descida | `ExperimentConfig.downhill_sign` | `webots/controllers/four_wheels_manual/learning_runtime.py` | fixado em `-1` na criação do protocolo |
+
+Os argumentos configurados pelo mundo principal encontram-se em
+`webots/worlds/experiment_inclined_plane.wbt`.
+
+#### [preservar] Parâmetros do mundo Webots
+
+| Parâmetro | Campo ou constante | Arquivo | Configuração integrada |
+|---|---|---|---|
+| passo básico do mundo | `WorldInfo.basicTimeStep` | `webots/worlds/experiment_inclined_plane.wbt` | campo do mundo; `16 ms` |
+| passo do controlador | `TIME_STEP` | `webots/controllers/four_wheels_manual/four_wheels_manual.py` | constante; `64 ms`, equivalente a quatro passos básicos |
+| seed do mundo | `WorldInfo.randomSeed` | `webots/worlds/experiment_inclined_plane.wbt` | campo do mundo; independente de `--learning-seed` |
+| inclinação da rampa | `angle` | `webots/worlds/experiment_inclined_plane.wbt` | repetida em `CompactInclinedPlane` e `InclinedFourWheelRobot`; valores devem coincidir |
+| área lógica da meta | `GoalArea.size`; `GoalArea.detectionHeight`; `--goal` | `webots/worlds/experiment_inclined_plane.wbt` | configuração duplicada entre mundo e controlador |
+| permanência na meta | `GoalArea.dwellTime`; último valor de `--goal` | `webots/worlds/experiment_inclined_plane.wbt` | monitor geral utiliza o valor; `LEARNING` termina na entrada |
+
+Gravidade, atrito e parâmetros de contato não estão explicitados no mundo
+principal e permanecem herdados dos defaults do Webots.
+
+#### [preservar] Parâmetros do robô e dos sensores
+
+| Parâmetro | Campo ou constante | Arquivo | Configuração integrada |
+|---|---|---|---|
+| torque do modo passivo realista | `PASSIVE_REALISTIC_TORQUE` | `webots/controllers/four_wheels_manual/four_wheels_manual.py` | constante hardcoded; `0,03 N·m` por roda |
 
 CMCC - Universidade Federal do ABC (UFABC) - Santo André - SP - Brasil
