@@ -1,3 +1,7 @@
+// ========================================
+// Default webots controller in C++
+// ========================================
+
 // File:          test_cpp_controller.cpp
 // Date:
 // Description:

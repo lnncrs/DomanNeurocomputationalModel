@@ -36,7 +36,7 @@
 # # Enter here exit cleanup code.
 
 # ========================================
-# Default webots controller in Python
+# Adaptação de versão mínima do controle em Python
 # ========================================
 
 from controller import Robot
