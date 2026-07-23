@@ -37,7 +37,11 @@ def test_downward_response_generates_sound_for_next_neural_step():
 
 @pytest.mark.parametrize(
     ("displacement", "expected"),
-    [(-0.006, MovementDirection.DOWN), (0.006, MovementDirection.UP), (0.004, MovementDirection.STATIONARY)],
+    [
+        (-0.006, MovementDirection.DOWN),
+        (0.006, MovementDirection.UP),
+        (0.004, MovementDirection.STATIONARY),
+    ],
 )
 def test_direction_uses_threshold_and_configured_ramp_axis(displacement, expected):
     runner = ExperimentRunner(
@@ -45,9 +49,10 @@ def test_direction_uses_threshold_and_configured_ramp_axis(displacement, expecte
         ExperimentConfig(stationary_threshold=0.005, downhill_sign=-1),
     )
     runner.start()
-    assert runner.complete_iteration(
-        displacement=displacement, acceleration=0.0
-    ).direction == expected
+    assert (
+        runner.complete_iteration(displacement=displacement, acceleration=0.0).direction
+        == expected
+    )
 
 
 def test_learning_criterion_distinguishes_paper_and_downward_goal():

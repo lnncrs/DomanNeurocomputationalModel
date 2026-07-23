@@ -75,9 +75,7 @@ def test_neuron_with_unique_highest_output_wins():
 
 def test_ties_do_not_always_favor_first_neuron():
     winners = {
-        FourNeuronNetwork(NeuralConfig(random_seed=seed))
-        .step(SensoryInput())
-        .winner
+        FourNeuronNetwork(NeuralConfig(random_seed=seed)).step(SensoryInput()).winner
         for seed in range(20)
     }
     assert len(winners) > 1
@@ -92,7 +90,9 @@ def test_same_seed_reproduces_every_step_exactly():
         SensoryInput(sound=1.0),
         SensoryInput(acceleration=0.4, visual=0.1),
     ]
-    assert [first.step(item) for item in inputs] == [second.step(item) for item in inputs]
+    assert [first.step(item) for item in inputs] == [
+        second.step(item) for item in inputs
+    ]
 
 
 def test_reset_replays_the_seeded_sequence():
@@ -108,9 +108,7 @@ def test_reset_replays_the_seeded_sequence():
     "scope", [PlasticityScope.WINNER_ONLY, PlasticityScope.ALL_POSTSYNAPTIC]
 )
 def test_recurrent_diagonal_remains_exactly_fixed(scope):
-    network = FourNeuronNetwork(
-        NeuralConfig(random_seed=4, plasticity_scope=scope)
-    )
+    network = FourNeuronNetwork(NeuralConfig(random_seed=4, plasticity_scope=scope))
     for index in range(2_000):
         network.step(
             SensoryInput(

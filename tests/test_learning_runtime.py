@@ -3,7 +3,6 @@ import sys
 
 import pytest
 
-
 CONTROLLER_DIRECTORY = (
     Path(__file__).resolve().parents[1]
     / "webots"
@@ -19,7 +18,6 @@ from learning_runtime import (  # noqa: E402
     LearningRuntimeConfig,
     STOPPED_WHEELS,
 )
-
 
 GOAL = GoalRegion(
     center_x=0.0,
@@ -53,11 +51,14 @@ def test_missing_goal_blocks_learning_safely():
     runtime.enter(time=0.0, position=position(2.0), longitudinal_acceleration=1.0)
     assert runtime.telemetry()["status"] == "BLOCKED"
     assert runtime.telemetry()["blockedReason"] == "GOAL_NOT_CONFIGURED"
-    assert runtime.step(
-        time=1.0,
-        position=position(2.0),
-        longitudinal_acceleration=1.0,
-    ) == STOPPED_WHEELS
+    assert (
+        runtime.step(
+            time=1.0,
+            position=position(2.0),
+            longitudinal_acceleration=1.0,
+        )
+        == STOPPED_WHEELS
+    )
 
 
 def test_action_is_held_until_window_finishes_and_uses_only_one_axle():
