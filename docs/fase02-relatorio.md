@@ -4,7 +4,9 @@ Base histórica: docs/fase01-relatorio.md.
 O conteúdo está sendo revisado incrementalmente e permanece sujeito às tags editoriais.
 -->
 
+<!--
 > **Documento de trabalho da Fase 2:** Este arquivo foi criado como cópia integral de `docs/fase01-relatorio.md` para permitir uma revisão incremental e rastreável. As seções marcadas como `[preservar]` já foram revistas, as demais ainda podem conter descrições, próximos passos e conclusões obsoletas.
+-->
 
 ## [atualizar] Escopo e estado da Fase 2
 
@@ -99,7 +101,15 @@ A implementação original foi realizada utilizando *LEGO Mindstorms NXT* em *MA
 
 A reconstrução foi conduzida deliberadamente de forma incremental, separando a modelagem do mundo, a validação da física neste mundo, a construção do robô e sua equipagem com sensores, a interface de controle webots e por fim sua integração com a rede neural. Essa organização permitiu testar isoladamente cada componente em cada camada antes de integrá-lo ao experimento completo, reduzindo a dificuldade de identificar falhas e aumentando a reprodutibilidade do sistema.
 
+![experiment with robot](../assets/experiment.png)
+
+Imagem: Simulador pronto para o experimento
+
 Como resultado, foram obtidos varios ambientes experimentais reproduzíveis no Webots versionados em `webots\worlds`, sendo o principal deles `webots\worlds\experiment_inclined_plane.wbt` já integrado a uma rede neural recorrente e plástica de quatro neurônios, com controle motor, aquisição de telemetria detalhada para diversos sensores incluindo aceleração, retorno do estímulo de uma maraca sintética que premia deslocamento para a meta e registro detalhado das execuções.
+
+![experiment with robot](../assets/experiment_telemetry.png)
+
+Imagem: Tela de acompanhamento da telemetria do robo
 
 <!-- ! TODO
 Os planos inclinados e normais devem ser revisados para garantir que estao sendo usados os artefatos mais recentes e mesma perspectiva, plano com boxes precisa ser renomeado para melhor entendimento
@@ -179,6 +189,7 @@ O modelo não pretende reproduzir toda a complexidade de um sistema neural biol�
 duvida se esta exata a sessao seguinte inclinado a omitir na fase 2 do relatorio e retornar com ela na fase 3
 -->
 
+<!--
 ### [esclarecer] Resumo das diferenças
 
 Em comparação com redes neurais convencionalmente treinadas, o modelo apresenta:
@@ -198,6 +209,7 @@ Em comparação com redes neurais convencionalmente treinadas, o modelo apresent
 - ausência de retropropagação de erro e de dados rotulados.
 
 Esse conjunto de características permite observar diretamente como o estado da rede se modifica durante o experimento e como sequências de atividade neural se relacionam com as ações motoras executadas.
+-->
 
 ### [preservar] Arquitetura e mapeamento motor
 
@@ -233,10 +245,15 @@ Tabela 2: Mapeamentos neurônio → movimento
 o paragrafo seguinte nao conecta com o texto
 -->
 
+<!--
 O artigo apresenta explicitamente o primeiro exemplo; a numeração das demais ações foi reconstruída a partir da combinação entre dois conjuntos de rodas e dois sentidos de rotação.
-
+-->
 
 No robô virtual, cada roda possui um motor independente. Para preservar a organização funcional do experimento original, o adaptador do modo `LEARNING` agrupa esses motores em conjuntos frontal e traseiro. Como a competição mantém apenas um neurônio ativo por iteração, o comportamento motor emerge da sequência temporal das ações selecionadas.
+
+![experiment with robot](../assets/experiment_robot.png)
+
+Imagem: *Closeup* no robo onde se vêem os dois eixos frontal / traseiro em perspectiva
 
 > **Nota sobre a implementação atual:** O retorno de **aceleração** é calculado a partir da variação da aceleração longitudinal medida durante cada janela motora. O retorno do estímulo sonoro da **maraca** é produzido sinteticamente quando existe redução da distância até a área retangular da meta e ela é suficiente para que o movimento seja classificado como descendente. Portanto, a implementação atual não utiliza um par físico de microfone e alto-falante e o canal visual de detecção de listras permanece não implementado nesta etapa. Esses mecanismos serão detalhados nas seções de funções, equações e protocolo experimental.
 
@@ -304,7 +321,7 @@ A conclusão de uma etapa técnica indica que seus componentes essenciais estão
 Nomes de produtos como Webots, PyBullet e Jupyter, etc em paragrafos ou titulos que nao sejam em paths ou semalhante devem estar em italico
 -->
 
-Para a simulação, foi realizada uma pesquisa na qual foram considerados dois ambientes principais: Webots e *PyBullet*. O Webots foi escolhido por oferecer maior capacidade de representar motores, atuadores e sensores de maneira próxima a uma implementação física, dentro de um ambiente integrado de simulação. A plataforma também oferece suporte a controladores em Python, C e C++, além de uma biblioteca de mundos e componentes reutilizáveis.
+Para a simulação, foi realizada uma pesquisa na qual foram considerados dois ambientes principais: *Webots* e *PyBullet*. O Webots foi escolhido por oferecer maior capacidade de representar motores, atuadores e sensores de maneira próxima a uma implementação física, dentro de um ambiente integrado de simulação. A plataforma também oferece suporte a controladores em Python, C e C++, além de uma biblioteca de mundos e componentes reutilizáveis.
 
 Os principais motivos para a escolha do Webots foram:
 
@@ -322,9 +339,9 @@ Um ponto importante do Webots é permitir o desenvolvimento inicial dos controla
 
 **A implementação foi organizada de forma que o modelo neural e o protocolo experimental não dependam diretamente dos detalhes internos do robô simulado.** Essa separação favorece a reutilização do núcleo do sistema, embora uma implementação física ainda exija um adaptador específico para os sensores, motores, unidades de medida e restrições temporais do hardware escolhido.
 
-<!-- ! todo
-aqui entra uma imagem de captura de tela do mapa de experimento com o carrinho
--->
+![experiment with robot](../assets/normal_plane.png)
+
+Imagem: Plano *half-size* não inclinado utilizado em testes
 
 A biblioteca de mundos, objetos e exemplos disponibilizada pelo Webots parcialmente preservada em `webots\tutorials` também foi um fator relevante para a escolha, pois forneceu referências para a construção inicial dos ambientes, das juntas, dos sensores e dos controladores utilizados no projeto.
 
@@ -334,9 +351,7 @@ A biblioteca de mundos, objetos e exemplos disponibilizada pelo Webots parcialme
 
 O Webots é utilizado para a simulação física, enquanto Python implementa a rede neural, o protocolo experimental, a integração com o controlador e a geração dos artefatos de cada execução.
 
-As dependências de sistema como o *gcc* e o *make* estão integralmente mapeadas na sessao `Montagem do ambiente de desenvolvimento e simulação`.
-
-As dependências Python são declaradas no `pyproject.toml` e consolidadas pelo *uv*, com alternativas para *pip* e *conda* e estão também mapeadas na mesma sessão.
+As dependências de sistema como o *gcc* e o *make* tão bem como dependências Python estão integralmente mapeadas no apêndice.
 
 Uma listagem preliminar do *software* utilizado é a que segue:
 
@@ -391,7 +406,9 @@ aqui entram duas imagens de um close no carrinho e da tela de treinamento lado a
 paragrafo seguinte nao conecta com o texto, talvez uma introducao simples
 -->
 
+<!--
 A implementação mantém separadas a arquitetura descrita no artigo e as hipóteses necessárias para torná-la executável. A rede não depende do Webots: ela recebe três valores sensoriais e devolve uma das quatro ações motoras abstratas.
+-->
 
 <!-- ! todo
 incluir referencia ao arquivo principal e classe da implementacao neuronal
@@ -849,31 +866,466 @@ https://pubmed.ncbi.nlm.nih.gov/15242651/
 
 ### Apêndice A - Guia de reprodução
 
+Este apêndice descreve a preparação do ambiente necessário para inspecionar o código, executar os testes automatizados e reproduzir a simulação integrada da Fase 2. Os comandos devem ser executados a partir da raiz do repositório, salvo quando indicado de outra forma.
+
+O procedimento principal utiliza *uv*, pois `pyproject.toml` e `uv.lock` constituem as fontes de configuração e travamento das dependências Python. Os procedimentos com *pip* e *conda* são mantidos como alternativas.
+
+#### [adicionar] Requisitos de software
+
+A tabela esta em ordem sugerida de instalação
+
+| Software | Versão ou condição | Finalidade |
+|---|---|---|
+| GCC, G++ e *make* | toolchain compatível com o sistema | compilação de controladores ou *plugins* nativos |
+| *Git* | versão recente | obtenção e atualização do repositório |
+| *Webots* | `R2025a` | execução dos mundos e do controlador do robô |
+| Python | `3.13.x` | rede neural, protocolo, testes e relatórios |
+| *uv* | versão recente | instalação reproduzível |
+| *conda* (não instale o Python antes se usar esta opção) | versão recente | instalação reproduzível |
+| *Visual Studio Code* ou outro editor | opcional | inspeção e desenvolvimento do código |
+
+O experimento integrado utiliza um controlador Python e, por isso, GCC não é necessário para interpretar a rede neural. A toolchain permanece documentada porque o repositório contém controladores e exemplos nativos e porque ela será necessária caso esses componentes sejam recompilados ou modificados.
+
+#### [adicionar] Requisitos de hardware
+
+| Hardware | Versão ou condição | Finalidade |
+|---|---|---|
+| controle compatível com *joystick* (modelo Xbox One S mapeado) | opcional para testes gerais; necessário na interface atual para selecionar os modos interativos | acionamento de `MANUAL`, `LEARNING` e demais modos |
+
+#### [adicionar] Instalação de GCC, G++ e make
+
+##### [adicionar] Ubuntu Linux
+
+O pacote `build-essential` reúne GCC, G++, *make* e os componentes básicos de compilação:
+
+```bash
+sudo apt update
+sudo apt install build-essential
+gcc --version
+g++ --version
+make --version
+```
+
+##### [adicionar] Windows
+
+O *Webots R2025a* distribui uma cópia própria do MinGW para seus controladores C e C++. Para desenvolvimento também fora do ambiente interno do simulador, pode-se instalar a toolchain UCRT64 do [MSYS2](https://www.msys2.org/).
+
+Após instalar o MSYS2, deve-se abrir o terminal **MSYS2 UCRT64** e atualizar os pacotes:
+
+```bash
+pacman -Syu
+```
+
+Caso o terminal solicite encerramento após a atualização dos componentes centrais, deve-se abri-lo novamente e repetir `pacman -Syu`. Em seguida, instala-se a toolchain:
+
+```bash
+pacman -S --needed \
+  mingw-w64-ucrt-x86_64-toolchain \
+  mingw-w64-ucrt-x86_64-make \
+  make
+```
+
+Quando as ferramentas precisarem ser utilizadas também pelo PowerShell ou pelo *Visual Studio Code*, os seguintes diretórios da instalação padrão podem ser adicionados ao `PATH` do usuário:
+
+```text
+C:\msys64\ucrt64\bin
+C:\msys64\usr\bin
+```
+
+A instalação deve ser validada em um novo terminal:
+
+```powershell
+gcc --version
+g++ --version
+make --version
+```
+
+No pacote UCRT64, o executável específico do *make* também pode aparecer como `mingw32-make`; o pacote `make` fornece o comando genérico usado pelos procedimentos do projeto.
+
+#### [adicionar] Instalação do Git
+
+##### [adicionar] Ubuntu Linux
+
+```bash
+sudo apt update
+sudo apt install git
+git --version
+```
+
+##### [adicionar] Windows
+
+O *Git for Windows* pode ser obtido em <https://git-scm.com/>. Em sistemas com *winget*, a instalação também pode ser realizada em PowerShell:
+
+```powershell
+winget install --id Git.Git -e --source winget
+git --version
+```
+
+Depois da instalação, deve-se abrir um novo terminal para que eventuais alterações no `PATH` sejam reconhecidas.
+
+#### [adicionar] Clonagem do repositório
+
+Usando HTTPS:
+
+```bash
+git clone https://github.com/lnncrs/DomanNeurocomputationalModel.git
+cd DomanNeurocomputationalModel
+```
+
+Usando SSH, quando uma chave já estiver configurada no GitHub:
+
+```bash
+git clone git@github.com:lnncrs/DomanNeurocomputationalModel.git
+cd DomanNeurocomputationalModel
+```
+
+Após a clonagem, os arquivos `pyproject.toml`, `uv.lock`, `requirements.txt` e `environment.yml` devem estar disponíveis na raiz do projeto.
+
+#### [adicionar] Instalação do Webots
+
+Os mundos do repositório declaram `R2025a` no cabeçalho e utilizam recursos dessa versão. Para reproduzir a configuração documentada, deve-se instalar **Webots R2025a**, em vez de substituir automaticamente pela versão mais recente. Os instaladores e as instruções oficiais estão disponíveis em <https://cyberbotics.com/doc/guide/installing-webots> e nas versões publicadas em <https://github.com/cyberbotics/webots/releases>.
+
+##### [adicionar] Ubuntu Linux
+
+Deve-se baixar o pacote `.deb` correspondente ao Webots R2025a e instalá-lo a partir do diretório em que foi salvo:
+
+```bash
+sudo apt install ./webots_2025a_amd64.deb
+webots --version
+```
+
+O nome exato do arquivo pode variar conforme o pacote publicado. Se o executável não for encontrado no `PATH`, o Webots também pode ser iniciado pelo menu de aplicações ou por seu diretório de instalação.
+
+##### [adicionar] Windows
+
+Deve-se baixar e executar o instalador `webots-R2025a_setup.exe`. Na instalação padrão, o executável fica sob `C:\Program Files\Webots`.
+
+Em algumas configurações, o Webots aberto diretamente pelo menu não herda o ambiente Python utilizado pelo projeto. Nesse caso, deve-se primeiro preparar ou ativar o ambiente e abrir o simulador pelo mesmo terminal. Em PowerShell, considerando a instalação padrão:
+
+```powershell
+& "C:\Program Files\Webots\msys64\mingw64\bin\webots.exe" --stdout --stderr --clear-cache
+```
+
+O caminho deve ser ajustado caso o Webots tenha sido instalado em outro diretório. As opções `--stdout` e `--stderr` mantêm visíveis as mensagens do controlador; `--clear-cache` é útil quando alterações em mundos ou arquivos PROTO não aparecem após uma atualização.
+
+#### [adicionar] Ambiente Python recomendado com uv
+
+O *uv* pode ser instalado pelos procedimentos oficiais disponíveis em <https://docs.astral.sh/uv/getting-started/installation/>.
+
+No Ubuntu Linux:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+No Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+Depois de abrir um novo terminal, a instalação pode ser verificada e o ambiente completo do projeto sincronizado:
+
+```bash
+uv --version
+uv sync --all-groups --all-extras
+```
+
+O comando cria ou atualiza `.venv`, instala a versão compatível do Python quando necessário, instala o projeto e inclui os grupos de análise e desenvolvimento empregados nos *notebooks* e testes.
+
+#### [adicionar] Alternativa com pip
+
+Esta alternativa exige que Python `3.13.x` já esteja instalado. Recomenda-se criar um ambiente virtual isolado.
+
+No Ubuntu Linux:
+
+```bash
+python3.13 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+No Windows PowerShell:
+
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+O arquivo `requirements.txt` instala o projeto com o conjunto de dependências de análise e inclui o *pytest*. A definição principal das dependências permanece em `pyproject.toml`.
+
+#### [adicionar] Alternativa com conda
+
+Pode-se utilizar Miniforge ou Miniconda seguindo a documentação em <https://docs.conda.io/projects/conda/en/stable/user-guide/install/>. Depois de instalar o gerenciador e abrir um terminal com `conda` disponível, o arquivo `environment.yml` cria o ambiente `webots` com Python 3.13 e as dependências do projeto:
+
+```bash
+conda env create -f environment.yml
+conda activate webots
+```
+
+Quando o ambiente já existir e o arquivo tiver sido alterado, ele pode ser atualizado por:
+
+```bash
+conda env update -f environment.yml --prune
+conda activate webots
+```
+
+#### [adicionar] Editor e extensões opcionais
+
+O projeto não depende de um editor específico. Para desenvolvimento com *Visual Studio Code*, são úteis as extensões oficiais **Python** e **Pylance**, além de suporte a Jupyter para os *notebooks*. O editor deve ser iniciado somente depois da criação ou ativação do ambiente, ou configurado para usar o interpretador localizado em `.venv` ou no ambiente `webots` do *conda*.
+
+#### [adicionar] Validação do ambiente
+
+Com *uv*, todos os testes podem ser executados por:
+
+```bash
+uv run pytest
+```
+
+Com o ambiente *pip* ou *conda* ativado:
+
+```bash
+python -m pytest
+```
+
+Os testes cobrem as equações e a plasticidade da rede, a causalidade do protocolo, o mapeamento motor, a telemetria e a geração dos artefatos. Sua aprovação verifica a instalação do núcleo Python, mas não substitui a validação da física e dos sentidos de rotação dentro do Webots.
+
+#### [adicionar] Execução da simulação integrada
+
+Após validar o ambiente:
+
+1. Inicie o Webots a partir do terminal associado ao ambiente Python.
+2. Abra o mundo `webots/worlds/experiment_inclined_plane.wbt`.
+3. Conecte o controle compatível com *joystick*, quando for utilizar a interface interativa atual.
+4. Inicie ou reinicie a simulação.
+5. Pressione o botão **Y** do mapeamento documentado para selecionar o modo `LEARNING`.
+6. Acompanhe no console e na interface a ação selecionada, o neurônio vencedor, a direção observada, a maraca e os critérios de aprendizagem.
+
+O mundo integrado inicia em `PASSIVE_REALISTIC`, conforme seus `controllerArgs`; portanto, apenas iniciar a simulação não ativa automaticamente o aprendizado. Na implementação atual, a seleção de `LEARNING` é feita pelo controle.
+
+Cada execução de aprendizagem gera um diretório sob:
+
+```text
+experiments/runs/learning_{timestamp_UTC}_{seed}/
+```
+
+Esse diretório contém `metadata.json`, `iterations.jsonl`, `summary.json` e, quando a execução é finalizada normalmente, `report.html`. Para comparar execuções, devem ser preservados o código utilizado, o mundo, os argumentos do controlador, a seed e todos esses artefatos.
+
+#### [adicionar] Lista mínima de verificação
+
+- `git --version` responde corretamente;
+- o Webots instalado corresponde à versão `R2025a`;
+- `uv sync --all-groups --all-extras` ou uma alternativa equivalente termina sem erros;
+- `webots/worlds/experiment_inclined_plane.wbt` abre sem erros de PROTO ou de controlador;
+- as mensagens do controlador aparecem no terminal;
+- o modo `LEARNING` pode ser selecionado;
+- uma execução produz os arquivos esperados em `experiments/runs`.
+
 ### Apêndice B - Estrutura do repositório
+
+O repositório separa o modelo neural, o protocolo experimental e a adaptação dos comandos motores em `src` dos artefatos específicos do Webots nos diretórios `webots/controllers`, `webots/protos` e `webots/worlds`.
+
+A árvore a seguir apresenta os componentes relevantes para compreender e reproduzir a Fase 2.
+
+Arquivos de cache, ambientes virtuais, resultados temporários e configurações internas de ferramentas foram omitidos.
+
+```text
+DomanNeurocomputationalModel/
+|-- README.md
+|-- pyproject.toml
+|-- uv.lock
+|-- requirements.txt
+|-- environment.yml
+|-- .python-version
+|
+|-- src/
+|   |-- neural/
+|   |   |-- four_neuron_network.py
+|   |   `-- README.md
+|   |-- control/
+|   |   `-- robot_adapter.py
+|   `-- experiments/
+|       |-- experiment_runner.py
+|       |-- experiment_logger.py
+|       `-- experiment_report.py
+|
+|-- tests/
+|   |-- test_four_neuron_network.py
+|   |-- test_robot_adapter.py
+|   |-- test_experiment_runner.py
+|   `-- test_learning_runtime.py
+|
+|-- webots/
+|   |-- worlds/
+|   |   |-- experiment_inclined_plane.wbt
+|   |   |-- inclined_plane_fs.wbt
+|   |   |-- inclined_plane_fs_balls.wbt
+|   |   |-- inclined_plane_fs_robot.wbt
+|   |   |-- inclined_plane_hs.wbt
+|   |   |-- inclined_plane_hs_robot.wbt
+|   |   |-- normal_plane_fs.wbt
+|   |   |-- normal_plane_fs_boxes.wbt
+|   |   |-- normal_plane_fs_robot.wbt
+|   |   |-- normal_plane_hs.wbt
+|   |   `-- normal_plane_hs_robot.wbt
+|   |-- protos/
+|   |   |-- CompactInclinedPlane.proto
+|   |   |-- CompactInclinedPlaneExperiment.proto
+|   |   |-- FourWheelRobot.proto
+|   |   |-- InclinedFourWheelRobot.proto
+|   |   |-- GoalArea.proto
+|   |   |-- SimpleRobot.proto
+|   |   |-- differential/
+|   |   `-- physics/
+|   |-- controllers/
+|   |   |-- four_wheels_manual/
+|   |   |   |-- four_wheels_manual.py
+|   |   |   `-- learning_runtime.py
+|   |   |-- four_wheels_collision_avoidance/
+|   |   |-- four_wheels_collision_avoidance_py/
+|   |   `-- outros controladores de referência e validação/
+|   |-- plugins/
+|   |   `-- robot_windows/
+|   |       |-- four_wheel_robot_window/
+|   |       `-- custom_robot_window/
+|   `-- tutorials/
+|
+|-- experiments/
+|   `-- runs/          [gerado durante o experimento]
+|       `-- learning_{timestamp}_{seed}/
+|           |-- metadata.json
+|           |-- iterations.jsonl
+|           |-- summary.json
+|           `-- report.html
+|
+|-- notebooks/
+|   `-- four_neuron_network_validation.ipynb
+|-- examples/
+|   `-- four_neuron_minimal.py
+|-- docs/
+|   |-- fase01-relatorio.md
+|   |-- fase02-relatorio.md
+|-- assets/
+`-- data/
+```
+
+#### [adicionar] Código-fonte do modelo
+
+O diretório `src` contém o núcleo independente do Webots e está dividido em três responsabilidades:
+
+- `src/neural` implementa o estado da rede de quatro neurônios, a ativação, a competição e as regras de plasticidade;
+
+- `src/control` traduz as quatro ações neurais abstratas em comandos para os motores, sem incorporar a lógica do simulador;
+
+- `src/experiments` organiza a execução do protocolo, registra os dados de cada iteração e produz o resumo e o relatório final.
+
+O arquivo `src/neural/four_neuron_network.py` concentra o modelo neural.
+
+O arquivo `src/control/robot_adapter.py` contém a fronteira entre as ações neurais e as primitivas motoras.
+
+Em `src/experiments`, `experiment_runner.py`, `experiment_logger.py` e `experiment_report.py` separam, respectivamente, execução, persistência e apresentação dos resultados.
+
+#### [adicionar] Testes automatizados
+
+O diretório `tests` reproduz a mesma divisão funcional do código:
+
+| Arquivo | Responsabilidade principal |
+|---|---|
+| `test_four_neuron_network.py` | equações, inicialização, competição e plasticidade neural |
+| `test_robot_adapter.py` | tradução das ações abstratas para comandos motores |
+| `test_experiment_runner.py` | causalidade, classificação do movimento, critérios e artefatos experimentais |
+| `test_learning_runtime.py` | integração temporal, telemetria, meta e funcionamento do runtime usado pelo Webots |
+
+> **Nota:** Esses testes validam o comportamento computacional somente.
+
+#### [adicionar] Estrutura da simulação Webots
+
+O diretório `webots` reúne todos os componentes dependentes do simulador:
+
+- `webots/worlds` contém os ambientes executáveis. `experiment_inclined_plane.wbt` é o mundo principal da Fase 2; os demais mundos preservam configurações intermediárias usadas para validar física, planos, bolas, robôs e diferentes escalas;
+
+- `webots/protos` contém as definições reutilizáveis do plano, da meta, do robô e dos objetos de teste. Os subdiretórios `differential` e `physics` preservam, respectivamente, modelos diferenciais e objetos utilizados na validação física;
+
+- `webots/controllers` contém o controle executado durante a simulação. O controlador atualmente relevante para o experimento integrado é `four_wheels_manual` e apesar do nome histórico, ele reúne os modos `AUTOMATIC`, `MANUAL`, `PASSIVE_FREE`, `PASSIVE_REALISTIC` e `LEARNING`;
+
+- `webots/plugins/robot_windows` contém as interfaces HTML, CSS, JavaScript e C exibidas como janela de telemetria e acompanahmento do robô.  `four_wheel_robot_window` corresponde à interface principal de acompanhamento;
+
+- `webots/tutorials` preserva mundos usados no aprendizado inicial da plataforma e como referência de implementação. Esses mundos não constituem a configuração experimental da Fase 2.
+
+No controlador principal, `four_wheels_manual.py` realiza a leitura dos sensores, a seleção do modo de controle e o envio dos comandos às rodas. `learning_runtime.py` conecta esse ciclo do Webots ao núcleo localizado em `src` e mantém a janela temporal de cada ação neural.
+
+#### [adicionar] Dados produzidos por uma execução
+
+O diretório `experiments/runs` é criado durante as execuções e não é tratado como código-fonte. Cada rodada recebe um diretório próprio no formato `learning_{timestamp}_{seed}` e pode produzir:
+
+- `metadata.json`, com a configuração neural, experimental e de runtime;
+
+- `iterations.jsonl`, com um registro estruturado para cada iteração;
+
+- `summary.json`, com o resultado consolidado da execução;
+
+- `report.html`, com a visualização derivada dos registros.
+
+Os arquivos de uma rodada devem permanecer juntos, pois o relatório HTML e o resumo são derivados dos mesmos metadados e registros por iteração.
+
+#### [adicionar] Documentação, exemplos e validação exploratória
+
+- `docs` contém os relatórios, os documentos de planejamento e o artigo usado como referência.
+
+- `notebooks/four_neuron_network_validation.ipynb` permite examinar o modelo neural com dados sintéticos fora do Webots;
+
+- `examples/four_neuron_minimal.py` apresenta uma execução mínima da rede de quatro neurônios;
+
+- `assets` armazena as imagens utilizadas na documentação;
+
+- `data` está reservado para conjuntos de dados que precisem ser preservados independentemente dos diretórios completos de execução.
+
+#### [adicionar] Arquivos de configuração na raiz
+
+| Arquivo | Função |
+|---|---|
+| `README.md` | apresentação geral e instruções principais do projeto |
+| `pyproject.toml` | metadados, versão do Python e dependências do projeto |
+| `uv.lock` | versões resolvidas para reprodução com uv |
+| `requirements.txt` | alternativa de instalação com pip |
+| `environment.yml` | alternativa de instalação com conda |
+| `.python-version` | versão de Python selecionada para o diretório de trabalho |
+| `.gitignore` | exclusão de ambientes, caches e resultados gerados |
+
+#### [adicionar] Relação entre os componentes
+
+O caminho principal de uma execução integrada pode ser resumido da seguinte forma:
+
+```text
+webots/worlds/experiment_inclined_plane.wbt
+        |
+        v
+webots/protos/InclinedFourWheelRobot.proto
+        |
+        v
+webots/controllers/four_wheels_manual/four_wheels_manual.py
+        |
+        v
+webots/controllers/four_wheels_manual/learning_runtime.py
+        |
+        +--> src/neural/four_neuron_network.py
+        +--> src/control/robot_adapter.py
+        `--> src/experiments/
+                    |
+                    v
+        experiments/runs/learning_{timestamp}_{seed}/
+```
 
 ### Apêndice C - Evolução histórica da simulação
 
-#### [atualizar] Visão geral do repositório
-
-<!-- ! todo
-remover a imagem e atualizar a arvode do repositorio com explicacoes de pastas e arquivos relevantes
-
-introduzir brevemente antes a estrutura do repositorio
--->
-
-A imagem repositorio_visao_geral dá uma ideia da organização atual do repositório.
-
-![repositorio visao geral](../assets/repositorio_visao_geral.png)
-
-Imagem: repositorio_visao_geral
-
-<!-- ! todo
-estas sessoes e videos podem ser movidos para depois do video do experrimento com descricao breve e im portancia historica (primeira simulacao com fisica, etc)
--->
+Foram necessárias diversas simulações para construir o experimento da Fase 2, os principais saltos qualitativos do projeto estão listados abaixo.
 
 #### [atualizar] Simulação de física
 
-O filme inclined_plane é o plano inclinado com bolas para a simulação de física.
+O primeiro desafio foi reproduzir física com parâmetros de mundo terrestre com exatidão aproximada(gravidade, atrito, elasticidade, etc), o filme inclined_plane é o plano inclinado com bolas para a simulação de física.
 
 inclined_plane: https://youtu.be/qvbR1wQidVg
 
@@ -881,9 +1333,12 @@ inclined_plane: https://youtu.be/qvbR1wQidVg
 
 Imagem: inclined_plane
 
+> **Nota:** Os planos foram criados especificamente para o projeto.
+
+
 #### [atualizar] Simulação de colisão do robô
 
-O filme inclined_plane_with_robot e inclined_plane_with_robot_1 é o plano inclinado com o robo e controle de batida (nao rede neural) para testar se o robo funcionava na simulação, o último tem um guardrail mais baixo (o que impede a queda do robo).
+O segundo desafio foi montar um robo e posicioná-lo neste mundo simulado, o filme inclined_plane_with_robot e inclined_plane_with_robot_1 é o plano inclinado com o robo e controle de batida (nao rede neural) para testar se o robo funcionava na simulação, o último tem um guardrail mais baixo (o que impede a queda do robo).
 
 inclined_plane_with_robot: https://youtu.be/1YhcI6GHoAs
 
@@ -893,9 +1348,11 @@ inclined_plane_with_robot_1: https://youtu.be/zjciixsm578
 
 Imagem: inclined_plane_with_robot
 
+> **Nota:** Nos robôs de teste de batida foram usados modelos de exemplo da biblioteca aberta do Webots adaptados.
+
 #### [atualizar] Simulação de controle
 
-O filme normal_plane_with_rotation é um primeiro teste com juntas, motores e ativação via interface de controle, foi um passo no projeto, pois abriu portas para que fosse possível controlar aspectos da simulação via interface programável.
+Por fim era necessário conseguir que uma interface de controle baseada em código conseguisse interagir com a simulação, o filme normal_plane_with_rotation é um primeiro teste com juntas, motores e ativação via interface de controle, esse passo foi decisivo no projeto, pois abriu portas para que fosse possível controlar aspectos da simulação via interface programável primeiro em C e depois em Python.
 
 normal_plane_with_rotation: https://youtu.be/ZKbbiObtkQ8
 
@@ -903,275 +1360,6 @@ normal_plane_with_rotation: https://youtu.be/ZKbbiObtkQ8
 
 Imagem: normal_plane_with_rotation
 
-Os planos foram criados especificamente para o projeto.
-
-Nos robôs de teste de batida foram usados modelos de exemplo da biblioteca aberta do Webots adaptados.
-
-As peças rotacionando com controle foi necessário criar do zero porque era necessário entender a fundo como funcionava exatamente a "junção" entre duas peças nesta simulação.
-
-### [preservar] Como clonar o repositório do projeto
-
-<!-- ! todo
-revisar
--->
-
-Clone o repositório do projeto para acessar o código, os mundos e os protos:
-
-Clonar usando HTTPS:
-
-```text
-git clone https://github.com/lnncrs/DomanNeurocomputationalModel.git
-cd DomanNeurocomputationalModel
-```
-
-Clonar usando SSH (recomendado):
-
-```text
-git clone git@github.com:lnncrs/DomanNeurocomputationalModel.git
-cd DomanNeurocomputationalModel
-```
-
-### [atualizar] Organização detalhada do repositório
-
-<!-- ! todo
-ficxa redundante com a sessao anterior, deve ser removida e usada a visao geral do repositorio
--->
-
-
-O repositório do projeto está organizado da seguinte forma:
-
-```text
-├── 📄 README.md                          # Documentação principal
-├── 📄 requirements.txt                     # Dependências Python
-├── 📄 pyproject.toml                        # Configuração do projeto
-│
-├── 🖼️ assets/                                   # Imagens e diagramas
-│
-├── 💾 data/                                      # Dados de experimentos
-│
-├── 📚 docs/                                   # Documentação técnica
-│
-├── 🧪 experiments/                       # Scripts de testes e experimentos
-│
-├── 📓 notebooks/                         # Jupyter notebooks
-│
-├── 🧠 src/                                    # Código-fonte principal
-│   │
-│   ├── control/                              # Controladores do robô
-│   │
-│   ├── interfaces/                         # Interfaces de comunicação
-│   │
-│   └── neural/                              # Implementação da rede neural
-│
-└── 🤖 webots/                            # Ambiente de simulação Webots
-│
-├── controllers/                        # Controladores Webots
-│
-├── protos/                              # Definições de objetos Webots
-│   ├── Ball.proto                                # Bola para testes de física
-│   ├── FourNeuronRobot.proto         # Robô de 4 neurônios (uso futuro)
-│   ├── Robot.proto                            # Robô genérico
-│   ├── SimpleRobot.proto                 # Robô simplificado
-│   ├── StableDifferentialRobot.proto # Robô diferencial estável
-│   ├── StableRobot.proto                  # Robô estável
-│   └── VeriSimpleRobot.proto           # Robô simples para testes
-│
-├── tutorials/                        # Mundos do tutorial Webots
-│   ├── 4_wheels_robot.wbt
-│   ├── appearance.wbt
-│   ├── collision_avoidance.wbt
-│   ├── compound_solid.wbt
-│   ├── my_first_simulation.wbt
-│   └── obstacles.wbt
-│
-└── worlds/                           # Mundos de simulação
-├── normal_plane.wbt                    # Plano nivelado
-├── inclined_plane.wbt                   # Plano inclinado (experimento)
-├── inclined_plane_new.wbt          # Versão alternativa do plano inclinado
-├── inclined_plane_with_balls.wbt # Teste de física
-├── inclined_plane_with_robot.wbt # Experimento com robô
-├── hexapod.wbt                            # Teste com hexápode
-├── moon.wbt                                 # Teste de gravidade
-└── sample.wbt                               # Mundo de exemplo
-```
-
-### [atualizar] Montagem do ambiente de desenvolvimento e simulação
-
-<!-- ! todo
-revisar, inserir numa ordem temporal
-
-software requerido e como instalar
-
-webots
-
-nota de uso do webots no windows
-
-gcc/make/sh
-
-instalacao linux ubuntu e windows via msys ucrt
-
-usando uv
-
-usando pip
-
-usando conda
-
-vscode
-
-vscode extensoes recomendadas
-
--->
-
-É necessário ter o ambiente configurado para reproduzir os experimentos. A seguir estão as instruções para configurar o ambiente de desenvolvimento e simulação.
-
-#### [atualizar] Lista de software requerido
-
-- Toolchain C++ de sua preferência (GCC, Clang, MSVC)
-
-- Git
-
-- Webots
-
-- Python +3.13 (Seja via conda ou instalação direta)
-
-- vscode ou editor de código de sua preferência
-
-A reprodução dos experimentos é garantida utilizando plataforma Windows ou Linux com a lista de software apresentada, no entanto outras plataformas podem ser utilizadas, desde que compatíveis com o Webots e Python +3.13.
-
-### Instalar GCC
-
-#### No Linux Ubuntu
-
-#### No Windows
-
-# MSYS2
-# https://github.com/msys2/msys2-installer/releases/download/2025-06-22/msys2-x86_64-20250622.exe
-
-# C:\ProgramData\msys64
-
-pacman -Syu
-
-pacman -S mingw-w64-ucrt-x86_64-gcc
-
-pacman -S \
-  mingw-w64-ucrt-x86_64-toolchain \
-  mingw-w64-ucrt-x86_64-make \
-  mingw-w64-ucrt-x86_64-cmake \
-  mingw-w64-ucrt-x86_64-ninja \
-  mingw-w64-ucrt-x86_64-pkg-config \
-  mingw-w64-ucrt-x86_64-boost \
-  mingw-w64-ucrt-x86_64-doxygen
-
-pacman -S make
-
-### Instalar Git
-
-#### No OInux Ubuntu
-
-#### No Windows
-
-Baixar de git windows
-
-### [atualizar] Webots
-
-O Webots é o ambiente de simulação utilizado para a construção e teste do experimento. Ele oferece uma plataforma robusta para modelagem de robôs, ambientes físicos e controle de comportamento. Para instalar o Webots, siga as instruções na página oficial: https://cyberbotics.com/doc/guide/installing-webots
-
-Importante: Certifique-se de instalar a versão mais recente do Webots para garantir compatibilidade com os mundos e protos utilizados no projeto.
-
-#### [atualizar] Nota sobre uso do Webots no Windows
-
-O Webots no Windows pode não herdar o caminho correto do Python no disparo, isso faz com que simulações com controle Python (ex: webots\worlds\normal_plane.wbt) falhem de maneira silenciosa, fechando a simulação logo após o carregamento. Para que isso não ocorra, abra o Webots a partir do terminal, com o ambiente Webots já ativo.
-
-Ativar o ambiente webots:
-
-```text
-conda activate webots
-```
-
-Abrir o Webots:
-
-```text
-& "C:\Program Files\Webots\msys64\mingw64\bin\webots.exe" --stdout --stderr --no-cache
-```
-
-A linha de comando do Webots depende da instalação, o caminho apresentado é o caminho padrão, mas pode variar dependendo do local onde o Webots foi instalado. Certifique-se de ajustar o caminho conforme necessário para a sua instalação.
-
-### [atualizar] Ambiente virtual e instalação de dependências
-
-Vamos mostrar a seguir um exemplo de como criar o ambiente necessário usando duas abordagens: pip e conda.
-
-#### [atualizar] Usando uv
-
-#### Instalar o uv no linux ubuntu
-
-#### Instalar o uv no windows
-
-#### [atualizar] Usando pip
-
-Certifique-se de ter instalado o motor Python +3.13 e instale as dependências do projeto com:
-
-```text
-pip install -r requirements.txt
-```
-
-Dentro do repositório do projeto.
-
-Use preferencialmente um ambiente virtual para isolar as dependências do projeto.
-
-#### [atualizar] Usando conda
-
-#### Instalar o conda-forge no linux ubuntu
-
-#### Instalar o conda-forge no windows
-
-Instalando o conda
-
-Utilize a referência oficial Conda-Forge para instalar o conda no seu ambiente https://conda-forge.org/download/
-
-Ou utilize a referência oficial Anaconda para instalar o miniconda no seu ambiente https://docs.anaconda.com/miniconda/install/
-
-Criando o ambiente virtual
-
-Para criar um ambiente virtual chamado webots com Python 3.13 utilizando o conda, use o comando:
-
-```text
-conda create -n webots python=3.13
-```
-
-Ativando o ambiente
-
-Após a criação do ambiente virtual, ative ele com
-
-```text
-conda activate webots
-```
-
-Instalando dependências
-
-Com o ambiente virtual ativado, instale as dependências do projeto com:
-
-```text
-pip install -r requirements.txt
-```
-
-Criando o ambiente a partir de arquivo (Alternativo)
-
-Para criar o ambiente com os pacotes base a partir de arquivo requirements.txt, utilize o comando:
-
-```text
-pip install -r requirements.txt
-```
-
-Ou para criar o ambiente com os pacotes base a partir de arquivo yml, utilize o comando:
-
-```text
-conda env create -f environment.yml
-```
-
-Dentro do repositório do projeto.
-
-Use preferencialmente um ambiente virtual para isolar as dependências do projeto.
-
-
+> **Nota:** As peças rotacionando com controle foram criadas do zero porque era necessário entender a fundo como funcionava exatamente a "junção" entre duas peças nesta simulação.
 
 CMCC - Universidade Federal do ABC (UFABC) - Santo André - SP - Brasil
