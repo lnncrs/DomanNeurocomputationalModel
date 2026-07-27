@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
 from src.neural import MotorAction
@@ -21,7 +20,7 @@ class FourWheelCommand:
         return self.wheel1, self.wheel2, self.wheel3, self.wheel4
 
 
-@dataclass(frozen=True)
+@dataclass
 class MotorActionMapper:
     """Agrupa motores por eixo transversal para aderência ao artigo"""
 
@@ -32,24 +31,12 @@ class MotorActionMapper:
     def map(self, action: MotorAction) -> FourWheelCommand:
         front = self.speed * self.front_clockwise_sign
         rear = self.speed * self.rear_clockwise_sign
-        commands = {
-            MotorAction.FRONT_CLOCKWISE: FourWheelCommand(front, front, 0.0, 0.0),
-            MotorAction.FRONT_COUNTERCLOCKWISE: FourWheelCommand(
-                -front, -front, 0.0, 0.0
-            ),
-            MotorAction.REAR_CLOCKWISE: FourWheelCommand(0.0, 0.0, rear, rear),
-            MotorAction.REAR_COUNTERCLOCKWISE: FourWheelCommand(0.0, 0.0, -rear, -rear),
-        }
-        return commands[action]
-
-
-class RobotAdapter(ABC): # Uso futuro
-    """Contrato mínimo futuro a ser implementado pela simulação ou hardware"""
-
-    @abstractmethod
-    def apply(self, command: FourWheelCommand) -> None:
-        """Aplica as quatro velocidades"""
-
-    @abstractmethod
-    def stop(self) -> None:
-        """Interrompe os quatro motores"""
+        if action == MotorAction.FRONT_CLOCKWISE:
+            return FourWheelCommand(front, front, 0.0, 0.0)
+        if action == MotorAction.FRONT_COUNTERCLOCKWISE:
+            return FourWheelCommand(-front, -front, 0.0, 0.0)
+        if action == MotorAction.REAR_CLOCKWISE:
+            return FourWheelCommand(0.0, 0.0, rear, rear)
+        if action == MotorAction.REAR_COUNTERCLOCKWISE:
+            return FourWheelCommand(0.0, 0.0, -rear, -rear)
+        raise KeyError(action)
