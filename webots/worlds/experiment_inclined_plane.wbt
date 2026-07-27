@@ -14,7 +14,7 @@ WorldInfo {
 Viewpoint {
   fieldOfView 0.78
   orientation 0.2020564765161874 -0.09400443229930358 -0.9748519615849113 3.993178059743586
-  position 1.959721940349495 -1.7034282491584092 1.5072091257478561
+  position 3.2937300667834077 -3.287575404221807 2.4042604024999497
 }
 TexturedBackground {
   texture "mars"
@@ -23,6 +23,12 @@ TexturedBackgroundLight {
   texture "mars"
 }
 CompactInclinedPlane {
+  platformSize 1
+  rampColor 0.35 0.2 0.1
+  platformColor 0.35 0.2 0.1
+  customPlatformColor TRUE
+  showStripes TRUE
+  showFinishLine TRUE
   # IMPORTANTE: mantenha este ângulo igual ao do robo abaixo.
   # angle 0.08726646259972 # 05°
   # angle 0.13962634015955 # 08°
@@ -31,27 +37,14 @@ CompactInclinedPlane {
   # angle 0.26179938779915 # 15°
   # angle 0.52359877559830 # 30°
   # angle 0.78539816339745 # 45°
-  platformSize 1
-  rampColor 0.35 0.2 0.1
-  platformColor 0.35 0.2 0.1
-  customPlatformColor TRUE
-  showStripes TRUE
-  stripeSpacing 0.1
-  stripeWidth 0.01
-  showFinishLine TRUE
-  finishLineColor 1 1 1
-  finishLineWidth 0.02
 }
 DEF GOAL_AREA GoalArea {
   translation 0 0 0.002
   size 0.96 0.96
-  color 0.18 0.28 0.1
-  detectionHeight 0.3
-  dwellTime 0.5
 }
 InclinedFourWheelRobot {
   name "inclined_four_wheel_robot_experiment"
-  # IMPORTANTE: mantenha este ângulo igual ao da rampa acima.
+  # IMPORTANTE: mantenha este ângulo igual ao do robo abaixo.
   # angle 0.08726646259972 # 05°
   # angle 0.13962634015955 # 08°
   # angle 0.17453292519943 # 10°
@@ -59,7 +52,6 @@ InclinedFourWheelRobot {
   # angle 0.26179938779915 # 15°
   # angle 0.52359877559830 # 30°
   # angle 0.78539816339745 # 45°
-  platformSize 1
   controllerArgs [
     "--passive-realistic"
     "--goal=0,0,0,0.96,0.96,0.3,0.5"
