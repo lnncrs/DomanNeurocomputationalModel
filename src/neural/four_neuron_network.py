@@ -20,19 +20,9 @@ class MotorAction(Enum):
     REAR_COUNTERCLOCKWISE = 3
 
 
-class CompetitionMode(str, Enum):
-    DETERMINISTIC = "deterministic"
-    STOCHASTIC = "stochastic"
-
-
 class PlasticityScope(str, Enum):
     WINNER_ONLY = "winner_only"
     ALL_POSTSYNAPTIC = "all_postsynaptic"
-
-
-class IntrinsicOutputSource(str, Enum):
-    POST_COMPETITION = "post_competition"
-    PRE_COMPETITION = "pre_competition"
 
 
 @dataclass(frozen=True)
@@ -84,39 +74,27 @@ class NormalizedSensoryInput:
 class NeuralConfig:
     """Parâmetros publicados e hipóteses operacionais da reconstrução."""
 
-    neuron_count: int = NEURON_COUNT
+    # Arquitetura e parâmetros descritos no artigo.
     recurrent_weight: float = 0.7
     sigmoid_gain: float = 25.0
     synaptic_learning_rate: float = 0.01
     intrinsic_learning_rate: float = 0.01
     initial_shift: float = 0.5
+
+    # Hipóteses necessárias para executar a reconstrução.
     initial_weight_min: float = 0.1
     initial_weight_max: float = 0.9
-    competition_mode: CompetitionMode = CompetitionMode.DETERMINISTIC
     plasticity_scope: PlasticityScope = PlasticityScope.WINNER_ONLY
-    intrinsic_output_source: IntrinsicOutputSource = (
-        IntrinsicOutputSource.POST_COMPETITION
-    )
-    activation_noise_std: float = 0.0
     random_seed: int = 0
-    optional_weight_bounds: tuple[float, float] | None = None
     sensory_normalization: SensoryNormalization = SensoryNormalization()
 
     def __post_init__(self) -> None:
-        if self.neuron_count != NEURON_COUNT:
-            raise ValueError("the article architecture requires exactly 4 neurons")
         if self.sigmoid_gain <= 0:
             raise ValueError("sigmoid_gain must be positive")
         if self.synaptic_learning_rate < 0 or self.intrinsic_learning_rate < 0:
             raise ValueError("learning rates cannot be negative")
         if self.initial_weight_min > self.initial_weight_max:
             raise ValueError("initial weight range is inverted")
-        if self.activation_noise_std < 0:
-            raise ValueError("activation_noise_std cannot be negative")
-        if self.optional_weight_bounds is not None:
-            lower, upper = self.optional_weight_bounds
-            if lower > upper:
-                raise ValueError("weight bounds are inverted")
 
 
 Matrix = tuple[tuple[float, ...], ...]
@@ -193,20 +171,20 @@ class FourNeuronNetwork:
         """Restaura estado e RNG; a mesma seed reproduz a mesma rede."""
 
         self._rng.seed(self.config.random_seed)
-        self._weights = [
-            [
-                (
-                    self.config.recurrent_weight
-                    if i == j
-                    else self._rng.uniform(
+        self._weights = []
+        for target in range(NEURON_COUNT):
+            target_weights = []
+            for source in range(NEURON_COUNT):
+                if target == source:
+                    weight = self.config.recurrent_weight
+                else:
+                    weight = self._rng.uniform(
                         self.config.initial_weight_min,
                         self.config.initial_weight_max,
                     )
-                )
-                for j in range(NEURON_COUNT)
-            ]
-            for i in range(NEURON_COUNT)
-        ]
+                target_weights.append(weight)
+            self._weights.append(target_weights)
+
         self._shifts = [self.config.initial_shift] * NEURON_COUNT
         self._previous_competitive_output = [0.0] * NEURON_COUNT
         self._step_index = 0
@@ -219,26 +197,15 @@ class FourNeuronNetwork:
         shifts_before = self.shifts
         previous_output = self.previous_competitive_output
 
-        activation = tuple(
-            sensory.total
-            + sum(
-                self._weights[i][j] * self._previous_competitive_output[j]
-                for j in range(NEURON_COUNT)
-            )
-            + (
-                self._rng.gauss(0.0, self.config.activation_noise_std)
-                if self.config.activation_noise_std > 0
-                else 0.0
-            )
-            for i in range(NEURON_COUNT)
+        activation = self._calculate_activations(
+            sensory_total=sensory.total,
+            previous_output=previous_output,
         )
-        raw_output = tuple(
-            sigmoid_output(activation[i], self._shifts[i], self.config.sigmoid_gain)
-            for i in range(NEURON_COUNT)
-        )
+        raw_output = self._calculate_sigmoid_outputs(activation)
         winner = self._select_winner(raw_output)
         competitive_output = tuple(
-            raw_output[i] if i == winner else 0.0 for i in range(NEURON_COUNT)
+            output if neuron == winner else 0.0
+            for neuron, output in enumerate(raw_output)
         )
 
         self._update_synaptic_weights(
@@ -246,7 +213,7 @@ class FourNeuronNetwork:
             previous_output=previous_output,
             current_winner=winner,
         )
-        self._update_intrinsic_shifts(raw_output, competitive_output)
+        self._update_intrinsic_shifts(competitive_output)
         self._previous_competitive_output = list(competitive_output)
 
         result = NeuralStepResult(
@@ -266,20 +233,43 @@ class FourNeuronNetwork:
         self._step_index += 1
         return result
 
-    def _select_winner(self, raw_output: tuple[float, ...]) -> int:
-        if self.config.competition_mode == CompetitionMode.STOCHASTIC:
-            total = sum(raw_output)
-            if total <= 0:
-                return self._rng.randrange(NEURON_COUNT)
-            threshold = self._rng.random() * total
-            accumulated = 0.0
-            for index, output in enumerate(raw_output):
-                accumulated += output
-                if accumulated >= threshold:
-                    return index
-            return NEURON_COUNT - 1
+    def _calculate_activations(
+        self,
+        *,
+        sensory_total: float,
+        previous_output: tuple[float, ...],
+    ) -> tuple[float, ...]:
+        """Soma as entradas sensorial e recorrente de cada neurônio."""
 
+        activations = []
+        for target in range(NEURON_COUNT):
+            recurrent_input = 0.0
+            for source in range(NEURON_COUNT):
+                # Convenção: weights[target][source] representa source -> target.
+                recurrent_input += (
+                    self._weights[target][source] * previous_output[source]
+                )
+
+            activations.append(sensory_total + recurrent_input)
+
+        return tuple(activations)
+
+    def _calculate_sigmoid_outputs(
+        self, activation: tuple[float, ...]
+    ) -> tuple[float, ...]:
+        outputs = []
+        for neuron in range(NEURON_COUNT):
+            output = sigmoid_output(
+                activation[neuron],
+                self._shifts[neuron],
+                self.config.sigmoid_gain,
+            )
+            outputs.append(output)
+        return tuple(outputs)
+
+    def _select_winner(self, raw_output: tuple[float, ...]) -> int:
         maximum = max(raw_output)
+        # O artigo não define o desempate; a reconstrução sorteia entre os máximos.
         tied = [
             index
             for index, output in enumerate(raw_output)
@@ -294,47 +284,40 @@ class FourNeuronNetwork:
         current_winner: int,
     ) -> None:
         if self.config.plasticity_scope == PlasticityScope.WINNER_ONLY:
-            postsynaptic_indices = (current_winner,)
+            targets_to_update = (current_winner,)
         else:
-            postsynaptic_indices = range(NEURON_COUNT)
+            targets_to_update = range(NEURON_COUNT)
 
         epsilon = self.config.synaptic_learning_rate
-        for i in postsynaptic_indices:
-            for j in range(NEURON_COUNT):
-                if i == j:
+        for target in targets_to_update:
+            for source in range(NEURON_COUNT):
+                if target == source:
                     continue
-                old_weight = self._weights[i][j]
+                old_weight = self._weights[target][source]
                 delta = grossberg_delta(
-                    input_j=previous_output[j],
-                    activation_i=activation[i],
+                    input_j=previous_output[source],
+                    activation_i=activation[target],
                     weight_ij=old_weight,
                     epsilon=epsilon,
                 )
-                new_weight = old_weight + delta
-                if self.config.optional_weight_bounds is not None:
-                    lower, upper = self.config.optional_weight_bounds
-                    new_weight = min(upper, max(lower, new_weight))
-                self._weights[i][j] = new_weight
+                self._weights[target][source] = old_weight + delta
 
-        # Reafirma a invariável publicada, inclusive contra futuras alterações.
-        for i in range(NEURON_COUNT):
-            self._weights[i][i] = self.config.recurrent_weight
+        # As quatro conexões autorrecorrentes são fixas no artigo.
+        for neuron in range(NEURON_COUNT):
+            self._weights[neuron][neuron] = self.config.recurrent_weight
 
     def _update_intrinsic_shifts(
         self,
-        raw_output: tuple[float, ...],
         competitive_output: tuple[float, ...],
     ) -> None:
-        if (
-            self.config.intrinsic_output_source
-            == IntrinsicOutputSource.POST_COMPETITION
-        ):
-            source = competitive_output
-        else:
-            source = raw_output
-
+        # Hipótese operacional: a equação usa a saída após a competição.
         xi = self.config.intrinsic_learning_rate
-        self._shifts = [
-            intrinsic_shift(previous_shift=self._shifts[i], output=source[i], xi=xi)
-            for i in range(NEURON_COUNT)
-        ]
+        updated_shifts = []
+        for neuron in range(NEURON_COUNT):
+            shift = intrinsic_shift(
+                previous_shift=self._shifts[neuron],
+                output=competitive_output[neuron],
+                xi=xi,
+            )
+            updated_shifts.append(shift)
+        self._shifts = updated_shifts

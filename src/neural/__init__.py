@@ -1,9 +1,7 @@
 """Modelo neural independente do simulador"""
 
 from .four_neuron_network import (
-    CompetitionMode,
     FourNeuronNetwork,
-    IntrinsicOutputSource,
     MotorAction,
     NeuralConfig,
     NeuralStepResult,
@@ -16,9 +14,7 @@ from .four_neuron_network import (
 )
 
 __all__ = [
-    "CompetitionMode",
     "FourNeuronNetwork",
-    "IntrinsicOutputSource",
     "MotorAction",
     "NeuralConfig",
     "NeuralStepResult",
