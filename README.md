@@ -631,7 +631,7 @@ Cada entrada sensorial pode ter seu ponto de referência corrigido e sua intensi
 
 > **Esta equação quer dizer:** Pegue o valor recebido de um sensor, subtraia um valor de referência e multiplique o resultado por um fator de escala.
 
-> **Localizador no código:** `src/neural/four_neuron_network.py` - `SensoryNormalization.normalize`.
+> **Localizador no código:** `src/experiments/sensory_processing.py` - `SensoryProcessor.process`.
 
 Os valores normalizados são somados e formam uma entrada sensorial comum aos quatro neurônios:
 
@@ -656,7 +656,7 @@ Onde:
 
 > **Esta equação quer dizer:** entrada total = aceleração transformada + visão transformada + som transformado
 
-> **Localizador no código:** `src/neural/four_neuron_network.py` - `SensoryNormalization.normalize`, no cálculo de `NormalizedSensoryInput.total`.
+> **Localizador no código:** `src/experiments/sensory_processing.py` - `SensoryProcessor.process`; e `src/neural/four_neuron_network.py` - `SensoryInput.total`.
 
 Na configuração atual:
 - Todos os *offsets* são zero e todas as escalas são `1,0`.
@@ -1078,7 +1078,7 @@ Onde:
 > para ser classificada como descida, produza a maraca; em qualquer outro caso,
 > mantenha a entrada sonora em zero.
 
-> **Localizador no código:** `src/experiments/experiment_runner.py` - `ExperimentRunner.complete_iteration`, no cálculo de `rewarding_sound` e de `SensoryInput.sound`.
+> **Localizador no código:** `src/experiments/experiment_runner.py` - `ExperimentRunner.complete_iteration`, no cálculo de `rewarding_sound` e de `SensoryObservation.sound`; e `src/experiments/sensory_processing.py` - `SensoryProcessor.process`.
 
 Na configuração atual, $m=0{,}1$. O estímulo não é produzido por microfone e
 alto-falante: ele é gerado logicamente pelo protocolo. A maraca é calculada
