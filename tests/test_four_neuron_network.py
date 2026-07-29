@@ -7,7 +7,6 @@ from src.neural import (
     NeuralConfig,
     PlasticityScope,
     SensoryInput,
-    SensoryNormalization,
     grossberg_delta,
     intrinsic_shift,
     sigmoid_output,
@@ -43,20 +42,6 @@ def test_grossberg_rule_cases(input_j, activation, weight, expected_sign):
 def test_intrinsic_activity_moves_shift_toward_output():
     assert intrinsic_shift(previous_shift=0.5, output=0.9, xi=0.1) > 0.5
     assert intrinsic_shift(previous_shift=0.5, output=0.1, xi=0.1) < 0.5
-
-
-def test_normalization_is_explicit_and_summed():
-    normalization = SensoryNormalization(
-        acceleration_offset=1.0,
-        acceleration_scale=0.5,
-        visual_scale=2.0,
-        sound_scale=3.0,
-    )
-    result = normalization.normalize(SensoryInput(3.0, 0.25, 0.5))
-    assert result.acceleration == pytest.approx(1.0)
-    assert result.visual == pytest.approx(0.5)
-    assert result.sound == pytest.approx(1.5)
-    assert result.total == pytest.approx(3.0)
 
 
 def test_exactly_one_competitive_output_is_nonzero():
@@ -156,3 +141,8 @@ def test_module_has_no_webots_dependency():
     )
     assert "from controller import" not in source
     assert "import controller" not in source
+
+
+def test_neural_input_rejects_non_finite_intensities():
+    with pytest.raises(ValueError, match="finite"):
+        SensoryInput(acceleration=math.inf)

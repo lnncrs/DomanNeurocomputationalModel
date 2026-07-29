@@ -8,6 +8,8 @@ import math
 
 from src.neural import FourNeuronNetwork, MotorAction, NeuralStepResult, SensoryInput
 
+from .sensory_processing import SensoryObservation, SensoryProcessor
+
 
 class MovementDirection(str, Enum):
     DOWN = "DOWN"
@@ -138,6 +140,7 @@ class ExperimentIterationResult:
     displacement: float
     direction: MovementDirection
     rewarding_sound: bool
+    sensory_observation: SensoryObservation
     sensory_input: SensoryInput
     neural_step: NeuralStepResult
     learning: LearningStatus
@@ -151,9 +154,11 @@ class ExperimentRunner:
         self,
         network: FourNeuronNetwork,
         config: ExperimentConfig | None = None,
+        sensory_processor: SensoryProcessor | None = None,
     ) -> None:
         self.network = network
         self.config = config or ExperimentConfig()
+        self.sensory_processor = sensory_processor or SensoryProcessor()
         self.criterion = LearningCriterion(self.config.learning_streak)
         self._pending_action: MotorAction | None = None
         self._iteration = 0
@@ -163,7 +168,13 @@ class ExperimentRunner:
         return self._pending_action
 
     def start(self, initial_sensory: SensoryInput | None = None) -> NeuralStepResult:
-        """Seleciona a primeira ação antes de existir resposta física."""
+        """
+        Seleciona a primeira ação antes de existir resposta física.
+
+        Quando fornecida, ``initial_sensory`` já deve estar normalizada. Em uma
+        execução comum, a ausência de observação anterior produz três
+        intensidades iguais a zero.
+        """
 
         if self._pending_action is not None:
             raise RuntimeError("experiment has already started")
@@ -199,13 +210,15 @@ class ExperimentRunner:
         # A resposta do ambiente determina direção e estímulos sensoriais.
         direction = self._classify_movement(displacement)
         rewarding_sound = direction == MovementDirection.DOWN
-        sensory_input = SensoryInput(
+        sensory_observation = SensoryObservation(
             acceleration=acceleration,
             visual=visual,
             sound=self.config.sound_intensity if rewarding_sound else 0.0,
         )
+        sensory_input = self.sensory_processor.process(sensory_observation)
 
-        # Os sensores resultantes da ação anterior selecionam a próxima ação.
+        # As intensidades já processadas resultantes da ação anterior
+        # selecionam a próxima ação.
         neural_step = self.network.step(sensory_input)
         next_action = neural_step.action
         learning = self.criterion.update(direction)
@@ -216,6 +229,7 @@ class ExperimentRunner:
             displacement=displacement,
             direction=direction,
             rewarding_sound=rewarding_sound,
+            sensory_observation=sensory_observation,
             sensory_input=sensory_input,
             neural_step=neural_step,
             learning=learning,

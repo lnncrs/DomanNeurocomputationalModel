@@ -10,6 +10,11 @@ from .experiment_runner import (
     LearningStatus,
     MovementDirection,
 )
+from .sensory_processing import (
+    SensoryNormalization,
+    SensoryObservation,
+    SensoryProcessor,
+)
 
 __all__ = [
     "ExperimentConfig",
@@ -20,4 +25,7 @@ __all__ = [
     "LearningCriterion",
     "LearningStatus",
     "MovementDirection",
+    "SensoryNormalization",
+    "SensoryObservation",
+    "SensoryProcessor",
 ]

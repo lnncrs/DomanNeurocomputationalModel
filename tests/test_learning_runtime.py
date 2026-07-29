@@ -90,7 +90,11 @@ def test_action_is_held_until_window_finishes_and_uses_only_one_axle():
 def test_progress_during_action_generates_maraca_for_next_neural_step():
     runtime = LearningRuntime(
         goal=GOAL,
-        config=LearningRuntimeConfig(action_duration_seconds=0.5, random_seed=1),
+        config=LearningRuntimeConfig(
+            action_duration_seconds=0.5,
+            acceleration_scale=2.0,
+            random_seed=1,
+        ),
     )
     runtime.enter(time=0.0, position=position(2.0), longitudinal_acceleration=2.0)
     runtime.step(
@@ -108,7 +112,10 @@ def test_progress_during_action_generates_maraca_for_next_neural_step():
     assert telemetry["direction"] == "DOWN"
     assert telemetry["maraca"] is True
     assert runtime._last_iteration.sensory_input.sound == pytest.approx(0.1)
-    assert runtime._last_iteration.sensory_input.acceleration == pytest.approx(0.3)
+    assert runtime._last_iteration.sensory_observation.acceleration == pytest.approx(
+        0.3
+    )
+    assert runtime._last_iteration.sensory_input.acceleration == pytest.approx(0.6)
 
 
 def test_five_downward_windows_mark_learning_but_continue_until_goal():

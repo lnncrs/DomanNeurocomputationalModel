@@ -21,12 +21,12 @@ from src.experiments import (
     ExperimentIterationResult,
     ExperimentLogger,
     ExperimentRunner,
+    SensoryNormalization,
+    SensoryProcessor,
 )
 from src.neural import (
     FourNeuronNetwork,
     NeuralConfig,
-    SensoryInput,
-    SensoryNormalization,
 )
 
 STOPPED_WHEELS = (0.0, 0.0, 0.0, 0.0)
@@ -103,11 +103,11 @@ class LearningRuntime:
     ) -> None:
         self.goal = goal
         self.config = config or LearningRuntimeConfig()
-        neural_config = NeuralConfig(
-            random_seed=self.config.random_seed,
-            sensory_normalization=SensoryNormalization(
+        neural_config = NeuralConfig(random_seed=self.config.random_seed)
+        sensory_processor = SensoryProcessor(
+            SensoryNormalization(
                 acceleration_scale=self.config.acceleration_scale,
-            ),
+            )
         )
         experiment_config = ExperimentConfig(
             movement_duration_seconds=self.config.action_duration_seconds,
@@ -120,7 +120,11 @@ class LearningRuntime:
             learning_streak=5,
         )
         self.network = FourNeuronNetwork(neural_config)
-        self.runner = ExperimentRunner(self.network, experiment_config)
+        self.runner = ExperimentRunner(
+            self.network,
+            experiment_config,
+            sensory_processor,
+        )
         self.mapper = MotorActionMapper(
             speed=self.config.wheel_speed,
             front_clockwise_sign=self.config.front_clockwise_sign,
@@ -148,7 +152,7 @@ class LearningRuntime:
             self.active = False
             return
         if self.runner.pending_action is None:
-            self.runner.start(SensoryInput())
+            self.runner.start()
             self._open_logger()
         self.active = True
         self.blocked_reason = None
@@ -335,6 +339,9 @@ class LearningRuntime:
                 "runtimeConfig": asdict(self.config),
                 "neuralConfig": asdict(self.network.config),
                 "experimentConfig": asdict(self.runner.config),
+                "sensoryNormalization": asdict(
+                    self.runner.sensory_processor.normalization
+                ),
                 "goal": asdict(self.goal) if self.goal is not None else None,
             },
         )
