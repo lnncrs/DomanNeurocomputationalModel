@@ -1,5 +1,5 @@
 """Adaptadores entre a rede e a plataforma robótica"""
 
-from .robot_adapter import FourWheelCommand, MotorActionMapper, RobotAdapter
+from .robot_adapter import FourWheelCommand, MotorActionMapper
 
-__all__ = ["FourWheelCommand", "MotorActionMapper", "RobotAdapter"]
+__all__ = ["FourWheelCommand", "MotorActionMapper"]

@@ -29,6 +29,7 @@ def test_downward_response_generates_sound_for_next_neural_step():
     result = runner.complete_iteration(displacement=-0.02, acceleration=0.3)
     assert result.direction == MovementDirection.DOWN
     assert result.rewarding_sound is True
+    assert result.sensory_observation.sound == 2.5
     assert result.sensory_input.sound == 2.5
     assert result.neural_step.sensory.sound == 2.5
     assert result.previous_action == first.action

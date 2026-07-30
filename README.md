@@ -631,7 +631,7 @@ Cada entrada sensorial pode ter seu ponto de referência corrigido e sua intensi
 
 > **Esta equação quer dizer:** Pegue o valor recebido de um sensor, subtraia um valor de referência e multiplique o resultado por um fator de escala.
 
-> **Localizador no código:** `src/neural/four_neuron_network.py` - `SensoryNormalization.normalize`.
+> **Localizador no código:** `src/experiments/sensory_processing.py` - `SensoryProcessor.process`.
 
 Os valores normalizados são somados e formam uma entrada sensorial comum aos quatro neurônios:
 
@@ -656,7 +656,7 @@ Onde:
 
 > **Esta equação quer dizer:** entrada total = aceleração transformada + visão transformada + som transformado
 
-> **Localizador no código:** `src/neural/four_neuron_network.py` - `SensoryNormalization.normalize`, no cálculo de `NormalizedSensoryInput.total`.
+> **Localizador no código:** `src/experiments/sensory_processing.py` - `SensoryProcessor.process`; e `src/neural/four_neuron_network.py` - `SensoryInput.total`.
 
 Na configuração atual:
 - Todos os *offsets* são zero e todas as escalas são `1,0`.
@@ -751,7 +751,7 @@ Na configuração atual:
 
 - a competição utiliza o modo determinístico, no qual vence a maior saída;
 - empates exatos são resolvidos pelo gerador pseudoaleatório associado à seed neural;
-- o desvio do ruído de ativação é `0,0` e, portanto, $\eta_i(t)=0$;
+- a implementação não adiciona ruído à ativação e, portanto, $\eta_i(t)=0$;
 - a saída competitiva do vencedor é preservada com seu valor sigmoidal, e não substituída por `1,0`.
 
 ### Plasticidade sináptica
@@ -1078,7 +1078,7 @@ Onde:
 > para ser classificada como descida, produza a maraca; em qualquer outro caso,
 > mantenha a entrada sonora em zero.
 
-> **Localizador no código:** `src/experiments/experiment_runner.py` - `ExperimentRunner.complete_iteration`, no cálculo de `rewarding_sound` e de `SensoryInput.sound`.
+> **Localizador no código:** `src/experiments/experiment_runner.py` - `ExperimentRunner.complete_iteration`, no cálculo de `rewarding_sound` e de `SensoryObservation.sound`; e `src/experiments/sensory_processing.py` - `SensoryProcessor.process`.
 
 Na configuração atual, $m=0{,}1$. O estímulo não é produzido por microfone e
 alto-falante: ele é gerado logicamente pelo protocolo. A maraca é calculada
@@ -1718,18 +1718,18 @@ controlador** significa que o valor pode ser informado por `controllerArgs`.
 
 | Parâmetro | Campo ou constante | Arquivo | Configuração integrada |
 |---|---|---|---|
-| número de neurônios | `NEURON_COUNT`; `NeuralConfig.neuron_count` | `src/neural/four_neuron_network.py` | fixado e validado em 4 |
+| número de neurônios | `NEURON_COUNT` | `src/neural/four_neuron_network.py` | constante fixada em 4 |
 | peso recorrente | `NeuralConfig.recurrent_weight` | `src/neural/four_neuron_network.py` | default interno |
 | ganho sigmoidal | `NeuralConfig.sigmoid_gain` | `src/neural/four_neuron_network.py` | default interno |
 | pesos não diagonais iniciais | `initial_weight_min`; `initial_weight_max` | `src/neural/four_neuron_network.py` | defaults internos; sorteio uniforme condicionado pela seed |
 | taxa sináptica `epsilon` | `NeuralConfig.synaptic_learning_rate` | `src/neural/four_neuron_network.py` | default interno |
 | taxa intrínseca `xi` | `NeuralConfig.intrinsic_learning_rate` | `src/neural/four_neuron_network.py` | default interno |
 | deslocamento inicial | `NeuralConfig.initial_shift` | `src/neural/four_neuron_network.py` | default interno |
-| competição | `NeuralConfig.competition_mode` | `src/neural/four_neuron_network.py` | default `CompetitionMode.DETERMINISTIC` |
+| competição | `FourNeuronNetwork._select_winner` | `src/neural/four_neuron_network.py` | maior saída; empates são resolvidos pela seed |
 | escopo da plasticidade | `NeuralConfig.plasticity_scope` | `src/neural/four_neuron_network.py` | default `PlasticityScope.WINNER_ONLY` |
-| fonte da plasticidade intrínseca | `NeuralConfig.intrinsic_output_source` | `src/neural/four_neuron_network.py` | default `IntrinsicOutputSource.POST_COMPETITION` |
-| desvio do ruído de ativação | `NeuralConfig.activation_noise_std` | `src/neural/four_neuron_network.py` | default `0.0`; desativado |
-| limites adicionais dos pesos | `NeuralConfig.optional_weight_bounds` | `src/neural/four_neuron_network.py` | default `None`; sem limites adicionais |
+| fonte da plasticidade intrínseca | `FourNeuronNetwork._update_intrinsic_shifts` | `src/neural/four_neuron_network.py` | saída após competição; hipótese fixa da reconstrução |
+| ruído de ativação | não implementado | `src/neural/four_neuron_network.py` | nenhum termo de ruído é adicionado |
+| limites adicionais dos pesos | não implementados | `src/neural/four_neuron_network.py` | a equação é aplicada sem recorte adicional |
 | seed neural | `LearningRuntimeConfig.random_seed`; `NeuralConfig.random_seed` | `webots/controllers/four_wheels_manual/learning_runtime.py` | argumento `--learning-seed`, definido no mundo principal |
 
 O `LearningRuntime` constrói `NeuralConfig` informando explicitamente a seed e

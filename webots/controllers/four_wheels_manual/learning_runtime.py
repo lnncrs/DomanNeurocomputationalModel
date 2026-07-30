@@ -18,15 +18,15 @@ if str(PROJECT_ROOT) not in sys.path:
 from src.control import MotorActionMapper
 from src.experiments import (
     ExperimentConfig,
+    ExperimentIterationResult,
     ExperimentLogger,
     ExperimentRunner,
-    MovementDirection,
+    SensoryNormalization,
+    SensoryProcessor,
 )
 from src.neural import (
     FourNeuronNetwork,
     NeuralConfig,
-    SensoryInput,
-    SensoryNormalization,
 )
 
 STOPPED_WHEELS = (0.0, 0.0, 0.0, 0.0)
@@ -103,23 +103,28 @@ class LearningRuntime:
     ) -> None:
         self.goal = goal
         self.config = config or LearningRuntimeConfig()
-        neural_config = NeuralConfig(
-            random_seed=self.config.random_seed,
-            sensory_normalization=SensoryNormalization(
+        neural_config = NeuralConfig(random_seed=self.config.random_seed)
+        sensory_processor = SensoryProcessor(
+            SensoryNormalization(
                 acceleration_scale=self.config.acceleration_scale,
-            ),
+            )
         )
         experiment_config = ExperimentConfig(
             movement_duration_seconds=self.config.action_duration_seconds,
             stationary_threshold=self.config.stationary_threshold,
             sound_intensity=self.config.sound_intensity,
             # displacement = distância_final - distância_inicial
-            # Aproximar-se da meta produz valor negativo, não necessariamente ao seu centro
+            # Aproximar-se da meta produz valor negativo, não necessariamente
+            # um movimento dirigido ao centro do retângulo.
             downhill_sign=-1,
             learning_streak=5,
         )
         self.network = FourNeuronNetwork(neural_config)
-        self.runner = ExperimentRunner(self.network, experiment_config)
+        self.runner = ExperimentRunner(
+            self.network,
+            experiment_config,
+            sensory_processor,
+        )
         self.mapper = MotorActionMapper(
             speed=self.config.wheel_speed,
             front_clockwise_sign=self.config.front_clockwise_sign,
@@ -134,7 +139,7 @@ class LearningRuntime:
         self._action_start_distance = 0.0
         self._acceleration_baseline = 0.0
         self._acceleration_samples: list[float] = []
-        self._last_iteration = None
+        self._last_iteration: ExperimentIterationResult | None = None
 
     def enter(self, *, time: float, position, longitudinal_acceleration: float) -> None:
         """Inicia ou retoma a janela da ação pendente."""
@@ -147,7 +152,7 @@ class LearningRuntime:
             self.active = False
             return
         if self.runner.pending_action is None:
-            self.runner.start(SensoryInput())
+            self.runner.start()
             self._open_logger()
         self.active = True
         self.blocked_reason = None
@@ -168,23 +173,22 @@ class LearningRuntime:
         if not self.active or self.goal is None or self.completed:
             return STOPPED_WHEELS
 
+        # Hipótese operacional: estímulo é a variação absoluta desde enter().
+        acceleration_sample = abs(
+            longitudinal_acceleration - self._acceleration_baseline
+        )
+        self._acceleration_samples.append(acceleration_sample)
+
         if self.goal.contains(position):
-            self._acceleration_samples.append(
-                abs(longitudinal_acceleration - self._acceleration_baseline)
-            )
             # Registra a ação parcial que efetivamente alcançou a meta
-            self._finish_action_window(time, position)
+            self._finish_action_window(position)
             self._complete("GOAL_REACHED")
             return STOPPED_WHEELS
 
-        self._acceleration_samples.append(
-            abs(longitudinal_acceleration - self._acceleration_baseline)
-        )
         elapsed = time - self._action_started_at
         if elapsed + 1e-12 >= self.config.action_duration_seconds:
-            self._finish_action_window(time, position)
-            if not self.active or self.completed:
-                return STOPPED_WHEELS
+            self._finish_action_window(position)
+            self._begin_action_window(time, position)
 
         action = self.runner.pending_action
         if action is None:
@@ -194,18 +198,8 @@ class LearningRuntime:
     def telemetry(self) -> dict:
         action = self.runner.pending_action
         last = self._last_iteration
-        if self.blocked_reason is not None:
-            status = "BLOCKED"
-        elif self.completed:
-            status = "COMPLETED"
-        elif self.active:
-            status = "RUNNING"
-        elif action is not None:
-            status = "PAUSED"
-        else:
-            status = "READY"
-        return {
-            "status": status,
+        telemetry = {
+            "status": self._status(),
             "blockedReason": self.blocked_reason,
             "iteration": last.iteration if last is not None else 0,
             "winner": (
@@ -227,42 +221,52 @@ class LearningRuntime:
             "lastRewardingSound": (
                 bool(last.rewarding_sound) if last is not None else False
             ),
-            "sameDirectionCount": (
-                last.learning.same_direction_count if last is not None else 0
-            ),
-            "downwardCount": last.learning.downward_count if last is not None else 0,
-            "paperCriterionReached": (
-                last.learning.paper_criterion_reached if last is not None else False
-            ),
-            "downwardCriterionReached": (
-                last.learning.downward_criterion_reached if last is not None else False
-            ),
-            "everPaperCriterionReached": (
-                last.learning.ever_paper_criterion_reached
-                if last is not None
-                else False
-            ),
-            "everDownwardCriterionReached": (
-                last.learning.ever_downward_criterion_reached
-                if last is not None
-                else False
-            ),
+        }
+        telemetry.update(self._learning_telemetry())
+        return telemetry
+
+    def _status(self) -> str:
+        if self.blocked_reason is not None:
+            return "BLOCKED"
+        if self.completed:
+            return "COMPLETED"
+        if self.active:
+            return "RUNNING"
+        if self.runner.pending_action is not None:
+            return "PAUSED"
+        return "READY"
+
+    def _learning_telemetry(self) -> dict:
+        if self._last_iteration is None:
+            return {
+                "sameDirectionCount": 0,
+                "downwardCount": 0,
+                "paperCriterionReached": False,
+                "downwardCriterionReached": False,
+                "everPaperCriterionReached": False,
+                "everDownwardCriterionReached": False,
+                "firstPaperCriterionIteration": None,
+                "firstDownwardCriterionIteration": None,
+                "maximumSameDirectionCount": 0,
+                "maximumDownwardCount": 0,
+            }
+
+        learning = self._last_iteration.learning
+        return {
+            "sameDirectionCount": learning.same_direction_count,
+            "downwardCount": learning.downward_count,
+            "paperCriterionReached": learning.paper_criterion_reached,
+            "downwardCriterionReached": learning.downward_criterion_reached,
+            "everPaperCriterionReached": learning.ever_paper_criterion_reached,
+            "everDownwardCriterionReached": learning.ever_downward_criterion_reached,
             "firstPaperCriterionIteration": (
-                last.learning.first_paper_criterion_iteration
-                if last is not None
-                else None
+                learning.first_paper_criterion_iteration
             ),
             "firstDownwardCriterionIteration": (
-                last.learning.first_downward_criterion_iteration
-                if last is not None
-                else None
+                learning.first_downward_criterion_iteration
             ),
-            "maximumSameDirectionCount": (
-                last.learning.maximum_same_direction_count if last is not None else 0
-            ),
-            "maximumDownwardCount": (
-                last.learning.maximum_downward_count if last is not None else 0
-            ),
+            "maximumSameDirectionCount": learning.maximum_same_direction_count,
+            "maximumDownwardCount": learning.maximum_downward_count,
         }
 
     def _begin_action_window(self, time: float, position) -> None:
@@ -270,7 +274,7 @@ class LearningRuntime:
         self._action_start_distance = self.goal.distance(position)
         self._acceleration_samples = []
 
-    def _finish_action_window(self, time: float, position) -> None:
+    def _finish_action_window(self, position) -> None:
         final_distance = self.goal.distance(position)
         displacement = final_distance - self._action_start_distance
         acceleration = (
@@ -293,8 +297,6 @@ class LearningRuntime:
             f"maraca={result.rewarding_sound}, "
             f"next={result.next_action.name}"
         )
-
-        self._begin_action_window(time, position)
 
     def _complete(self, reason: str) -> None:
         self.active = False
@@ -337,6 +339,9 @@ class LearningRuntime:
                 "runtimeConfig": asdict(self.config),
                 "neuralConfig": asdict(self.network.config),
                 "experimentConfig": asdict(self.runner.config),
+                "sensoryNormalization": asdict(
+                    self.runner.sensory_processor.normalization
+                ),
                 "goal": asdict(self.goal) if self.goal is not None else None,
             },
         )

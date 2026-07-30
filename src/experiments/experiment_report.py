@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 from collections import Counter
+from dataclasses import dataclass
 from html import escape
 import json
 import math
 from pathlib import Path
-from statistics import median
-from typing import Iterable, Sequence
+from typing import cast, Sequence, TypedDict
 
 ACTION_NAMES = (
     "FRONT_CLOCKWISE",
@@ -20,16 +20,55 @@ SHORT_ACTION_NAMES = ("Front CW", "Front CCW", "Rear CW", "Rear CCW")
 SERIES_COLORS = ("var(--n0)", "var(--n1)", "var(--n2)", "var(--n3)")
 
 
+class SensoryRow(TypedDict):
+    acceleration: float
+    sound: float
+
+
+class NeuralStepRow(TypedDict):
+    raw_output: list[float]
+    shifts_after: list[float]
+    weights_before: list[list[float]]
+    weights_after: list[list[float]]
+    winner: int
+
+
+class LearningRow(TypedDict, total=False):
+    downward_criterion_reached: bool
+
+
+class IterationRow(TypedDict):
+    iteration: int
+    previous_action: int
+    displacement: float
+    direction: str
+    sensory_input: SensoryRow
+    neural_step: NeuralStepRow
+    learning: LearningRow
+
+
+@dataclass(frozen=True)
+class ReportAnalysis:
+    iterations: int
+    downward: int
+    productive_ratio: float
+    criterion_reached: bool
+    saturated_count: int
+    saturation_ratio: float
+    notes: tuple[str, ...]
+
+
 def _load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _load_iterations(path: Path) -> list[dict]:
-    return [
+def _load_iterations(path: Path) -> list[IterationRow]:
+    rows = [
         json.loads(line)
         for line in path.read_text(encoding="utf-8").splitlines()
         if line.strip()
     ]
+    return cast(list[IterationRow], rows)
 
 
 def _fmt(value: float, digits: int = 3) -> str:
@@ -102,7 +141,7 @@ def _line_chart(
     </section>"""
 
 
-def _timeline(rows: Sequence[dict]) -> str:
+def _timeline(rows: Sequence[IterationRow]) -> str:
     width, height = 960.0, 126.0
     left, usable = 72.0, 864.0
     cell = usable / max(len(rows), 1)
@@ -145,7 +184,7 @@ def _timeline(rows: Sequence[dict]) -> str:
     </section>"""
 
 
-def _network_diagram(rows: Sequence[dict]) -> tuple[str, str]:
+def _network_diagram(rows: Sequence[IterationRow]) -> tuple[str, str]:
     first = rows[0]["neural_step"]
     last = rows[-1]["neural_step"]
     initial = first["weights_before"]
@@ -235,7 +274,7 @@ def _network_diagram(rows: Sequence[dict]) -> tuple[str, str]:
     return diagram, matrix
 
 
-def _longest_run(rows: Sequence[dict]) -> tuple[int, int, int, int]:
+def _longest_run(rows: Sequence[IterationRow]) -> tuple[int, int, int, int]:
     best_action = best_start = best_end = best_length = 0
     start = 0
     for index in range(1, len(rows) + 1):
@@ -251,17 +290,15 @@ def _longest_run(rows: Sequence[dict]) -> tuple[int, int, int, int]:
     return best_action, best_start, best_end, best_length
 
 
-def _analysis(rows: Sequence[dict], summary: dict) -> tuple[dict, list[str]]:
+def _analyze_run(rows: Sequence[IterationRow], summary: dict) -> ReportAnalysis:
     directions = Counter(row["direction"] for row in rows)
     downward = directions["DOWN"]
     stationary = directions["STATIONARY"]
     upward = directions["UP"]
-    gaps = []
     saturated = 0
     exact_ties = 0
     for row in rows:
         outputs = sorted(row["neural_step"]["raw_output"], reverse=True)
-        gaps.append(outputs[0] - outputs[1])
         saturated += all(value >= 0.999 for value in outputs)
         exact_ties += outputs[0] == outputs[1]
     action, start, end, length = _longest_run(rows)
@@ -280,38 +317,35 @@ def _analysis(rows: Sequence[dict], summary: dict) -> tuple[dict, list[str]]:
             ),
             None,
         )
-    metrics = {
-        "iterations": len(rows),
-        "down": downward,
-        "stationary": stationary,
-        "up": upward,
-        "productive": downward / len(rows) if rows else 0.0,
-        "saturation": saturated / len(rows) if rows else 0.0,
-        "saturated_count": saturated,
-        "ties": exact_ties,
-        "median_gap": median(gaps) if gaps else 0.0,
-        "historical": historical,
-        "first_criterion": first_criterion,
-    }
+    productive_ratio = downward / len(rows) if rows else 0.0
+    saturation_ratio = saturated / len(rows) if rows else 0.0
     notes = [
-        f"A execução terminou por {summary.get('reason', 'motivo não registrado')} após {len(rows)} iterações; {downward} ({metrics['productive']:.1%}) produziram aproximação da meta.",
+        f"A execução terminou por {summary.get('reason', 'motivo não registrado')} após {len(rows)} iterações; {downward} ({productive_ratio:.1%}) produziram aproximação da meta.",
         (
             f"O critério de descidas consecutivas foi alcançado pela primeira vez na iteração {first_criterion}."
             if historical
             else "O critério de descidas consecutivas não foi alcançado nesta execução."
         ),
         f"A maior repetição de uma ação durou {length} ciclos: {ACTION_NAMES[action]}, das iterações {start} a {end}.",
-        f"As quatro saídas ficaram simultaneamente ≥ 0,999 em {saturated} ciclos ({metrics['saturation']:.1%}); ocorreram {exact_ties} empates exatos no topo.",
+        f"As quatro saídas ficaram simultaneamente ≥ 0,999 em {saturated} ciclos ({saturation_ratio:.1%}); ocorreram {exact_ties} empates exatos no topo.",
     ]
     if stationary + upward > downward:
         notes.append(
             f"Ciclos improdutivos predominaram: {stationary} estacionários e {upward} para cima, contra {downward} para baixo."
         )
-    if metrics["saturation"] >= 0.25:
+    if saturation_ratio >= 0.25:
         notes.append(
             "A saturação é alta e reduz a capacidade da competição de distinguir os neurônios; examine os gráficos de saídas, shifts e entradas sensoriais no mesmo intervalo."
         )
-    return metrics, notes
+    return ReportAnalysis(
+        iterations=len(rows),
+        downward=downward,
+        productive_ratio=productive_ratio,
+        criterion_reached=bool(historical),
+        saturated_count=saturated,
+        saturation_ratio=saturation_ratio,
+        notes=tuple(notes),
+    )
 
 
 def generate_experiment_report(run_directory: str | Path) -> Path:
@@ -324,7 +358,7 @@ def generate_experiment_report(run_directory: str | Path) -> Path:
     if not rows:
         raise ValueError("cannot generate a report without iterations")
 
-    metrics, notes = _analysis(rows, summary)
+    analysis = _analyze_run(rows, summary)
     runtime = metadata.get(
         "runtimeConfig", metadata.get("config", {}).get("runtime", {})
     )
@@ -384,12 +418,12 @@ def generate_experiment_report(run_directory: str | Path) -> Path:
 <header><h1>Relatório do experimento neural</h1><p class="muted"><code>{escape(directory.name)}</code> · gerado automaticamente a partir dos arquivos da execução</p></header>
 <div class="cards">
   <div class="card"><span>Resultado</span><strong>{escape(summary.get('reason', '—'))}</strong></div>
-  <div class="card"><span>Iterações / tempo</span><strong>{metrics['iterations']} / {metrics['iterations'] * action_duration:.1f}s</strong></div>
-  <div class="card"><span>Descidas produtivas</span><strong>{metrics['down']} ({metrics['productive']:.1%})</strong></div>
-  <div class="card"><span>Critério histórico</span><strong>{'Sim' if metrics['historical'] else 'Não'}</strong></div>
-  <div class="card"><span>Saturação conjunta</span><strong>{metrics['saturated_count']} ({metrics['saturation']:.1%})</strong></div>
+  <div class="card"><span>Iterações / tempo</span><strong>{analysis.iterations} / {analysis.iterations * action_duration:.1f}s</strong></div>
+  <div class="card"><span>Descidas produtivas</span><strong>{analysis.downward} ({analysis.productive_ratio:.1%})</strong></div>
+  <div class="card"><span>Critério histórico</span><strong>{'Sim' if analysis.criterion_reached else 'Não'}</strong></div>
+  <div class="card"><span>Saturação conjunta</span><strong>{analysis.saturated_count} ({analysis.saturation_ratio:.1%})</strong></div>
 </div>
-<section><h2>Leitura automática</h2><ul>{''.join(f'<li>{escape(note)}</li>' for note in notes)}</ul></section>
+<section><h2>Leitura automática</h2><ul>{''.join(f'<li>{escape(note)}</li>' for note in analysis.notes)}</ul></section>
 {_timeline(rows)}
 {_line_chart(title='Progresso acumulado em direção à meta',series=(('Progresso',cumulative,'var(--down)'),),y_label='Metros')}
 {_line_chart(title='Entradas sensoriais',series=(('Aceleração',accelerations,'var(--n0)'),('Maraca',sounds,'var(--n1)')),y_label='Entrada normalizada')}
