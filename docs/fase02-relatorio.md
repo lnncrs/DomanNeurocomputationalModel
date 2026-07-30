@@ -13,6 +13,8 @@ O experimento e a simulação até este ponto foram criados com reprodutibilidad
 
 Como o relatório ficou extenso mesmo após repetidas remoções de conteúdo, e uma boa parte dele foi somente modificada do relatório 1, tomei a liberdade de marcar trechos com informação realmente nova ou de especial interesse para a entrega da `Fase 2` com <mark>MARCADOR DE TEXTO</mark>. Uma leitura rápida do relatório pode ser feita apenas com a leitura dos trechos marcados.
 
+**Um vídeo com uma rodada de simulação e uma breve introdução as novas funcionalidades está em https://youtu.be/twNaPXXH5lA**
+
 ![logotipo-ufabc-extenso](../assets/logotipo-ufabc-extenso.png)
 
 # Modelo neurocomputacional de reorganização motora
@@ -43,12 +45,14 @@ Resumo. Este trabalho tem como objetivo a reprodução computacional e robótica
   - Execução de uma simulação
   - Mapeamento detalhado dos modos de controle
 - Funções e equações
+  <!--
   - Normalização e soma sensorial
   - Ativação, saída sigmoidal e competição
   - Plasticidade sináptica
   - Plasticidade intrínseca
   - Distância, deslocamento e classificação do movimento
   - Aceleração, maraca e critérios de aprendizagem
+  -->
 - Parâmetros experimentais
   - Parâmetros da rede neural
   - Parâmetros do protocolo de aprendizagem
