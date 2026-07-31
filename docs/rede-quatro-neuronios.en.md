@@ -47,6 +47,8 @@ Reproducing the paper is the starting point, but having a platform where the net
 ![simulation](../assets/experiment.png)
 
 
+https://www.youtube.com/watch?v=oyLF4tXCKJU
+
 ## The four neurons and what each one controls
 
 Each neuron is associated with an abstract motor action over two wheel sets of the robot:

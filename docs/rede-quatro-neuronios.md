@@ -46,6 +46,7 @@ Reproduzir o artigo é o ponto de partida, mas ter uma plataforma onde a rede po
 
 ![simulation](../assets/experiment.png)
 
+https://www.youtube.com/watch?v=oyLF4tXCKJU
 
 ## Os quatro neurônios e o que cada um controla
 
